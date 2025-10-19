@@ -17,13 +17,13 @@ export const PlayerSetup = ({ onStart }: PlayerSetupProps) => {
 
   const handleCountSelect = (count: number) => {
     setSelectedCount(count);
-    setPlayerNames(Array.from({ length: count }, (_, i) => `Jugador ${i + 1}`));
+    setPlayerNames(Array.from({ length: count }, () => ""));
     setStep('names');
   };
 
   const handleNameChange = (index: number, name: string) => {
     const newNames = [...playerNames];
-    newNames[index] = name || `Jugador ${index + 1}`;
+    newNames[index] = name;
     setPlayerNames(newNames);
   };
 
