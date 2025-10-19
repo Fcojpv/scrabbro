@@ -47,6 +47,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
+        },
+        celebrate: "hsl(var(--celebrate))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -80,10 +85,44 @@ export default {
             height: "0",
           },
         },
+        "celebrate": {
+          "0%": { 
+            transform: "scale(0) rotate(0deg)",
+            opacity: "1"
+          },
+          "50%": {
+            transform: "scale(1.2) rotate(180deg)",
+          },
+          "100%": {
+            transform: "scale(0) rotate(360deg)",
+            opacity: "0"
+          }
+        },
+        "slide-up": {
+          from: {
+            transform: "translateY(10px)",
+            opacity: "0"
+          },
+          to: {
+            transform: "translateY(0)",
+            opacity: "1"
+          }
+        },
+        "pulse-subtle": {
+          "0%, 100%": {
+            opacity: "1"
+          },
+          "50%": {
+            opacity: "0.8"
+          }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "celebrate": "celebrate 0.6s ease-out",
+        "slide-up": "slide-up 0.3s ease-out",
+        "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
       },
     },
   },
