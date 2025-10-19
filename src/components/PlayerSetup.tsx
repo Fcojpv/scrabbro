@@ -9,11 +9,11 @@ interface PlayerSetupProps {
 }
 
 export const PlayerSetup = ({ onStart }: PlayerSetupProps) => {
-  const [selectedCount, setSelectedCount] = useState(2);
+  const [selectedCount, setSelectedCount] = useState(1);
   const [step, setStep] = useState<'count' | 'names'>('count');
   const [playerNames, setPlayerNames] = useState<string[]>([]);
 
-  const playerOptions = [2, 3, 4, 5, 6, 7, 8];
+  const playerOptions = [1, 2, 3, 4];
 
   const handleCountSelect = (count: number) => {
     setSelectedCount(count);
