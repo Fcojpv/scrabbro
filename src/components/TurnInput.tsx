@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, X } from "lucide-react";
 
 interface TurnInputProps {
   currentPlayer: number;
@@ -27,6 +27,10 @@ export const TurnInput = ({ currentPlayer, currentPlayerName, onSubmitScore }: T
     }
   };
 
+  const handleClear = () => {
+    setScore("");
+  };
+
   return (
     <Card className="p-6 border-2 border-primary/20 bg-card/50 backdrop-blur">
       <div className="space-y-4">
@@ -49,6 +53,16 @@ export const TurnInput = ({ currentPlayer, currentPlayerName, onSubmitScore }: T
             onKeyPress={handleKeyPress}
             className="text-2xl text-center font-bold h-14"
           />
+          {score.length > 0 && (
+            <Button 
+              onClick={handleClear}
+              variant="ghost"
+              size="lg"
+              className="px-4"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          )}
           <Button 
             onClick={handleSubmit}
             size="lg"
