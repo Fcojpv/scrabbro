@@ -76,26 +76,42 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
         setTimeout(() => {
           setCelebratingPlayers(new Set());
           setPlayerEmojis(new Map());
-        }, 2000);
+        }, 5000);
       }
     }
 
     setPreviousRankings(currentRankings);
   }, [sortedPlayers.map(p => `${p.id}-${p.score}`).join(',')]);
 
-  const getMedalEmoji = (position: number) => {
-    if (position === 0) return "🥇";
-    if (position === 1) return "🥈";
-    if (position === 2) return "🥉";
+  const getMedalEmoji = (rank: number) => {
+    if (rank === 1) return "🥇";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
     return null;
   };
 
-  const getPositionColor = (position: number) => {
-    if (position === 0) return "bg-gold/20 border-gold/40";
-    if (position === 1) return "bg-muted/50 border-muted";
-    if (position === 2) return "bg-accent/20 border-accent/40";
+  const getPositionColor = (rank: number) => {
+    if (rank === 1) return "bg-gold/20 border-gold/40";
+    if (rank === 2) return "bg-muted/50 border-muted";
+    if (rank === 3) return "bg-accent/20 border-accent/40";
     return "bg-card border-border";
   };
+
+  const calculateRankings = () => {
+    const rankings: { player: Player; rank: number; displayIndex: number }[] = [];
+    let currentRank = 1;
+    
+    sortedPlayers.forEach((player, index) => {
+      if (index > 0 && player.score < sortedPlayers[index - 1].score) {
+        currentRank = index + 1;
+      }
+      rankings.push({ player, rank: currentRank, displayIndex: index });
+    });
+    
+    return rankings;
+  };
+
+  const rankedPlayers = calculateRankings();
 
   const handleEditClick = (player: Player) => {
     setEditingPlayer(player);
@@ -126,7 +142,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
       </div>
 
       <AnimatePresence mode="popLayout">
-        {sortedPlayers.map((player, index) => {
+        {rankedPlayers.map(({ player, rank, displayIndex }) => {
           const difference = leaderScore - player.score;
           const isCelebrating = celebratingPlayers.has(player.id);
           const playerEmoji = playerEmojis.get(player.id);
@@ -147,7 +163,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
               <Card
                 className={`
                   p-4 border-2 transition-all relative overflow-hidden
-                  ${getPositionColor(index)}
+                  ${getPositionColor(rank)}
                   ${isCelebrating ? "animate-pulse-subtle" : ""}
                 `}
               >
@@ -161,10 +177,10 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 min-w-[60px]">
                   <span className="text-2xl font-bold text-foreground">
-                    #{index + 1}
+                    #{rank}
                   </span>
-                  {getMedalEmoji(index) && (
-                    <span className="text-xl">{getMedalEmoji(index)}</span>
+                  {getMedalEmoji(rank) && (
+                    <span className="text-xl">{getMedalEmoji(rank)}</span>
                   )}
                 </div>
                 
@@ -172,7 +188,15 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
                   <div className="flex items-center gap-2 font-semibold text-foreground">
                     <span>{player.name}</span>
                     {playerEmoji && (
-                      <span className="text-lg animate-fade-in">{playerEmoji}</span>
+                      <motion.span 
+                        className="text-lg"
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {playerEmoji}
+                      </motion.span>
                     )}
                   </div>
                   {difference > 0 && (
@@ -181,7 +205,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
                       <span>-{difference} del líder</span>
                     </div>
                   )}
-                  {difference === 0 && index > 0 && (
+                  {difference === 0 && displayIndex > 0 && (
                     <div className="text-sm text-muted-foreground">
                       Empate con líder
                     </div>
