@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Player {
   id: number;
@@ -124,20 +125,32 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
         </div>
       </div>
 
-      {sortedPlayers.map((player, index) => {
-        const difference = leaderScore - player.score;
-        const isCelebrating = celebratingPlayers.has(player.id);
-        const playerEmoji = playerEmojis.get(player.id);
+      <AnimatePresence mode="popLayout">
+        {sortedPlayers.map((player, index) => {
+          const difference = leaderScore - player.score;
+          const isCelebrating = celebratingPlayers.has(player.id);
+          const playerEmoji = playerEmojis.get(player.id);
 
-        return (
-          <Card
-            key={player.id}
-            className={`
-              p-4 border-2 transition-all relative overflow-hidden
-              ${getPositionColor(index)}
-              ${isCelebrating ? "animate-pulse-subtle" : ""}
-            `}
-          >
+          return (
+            <motion.div
+              key={player.id}
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{
+                layout: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+                scale: { duration: 0.2 }
+              }}
+            >
+              <Card
+                className={`
+                  p-4 border-2 transition-all relative overflow-hidden
+                  ${getPositionColor(index)}
+                  ${isCelebrating ? "animate-pulse-subtle" : ""}
+                `}
+              >
             {isCelebrating && (
               <div className="absolute top-2 right-2 animate-celebrate text-2xl">
                 🎉
@@ -195,9 +208,11 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
                 )}
               </div>
             </div>
-          </Card>
-        );
-      })}
+              </Card>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
 
       <Dialog open={!!editingPlayer} onOpenChange={() => setEditingPlayer(null)}>
         <DialogContent>
