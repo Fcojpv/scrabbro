@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Trophy, TrendingUp, Pencil } from "lucide-react";
+import { Trophy, TrendingUp, Pencil, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ interface LeaderboardProps {
   onPositionChange?: () => void;
   roundNumber: number;
   onEditScore?: (playerId: number, newScore: number) => void;
+  gameTime?: string;
 }
 
 // Emojis for different position changes
@@ -25,7 +26,7 @@ const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "�
 const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶"];
 const MAINTAIN_EMOJI = "😉";
 
-export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScore }: LeaderboardProps) => {
+export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScore, gameTime }: LeaderboardProps) => {
   const { t } = useLanguage();
   const [previousRankings, setPreviousRankings] = useState<number[]>([]);
   const [celebratingPlayers, setCelebratingPlayers] = useState<Set<number>>(new Set());
@@ -138,8 +139,16 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
           <Trophy className="w-5 h-5 text-primary" />
           <h2 className="text-lg font-semibold">{t.leaderboard}</h2>
         </div>
-        <div className="text-sm font-medium text-muted-foreground">
-          {t.round} {roundNumber}
+        <div className="flex items-center gap-3">
+          {gameTime && (
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Clock className="w-3.5 h-3.5" />
+              <span>{gameTime}</span>
+            </div>
+          )}
+          <div className="text-sm font-medium text-muted-foreground">
+            {t.round} {roundNumber}
+          </div>
         </div>
       </div>
 

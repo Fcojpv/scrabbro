@@ -102,13 +102,7 @@ const Index = () => {
     <div className="min-h-screen bg-background p-4 pb-20">
       <div className="max-w-2xl mx-auto space-y-6 animate-slide-up">
         <div className="flex justify-between items-center pt-4">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Clock className="w-3.5 h-3.5" />
-              <span>{formatGameTime()}</span>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -156,7 +150,13 @@ const Index = () => {
           isTimerFinished={turnTimer.isFinished}
         />
 
-        <Leaderboard players={players} onPositionChange={handlePositionChange} roundNumber={roundNumber} onEditScore={handleEditScore} />
+        <Leaderboard 
+          players={players} 
+          onPositionChange={handlePositionChange} 
+          roundNumber={roundNumber} 
+          onEditScore={handleEditScore}
+          gameTime={formatGameTime()}
+        />
       </div>
 
       <ConfirmDialog
