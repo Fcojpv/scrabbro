@@ -3,16 +3,21 @@ import { useState, useEffect, useRef } from 'react';
 export const useTurnTimer = (currentTurn: number, isActive: boolean) => {
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [configuredMinutes, setConfiguredMinutes] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previousTurnRef = useRef(currentTurn);
 
   useEffect(() => {
-    // Reset timer when turn changes
+    // Reset and restart timer when turn changes
     if (previousTurnRef.current !== currentTurn) {
       setIsFinished(false);
+      // Restart timer with the same duration if it was configured
+      if (configuredMinutes !== null) {
+        setRemainingSeconds(configuredMinutes * 60);
+      }
       previousTurnRef.current = currentTurn;
     }
-  }, [currentTurn]);
+  }, [currentTurn, configuredMinutes]);
 
   useEffect(() => {
     if (!isActive || remainingSeconds === null || remainingSeconds <= 0) {
@@ -58,11 +63,13 @@ export const useTurnTimer = (currentTurn: number, isActive: boolean) => {
   };
 
   const startTimer = (minutes: number) => {
+    setConfiguredMinutes(minutes);
     setRemainingSeconds(minutes * 60);
     setIsFinished(false);
   };
 
   const stopTimer = () => {
+    setConfiguredMinutes(null);
     setRemainingSeconds(null);
     setIsFinished(false);
   };
