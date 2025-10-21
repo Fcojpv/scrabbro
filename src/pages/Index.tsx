@@ -110,14 +110,6 @@ const Index = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <SettingsMenu />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowResetDialog(true)}
-            >
-              <RotateCcw className="w-4 h-4" />
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -144,6 +136,15 @@ const Index = () => {
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowResetDialog(true)}
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              {t.reset}
+            </Button>
+            <SettingsMenu />
           </div>
         </div>
 
