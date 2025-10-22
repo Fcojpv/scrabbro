@@ -44,7 +44,7 @@ export const TurnInput = ({
   };
 
   return (
-    <Card className="p-6 border-2 border-primary/20 bg-card/50 backdrop-blur relative">
+    <Card className="p-4 border-2 border-primary/20 bg-card/50 backdrop-blur relative">
       {timerDisplay && (
         <div className="absolute top-4 right-4 flex items-center gap-2">
           <span className={`text-2xl font-bold font-mono ${timerColorClass} transition-colors`}>
@@ -55,10 +55,10 @@ export const TurnInput = ({
           )}
         </div>
       )}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="text-center">
           <h3 className="text-lg font-semibold text-muted-foreground">{t.turn}</h3>
-          <p className="text-3xl font-bold text-primary animate-pulse-subtle">
+          <p className="text-2xl font-bold text-primary animate-pulse-subtle">
             {currentPlayerName}
           </p>
         </div>
@@ -70,7 +70,7 @@ export const TurnInput = ({
             onChange={(e) => setScore(e.target.value)}
             placeholder={t.enterScore}
             onKeyPress={handleKeyPress}
-            className="text-2xl text-center font-bold h-14"
+            className="text-2xl text-center font-bold h-12"
           />
           {score.length > 0 && (
             <Button 
@@ -98,7 +98,7 @@ export const TurnInput = ({
               variant="outline"
               size="sm"
               onClick={() => setScore((prev) => (parseInt(prev || "0") + quickScore).toString())}
-              className="flex-1 min-w-[60px]"
+              className="flex-1 min-w-[50px]"
             >
               +{quickScore}
             </Button>

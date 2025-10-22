@@ -133,11 +133,11 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between text-foreground mb-4">
         <div className="flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">{t.leaderboard}</h2>
+          <Trophy className="w-4 h-4 text-primary" />
+          <h2 className="text-base font-semibold">{t.leaderboard}</h2>
         </div>
         <div className="flex items-center gap-3">
           {gameTime && (
@@ -173,7 +173,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
             >
               <Card
                 className={`
-                  p-4 border-2 transition-all relative overflow-hidden
+                  p-3 border-2 transition-all relative overflow-hidden
                   ${getPositionColor(rank)}
                   ${isCelebrating ? "animate-pulse-subtle" : ""}
                 `}
@@ -184,10 +184,10 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
               </div>
             )}
 
-            <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 min-w-[60px]">
-                  <span className="text-2xl font-bold text-foreground">
+                <div className="flex items-center gap-2 min-w-[50px]">
+                  <span className="text-xl font-bold text-foreground">
                     #{rank}
                   </span>
                   {getMedalEmoji(rank) && (
@@ -226,7 +226,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditScor
 
               <div className="text-right flex items-center gap-2">
                 <div>
-                  <div className="text-3xl font-bold text-primary">
+                  <div className="text-2xl font-bold text-primary">
                     {player.score}
                   </div>
                   <div className="text-xs text-muted-foreground">{t.points}</div>

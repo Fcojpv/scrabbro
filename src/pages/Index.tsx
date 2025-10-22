@@ -99,9 +99,9 @@ const Index = () => {
   const currentPlayer = players[currentTurn];
 
   return (
-    <div className="min-h-screen bg-background p-4 pb-20">
-      <div className="max-w-2xl mx-auto space-y-6 animate-slide-up">
-        <div className="flex justify-between items-center pt-4">
+    <div className="min-h-screen bg-background p-4 pb-8">
+      <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
+        <div className="flex justify-between items-center pt-2">
           <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
           <div className="flex items-center gap-2">
             <DropdownMenu>
