@@ -126,21 +126,19 @@ const Index = () => {
         <div className="flex justify-between items-center pt-2">
           <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
           <div className="flex items-center gap-2">
-            <div className="relative">
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={toggleRadio}
-                className={isRadioPlaying ? "text-orange-500" : ""}
-              >
-                <Music className="w-4 h-4" />
-              </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={toggleRadio}
+              className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+            >
+              <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
               {isRadioPlaying && (
-                <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-semibold text-orange-500 whitespace-nowrap">
+                <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
                   live
                 </span>
               )}
-            </div>
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
