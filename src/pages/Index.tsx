@@ -4,6 +4,7 @@ import { Leaderboard } from "@/components/Leaderboard";
 import { TurnInput } from "@/components/TurnInput";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { SettingsMenu } from "@/components/SettingsMenu";
+import { ScoreChart } from "@/components/ScoreChart";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -29,6 +30,11 @@ interface Player {
   score: number;
 }
 
+interface ScoreHistory {
+  round: number;
+  [key: string]: number;
+}
+
 const Index = () => {
   const { t } = useLanguage();
   const [gameStarted, setGameStarted] = useState(false);
@@ -40,6 +46,7 @@ const Index = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [scoreHistory, setScoreHistory] = useState<ScoreHistory[]>([]);
   
   const { formatTime: formatGameTime } = useGameTimer(gameStarted);
   const turnTimer = useTurnTimer(currentTurn, gameStarted);
@@ -77,18 +84,39 @@ const Index = () => {
     setPlayers(players);
     setCurrentTurn(0);
     setGameStarted(true);
+    
+    // Initialize score history with starting scores (0)
+    const initialHistory: ScoreHistory = { round: 0 };
+    players.forEach(player => {
+      initialHistory[`player_${player.id}`] = 0;
+    });
+    setScoreHistory([initialHistory]);
   };
 
   const handleSubmitScore = (score: number) => {
     const currentPlayerId = players[currentTurn].id;
     
-    setPlayers(prev =>
-      prev.map(p =>
+    setPlayers(prev => {
+      const updatedPlayers = prev.map(p =>
         p.id === currentPlayerId
           ? { ...p, score: p.score + score }
           : p
-      )
-    );
+      );
+
+      const nextTurn = (currentTurn + 1) % players.length;
+      
+      // Update score history when round completes
+      if (nextTurn === 0) {
+        const newHistoryEntry: ScoreHistory = { round: roundNumber };
+        updatedPlayers.forEach(player => {
+          newHistoryEntry[`player_${player.id}`] = player.score;
+        });
+        setScoreHistory(prev => [...prev, newHistoryEntry]);
+        setRoundNumber(prev => prev + 1);
+      }
+
+      return updatedPlayers;
+    });
 
     const playerName = players.find(p => p.id === currentPlayerId)?.name || `${t.player} ${currentPlayerId}`;
     toast.success(`${playerName}: +${score} ${t.points}`, {
@@ -97,11 +125,6 @@ const Index = () => {
 
     const nextTurn = (currentTurn + 1) % players.length;
     setCurrentTurn(nextTurn);
-    
-    // Increment round when all players have played
-    if (nextTurn === 0) {
-      setRoundNumber(prev => prev + 1);
-    }
   };
 
   const handleReset = () => {
@@ -109,6 +132,7 @@ const Index = () => {
     setPlayers([]);
     setCurrentTurn(0);
     setRoundNumber(1);
+    setScoreHistory([]);
     setShowResetDialog(false);
     turnTimer.stopTimer();
     toast.info(t.gameReset);
@@ -225,12 +249,13 @@ const Index = () => {
               </div>
             </CarouselItem>
 
-            {/* Screen 2: Coming soon */}
+            {/* Screen 2: Score Chart */}
             <CarouselItem>
-              <div className="max-w-2xl mx-auto space-y-3 animate-slide-up min-h-[60vh] flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <p className="text-lg">Próxima funcionalidad</p>
-                </div>
+              <div className="max-w-2xl mx-auto space-y-4 animate-slide-up pt-8">
+                <h2 className="text-xl font-semibold text-foreground text-center">
+                  Progresión de Puntajes
+                </h2>
+                <ScoreChart players={players} scoreHistory={scoreHistory} />
               </div>
             </CarouselItem>
           </CarouselContent>
