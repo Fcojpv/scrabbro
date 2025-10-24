@@ -171,8 +171,17 @@ const Index = () => {
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <Hourglass className="w-4 h-4" />
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                        >
+                          <Hourglass className={`w-4 h-4 ${turnTimer.isActive ? "text-orange-500" : ""}`} />
+                          {turnTimer.isActive && (
+                            <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                              on
+                            </span>
+                          )}
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
@@ -293,8 +302,17 @@ const Index = () => {
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Hourglass className="w-4 h-4" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                  >
+                    <Hourglass className={`w-4 h-4 ${turnTimer.isActive ? "text-orange-500" : ""}`} />
+                    {turnTimer.isActive && (
+                      <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                        on
+                      </span>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
