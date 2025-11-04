@@ -163,7 +163,10 @@ const Index = () => {
 
   const handleEndGame = () => {
     setShowSurpriseEmojis(true);
-    setShowEndGameDialog(true);
+    // Small delay to ensure emojis change before dialog opens
+    setTimeout(() => {
+      setShowEndGameDialog(true);
+    }, 100);
   };
 
   const handleApplyPenalties = (penalties: Record<number, number>) => {
