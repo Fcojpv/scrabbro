@@ -70,12 +70,11 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
             <div className="mb-4 p-3 bg-muted/30 rounded-lg">
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {players.map((player, index) => (
-                  <div key={player.id} className="flex items-center gap-2">
+                  <div key={player.id} className="flex items-center">
                     <span className={`font-bold ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}>
                       {getInitials(player.name)}
                     </span>
-                    <span className="text-muted-foreground">-</span>
-                    <span>{player.name}</span>
+                    <span>{player.name.substring(3)}</span>
                   </div>
                 ))}
               </div>
