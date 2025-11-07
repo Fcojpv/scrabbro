@@ -82,17 +82,17 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
           )}
 
           {/* Score table */}
-          <div className="overflow-x-auto">
+          <div className="w-full">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-20 font-bold">{t.round || "Ronda"}</TableHead>
+                  <TableHead className="text-center font-bold w-16 px-2">{t.round || "Ronda"}</TableHead>
                   {players.map((player, index) => (
                     <TableHead 
                       key={player.id} 
-                      className={`text-center font-bold ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}
+                      className={`text-center font-bold px-2 ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}
                     >
-                      {useFullNames ? player.name : getInitials(player.name)}
+                      <span className="block truncate">{useFullNames ? player.name : getInitials(player.name)}</span>
                     </TableHead>
                   ))}
                 </TableRow>
@@ -107,7 +107,7 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
                 ) : (
                   scoreHistory.map((round, roundIndex) => (
                     <TableRow key={roundIndex}>
-                      <TableCell className="font-medium">{roundIndex + 1}</TableCell>
+                      <TableCell className="font-medium text-center px-2">{roundIndex + 1}</TableCell>
                       {players.map((player) => {
                         const scoreData = round.find(s => s.playerId === player.id);
                         const score = scoreData?.score || 0;
@@ -115,7 +115,7 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
                         const isHighest = isHighestInRound(roundIndex, player.id);
                         
                         return (
-                          <TableCell key={player.id} className="text-center">
+                          <TableCell key={player.id} className="text-center px-2">
                             {score > 0 && (
                               <span className="inline-flex items-center gap-0.5">
                                 <span>{score}</span>
