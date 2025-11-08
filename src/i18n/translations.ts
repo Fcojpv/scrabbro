@@ -90,6 +90,21 @@ export interface Translations {
   unusedTilesPenalty: string;
   penaltyDescription: string;
   enterPenalty: string;
+  
+  // Game persistence
+  gameInProgress: string;
+  savedGameFound: string;
+  continueGame: string;
+  newGame: string;
+  continueOrNewQuestion: string;
+  lastPlayed: string;
+  justNow: string;
+  ago: string;
+  hour: string;
+  hours: string;
+  day: string;
+  days: string;
+  gameRestored: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -160,6 +175,19 @@ export const translations: Record<Language, Translations> = {
     unusedTilesPenalty: 'Unused Tiles Penalty',
     penaltyDescription: 'Enter the penalty points for each player (will be subtracted from total score)',
     enterPenalty: 'Penalty points',
+    gameInProgress: 'Game in Progress',
+    savedGameFound: 'We found a saved game from your last session.',
+    continueGame: 'Continue Game',
+    newGame: 'New Game',
+    continueOrNewQuestion: 'Would you like to continue where you left off or start fresh?',
+    lastPlayed: 'Last played',
+    justNow: 'just now',
+    ago: 'ago',
+    hour: 'hour',
+    hours: 'hours',
+    day: 'day',
+    days: 'days',
+    gameRestored: 'Game restored successfully',
   },
   es: {
     scrabbleScore: 'Scrabble Score',
@@ -228,6 +256,19 @@ export const translations: Record<Language, Translations> = {
     unusedTilesPenalty: 'Penalización por Fichas Sin Usar',
     penaltyDescription: 'Ingresa los puntos de penalización para cada jugador (se restarán del puntaje total)',
     enterPenalty: 'Puntos de penalización',
+    gameInProgress: 'Partida en Curso',
+    savedGameFound: 'Encontramos una partida guardada de tu última sesión.',
+    continueGame: 'Continuar Partida',
+    newGame: 'Nueva Partida',
+    continueOrNewQuestion: '¿Quieres continuar donde lo dejaste o empezar de nuevo?',
+    lastPlayed: 'Última vez jugada',
+    justNow: 'justo ahora',
+    ago: 'hace',
+    hour: 'hora',
+    hours: 'horas',
+    day: 'día',
+    days: 'días',
+    gameRestored: 'Partida restaurada exitosamente',
   },
   zh: {
     scrabbleScore: 'Scrabble Score',
@@ -296,6 +337,19 @@ export const translations: Record<Language, Translations> = {
     unusedTilesPenalty: '未使用牌罚分',
     penaltyDescription: '输入每位玩家的罚分（将从总分中扣除）',
     enterPenalty: '罚分',
+    gameInProgress: '游戏进行中',
+    savedGameFound: '我们找到了您上次会话的保存游戏。',
+    continueGame: '继续游戏',
+    newGame: '新游戏',
+    continueOrNewQuestion: '您想继续上次的游戏还是重新开始？',
+    lastPlayed: '上次游戏',
+    justNow: '刚刚',
+    ago: '前',
+    hour: '小时',
+    hours: '小时',
+    day: '天',
+    days: '天',
+    gameRestored: '游戏恢复成功',
   },
   hi: {
     scrabbleScore: 'Scrabble Score',
@@ -364,6 +418,19 @@ export const translations: Record<Language, Translations> = {
     unusedTilesPenalty: 'अप्रयुक्त टाइलों का दंड',
     penaltyDescription: 'प्रत्येक खिलाड़ी के लिए दंड अंक दर्ज करें (कुल स्कोर से घटाया जाएगा)',
     enterPenalty: 'दंड अंक',
+    gameInProgress: 'खेल जारी है',
+    savedGameFound: 'हमें आपके पिछले सत्र से एक सहेजा गया खेल मिला।',
+    continueGame: 'खेल जारी रखें',
+    newGame: 'नया खेल',
+    continueOrNewQuestion: 'क्या आप जहां छोड़ा था वहीं से जारी रखना चाहते हैं या नया शुरू करना चाहते हैं?',
+    lastPlayed: 'अंतिम बार खेला गया',
+    justNow: 'अभी',
+    ago: 'पहले',
+    hour: 'घंटा',
+    hours: 'घंटे',
+    day: 'दिन',
+    days: 'दिन',
+    gameRestored: 'खेल सफलतापूर्वक पुनर्स्थापित हो गया',
   },
   ar: {
     scrabbleScore: 'Scrabble Score',
@@ -432,6 +499,19 @@ export const translations: Record<Language, Translations> = {
     unusedTilesPenalty: 'عقوبة البلاط غير المستخدم',
     penaltyDescription: 'أدخل نقاط العقوبة لكل لاعب (سيتم طرحها من النتيجة الإجمالية)',
     enterPenalty: 'نقاط العقوبة',
+    gameInProgress: 'اللعبة قيد التقدم',
+    savedGameFound: 'لقد وجدنا لعبة محفوظة من جلستك الأخيرة.',
+    continueGame: 'متابعة اللعبة',
+    newGame: 'لعبة جديدة',
+    continueOrNewQuestion: 'هل تريد المتابعة من حيث توقفت أم البدء من جديد؟',
+    lastPlayed: 'آخر لعب',
+    justNow: 'الآن',
+    ago: 'منذ',
+    hour: 'ساعة',
+    hours: 'ساعات',
+    day: 'يوم',
+    days: 'أيام',
+    gameRestored: 'تم استعادة اللعبة بنجاح',
   },
   pt: {
     scrabbleScore: 'Scrabble Score',
@@ -500,6 +580,19 @@ export const translations: Record<Language, Translations> = {
     unusedTilesPenalty: 'Penalidade por Peças Não Utilizadas',
     penaltyDescription: 'Digite os pontos de penalidade para cada jogador (serão subtraídos da pontuação total)',
     enterPenalty: 'Pontos de penalidade',
+    gameInProgress: 'Jogo em Andamento',
+    savedGameFound: 'Encontramos um jogo salvo da sua última sessão.',
+    continueGame: 'Continuar Jogo',
+    newGame: 'Novo Jogo',
+    continueOrNewQuestion: 'Você gostaria de continuar de onde parou ou começar do zero?',
+    lastPlayed: 'Última vez jogado',
+    justNow: 'agora mesmo',
+    ago: 'atrás',
+    hour: 'hora',
+    hours: 'horas',
+    day: 'dia',
+    days: 'dias',
+    gameRestored: 'Jogo restaurado com sucesso',
   },
 };
 

@@ -7,12 +7,14 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { EndGameDialog } from "@/components/EndGameDialog";
 import { KofiDialog } from "@/components/KofiDialog";
 import { SettingsMenu } from "@/components/SettingsMenu";
+import { RestoreGameDialog } from "@/components/RestoreGameDialog";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useGameTimer } from "@/hooks/useGameTimer";
 import { useTurnTimer } from "@/hooks/useTurnTimer";
+import { useGamePersistence } from "@/hooks/useGamePersistence";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,9 +58,35 @@ const Index = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [scoreHistory, setScoreHistory] = useState<RoundScore[][]>([]);
   const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+  const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
   
   const gameTimer = useGameTimer(gameStarted);
   const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
+  const { saveGameState, loadGameState, clearSavedGame, getSavedGameInfo } = useGamePersistence();
+
+  // Check for saved game on mount
+  useEffect(() => {
+    const info = getSavedGameInfo();
+    if (info) {
+      setSavedGameInfo(info);
+      setShowRestoreDialog(true);
+    }
+  }, []);
+
+  // Auto-save game state when it changes
+  useEffect(() => {
+    if (gameStarted) {
+      saveGameState({
+        gameStarted,
+        players,
+        currentTurn,
+        roundNumber,
+        scoreHistory,
+        currentRoundScores,
+      });
+    }
+  }, [gameStarted, players, currentTurn, roundNumber, scoreHistory, currentRoundScores]);
 
   // Heart animation cycle: 60s empty -> 5s filled -> repeat
   useEffect(() => {
@@ -114,9 +142,32 @@ const Index = () => {
   };
 
   const handleStartGame = (players: Player[]) => {
+    // Clear any saved game when starting fresh
+    clearSavedGame();
     setPlayers(players);
     setCurrentTurn(0);
     setGameStarted(true);
+    setScoreHistory([]);
+    setCurrentRoundScores([]);
+    setRoundNumber(1);
+  };
+
+  const handleRestoreGame = () => {
+    const savedState = loadGameState();
+    if (savedState) {
+      setGameStarted(savedState.gameStarted);
+      setPlayers(savedState.players);
+      setCurrentTurn(savedState.currentTurn);
+      setRoundNumber(savedState.roundNumber);
+      setScoreHistory(savedState.scoreHistory);
+      setCurrentRoundScores(savedState.currentRoundScores);
+      toast.success(t.gameRestored, { duration: 3000 });
+    }
+  };
+
+  const handleNewGame = () => {
+    clearSavedGame();
+    setShowRestoreDialog(false);
   };
 
   const handleSubmitScore = (score: number, wasBingo: boolean) => {
@@ -154,6 +205,7 @@ const Index = () => {
   };
 
   const handleReset = () => {
+    clearSavedGame();
     setGameStarted(false);
     setPlayers([]);
     setCurrentTurn(0);
@@ -207,6 +259,8 @@ const Index = () => {
     );
     setShowEndGameDialog(false);
     setShowSurpriseEmojis(false);
+    // Clear saved game when ending
+    clearSavedGame();
     toast.success(t.scoreUpdated, {
       duration: 2000,
     });
@@ -538,6 +592,14 @@ const Index = () => {
         onOpenChange={setShowEndGameDialog}
         players={players}
         onApplyPenalties={handleApplyPenalties}
+      />
+      
+      <RestoreGameDialog
+        open={showRestoreDialog}
+        onOpenChange={setShowRestoreDialog}
+        gameInfo={savedGameInfo}
+        onRestore={handleRestoreGame}
+        onNewGame={handleNewGame}
       />
     </div>
   );
