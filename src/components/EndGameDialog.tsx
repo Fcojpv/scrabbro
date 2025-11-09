@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Player {
@@ -66,26 +67,38 @@ export const EndGameDialog = ({
           </AlertDialogTitle>
           <AlertDialogDescription>
             {showPenalties ? (
-              <div className="space-y-4 pt-4">
-                <p className="text-sm">{t.penaltyDescription}</p>
-                {players.map(player => (
-                  <div key={player.id} className="space-y-2">
-                    <Label htmlFor={`penalty-${player.id}`}>
-                      {player.name}
-                    </Label>
-                    <Input
-                      id={`penalty-${player.id}`}
-                      type="number"
-                      placeholder={t.enterPenalty}
-                      value={penalties[player.id] || ""}
-                      onChange={(e) => setPenalties(prev => ({
-                        ...prev,
-                        [player.id]: e.target.value
-                      }))}
-                      className="text-center"
-                    />
+              <div className="pt-4">
+                <p className="text-sm mb-4">{t.penaltyDescription}</p>
+                <ScrollArea className="max-h-[40vh] pr-4">
+                  <div className="space-y-3">
+                    {players.map(player => (
+                      <div key={player.id} className="flex items-center gap-3">
+                        <Label 
+                          htmlFor={`penalty-${player.id}`}
+                          className="flex-1 text-base font-semibold"
+                        >
+                          {player.name}
+                        </Label>
+                        <Input
+                          id={`penalty-${player.id}`}
+                          type="number"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          placeholder="0"
+                          value={penalties[player.id] || ""}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            setPenalties(prev => ({
+                              ...prev,
+                              [player.id]: value
+                            }));
+                          }}
+                          className="w-24 text-center"
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </ScrollArea>
               </div>
             ) : (
               <>
