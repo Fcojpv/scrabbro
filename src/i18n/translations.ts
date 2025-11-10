@@ -109,7 +109,7 @@ export interface Translations {
 
 export const translations: Record<Language, Translations> = {
   en: {
-    scrabbleScore: 'Scrabble Score',
+    scrabbleScore: 'ScrabBro',
     howManyPlayers: 'How many players?',
     names: 'Names',
     enterPlayerName: 'Enter the name of each player',
@@ -190,7 +190,7 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'Game restored successfully',
   },
   es: {
-    scrabbleScore: 'Scrabble Score',
+    scrabbleScore: 'ScrabBro',
     howManyPlayers: '¿Cuántos jugadores?',
     names: 'Nombres',
     enterPlayerName: 'Ingresa el nombre de cada jugador',
@@ -271,7 +271,7 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'Partida restaurada exitosamente',
   },
   zh: {
-    scrabbleScore: 'Scrabble Score',
+    scrabbleScore: 'ScrabBro',
     howManyPlayers: '多少位玩家？',
     names: '名字',
     enterPlayerName: '输入每位玩家的名字',
@@ -352,7 +352,7 @@ export const translations: Record<Language, Translations> = {
     gameRestored: '游戏恢复成功',
   },
   hi: {
-    scrabbleScore: 'Scrabble Score',
+    scrabbleScore: 'ScrabBro',
     howManyPlayers: 'कितने खिलाड़ी?',
     names: 'नाम',
     enterPlayerName: 'प्रत्येक खिलाड़ी का नाम दर्ज करें',
@@ -433,7 +433,7 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'खेल सफलतापूर्वक पुनर्स्थापित हो गया',
   },
   ar: {
-    scrabbleScore: 'Scrabble Score',
+    scrabbleScore: 'ScrabBro',
     howManyPlayers: 'كم عدد اللاعبين؟',
     names: 'الأسماء',
     enterPlayerName: 'أدخل اسم كل لاعب',
@@ -514,7 +514,7 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'تم استعادة اللعبة بنجاح',
   },
   pt: {
-    scrabbleScore: 'Scrabble Score',
+    scrabbleScore: 'ScrabBro',
     howManyPlayers: 'Quantos jogadores?',
     names: 'Nomes',
     enterPlayerName: 'Digite o nome de cada jogador',
