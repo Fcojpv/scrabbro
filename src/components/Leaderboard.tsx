@@ -166,13 +166,14 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
 
   return (
     <div className="space-y-2">
+      <div id="leaderboard-capture" className="space-y-2 bg-background p-4 rounded-lg">
       <div className="flex items-center justify-between text-foreground mb-4">
         <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold">{t.leaderboard}</h2>
         </div>
         <div className="flex items-center gap-3">
-          <ShareButton players={players} roundNumber={roundNumber} />
+          <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
           {gameTime && (
             <div className="flex flex-col items-center gap-0.5">
               <div className={`flex items-center gap-1.5 text-sm font-semibold ${gameTimeColor || 'text-muted-foreground'}`}>
@@ -369,6 +370,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 };
