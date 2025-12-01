@@ -439,7 +439,12 @@ const Index = () => {
 
             {/* Screen 2: Score History */}
             <CarouselItem>
-              <ScoreHistory players={players} scoreHistory={scoreHistory} />
+              <ScoreHistory 
+                players={players} 
+                scoreHistory={scoreHistory}
+                currentRoundScores={currentRoundScores}
+                currentTurn={currentTurn}
+              />
             </CarouselItem>
           </CarouselContent>
 
