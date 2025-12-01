@@ -128,9 +128,9 @@ export const ScoreHistory = ({ players, scoreHistory, currentRoundScores = [], c
                   allRounds.map((round, roundIndex) => (
                     <TableRow key={roundIndex} className={isCurrentRound(roundIndex) ? "bg-primary/5" : ""}>
                       <TableCell className="font-medium text-center px-1">
-                        <span className="inline-flex items-center justify-center gap-1">
+                        <span className="relative inline-flex items-center justify-center">
                           {isCurrentRound(roundIndex) && (
-                            <Play className="w-3 h-3 text-primary fill-primary" />
+                            <Play className="w-3 h-3 text-primary fill-primary absolute -left-3" />
                           )}
                           {roundIndex + 1}
                         </span>
