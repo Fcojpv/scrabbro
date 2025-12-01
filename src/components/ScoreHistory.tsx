@@ -92,7 +92,7 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-center font-bold w-16 px-2">{t.round || "Ronda"}</TableHead>
+                  <TableHead className="text-center font-bold w-12 px-1">{t.round || "Ronda"}</TableHead>
                   {players.map((player, index) => (
                     <TableHead 
                       key={player.id} 
@@ -113,7 +113,7 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
                 ) : (
                   scoreHistory.map((round, roundIndex) => (
                     <TableRow key={roundIndex}>
-                      <TableCell className="font-medium text-center px-2">{roundIndex + 1}</TableCell>
+                      <TableCell className="font-medium text-center px-1">{roundIndex + 1}</TableCell>
                       {players.map((player) => {
                         const scoreData = round.find(s => s.playerId === player.id);
                         const score = scoreData?.score || 0;
