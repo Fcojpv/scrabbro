@@ -43,6 +43,12 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
     return name.substring(0, 3).toUpperCase();
   };
 
+  // Get initials capitalized (first letter uppercase, rest lowercase)
+  const getInitialsCapitalized = (name: string) => {
+    const initials = name.substring(0, 3);
+    return initials.charAt(0).toUpperCase() + initials.slice(1).toLowerCase();
+  };
+
   // Check if this score was the highest in the round
   const isHighestInRound = (roundIndex: number, playerId: number) => {
     const round = scoreHistory[roundIndex];
@@ -72,7 +78,7 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
                 {players.map((player, index) => (
                   <div key={player.id} className="flex items-center">
                     <span className={`font-bold ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}>
-                      {getInitials(player.name)}
+                      {getInitialsCapitalized(player.name)}
                     </span>
                     <span>{player.name.substring(3)}</span>
                   </div>
