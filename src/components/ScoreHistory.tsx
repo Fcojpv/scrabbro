@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Play } from "lucide-react";
 
 interface Player {
   id: number;
@@ -127,10 +128,12 @@ export const ScoreHistory = ({ players, scoreHistory, currentRoundScores = [], c
                   allRounds.map((round, roundIndex) => (
                     <TableRow key={roundIndex} className={isCurrentRound(roundIndex) ? "bg-primary/5" : ""}>
                       <TableCell className="font-medium text-center px-1">
-                        {roundIndex + 1}
-                        {isCurrentRound(roundIndex) && (
-                          <span className="text-xs text-primary ml-1">▶</span>
-                        )}
+                        <span className="inline-flex items-center justify-center gap-1">
+                          {isCurrentRound(roundIndex) && (
+                            <Play className="w-3 h-3 text-primary fill-primary" />
+                          )}
+                          {roundIndex + 1}
+                        </span>
                       </TableCell>
                       {players.map((player) => {
                         const scoreData = round.find(s => s.playerId === player.id);
