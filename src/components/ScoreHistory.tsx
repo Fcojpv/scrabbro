@@ -24,6 +24,8 @@ interface RoundScore {
 interface ScoreHistoryProps {
   players: Player[];
   scoreHistory: RoundScore[][];
+  currentRoundScores?: RoundScore[];
+  currentTurn?: number;
 }
 
 const PLAYER_COLORS = [
@@ -35,8 +37,14 @@ const PLAYER_COLORS = [
   "text-cyan-500",
 ];
 
-export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
+export const ScoreHistory = ({ players, scoreHistory, currentRoundScores = [], currentTurn = 0 }: ScoreHistoryProps) => {
   const { t } = useLanguage();
+  
+  // Combine completed rounds with current round in progress
+  const allRounds = [...scoreHistory];
+  if (currentRoundScores.length > 0) {
+    allRounds.push(currentRoundScores);
+  }
   
   // Get initials for each player (first 3 letters uppercase)
   const getInitials = (name: string) => {
@@ -51,7 +59,7 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
 
   // Check if this score was the highest in the round
   const isHighestInRound = (roundIndex: number, playerId: number) => {
-    const round = scoreHistory[roundIndex];
+    const round = allRounds[roundIndex];
     if (!round) return false;
     
     const playerScore = round.find(s => s.playerId === playerId);
@@ -59,6 +67,11 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
     
     const maxScore = Math.max(...round.map(s => s.score));
     return playerScore.score === maxScore && maxScore > 0;
+  };
+
+  // Check if this is the current round in progress
+  const isCurrentRound = (roundIndex: number) => {
+    return roundIndex === allRounds.length - 1 && currentRoundScores.length > 0;
   };
 
   // Use full names for 1-2 players, initials for 3+
@@ -104,21 +117,27 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {scoreHistory.length === 0 ? (
+                {allRounds.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={players.length + 1} className="text-center text-muted-foreground py-8">
                       {t.noRoundsYet || "No hay rondas completadas aún"}
                     </TableCell>
                   </TableRow>
                 ) : (
-                  scoreHistory.map((round, roundIndex) => (
-                    <TableRow key={roundIndex}>
-                      <TableCell className="font-medium text-center px-1">{roundIndex + 1}</TableCell>
+                  allRounds.map((round, roundIndex) => (
+                    <TableRow key={roundIndex} className={isCurrentRound(roundIndex) ? "bg-primary/5" : ""}>
+                      <TableCell className="font-medium text-center px-1">
+                        {roundIndex + 1}
+                        {isCurrentRound(roundIndex) && (
+                          <span className="text-xs text-primary ml-1">▶</span>
+                        )}
+                      </TableCell>
                       {players.map((player) => {
                         const scoreData = round.find(s => s.playerId === player.id);
                         const score = scoreData?.score || 0;
                         const wasBingo = scoreData?.wasBingo || false;
                         const isHighest = isHighestInRound(roundIndex, player.id);
+                        const hasNotPlayed = isCurrentRound(roundIndex) && !scoreData;
                         
                         return (
                           <TableCell key={player.id} className="text-center px-2">
@@ -128,12 +147,13 @@ export const ScoreHistory = ({ players, scoreHistory }: ScoreHistoryProps) => {
                                 {wasBingo && (
                                   <span className="text-yellow-500 font-bold text-xs">B</span>
                                 )}
-                                {isHighest && (
+                                {isHighest && !isCurrentRound(roundIndex) && (
                                   <span className="text-primary">·</span>
                                 )}
                               </span>
                             )}
-                            {score === 0 && <span className="text-muted-foreground">-</span>}
+                            {score === 0 && !hasNotPlayed && <span className="text-muted-foreground">-</span>}
+                            {hasNotPlayed && <span className="text-muted-foreground/40">···</span>}
                           </TableCell>
                         );
                       })}
