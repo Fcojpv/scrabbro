@@ -70,9 +70,9 @@ export const EndGameDialog = ({
               <div className="pt-4">
                 <p className="text-sm mb-4">{t.penaltyDescription}</p>
                 <ScrollArea className="max-h-[40vh] pr-4">
-                  <div className="space-y-3">
+                  <div className="space-y-4 px-1 py-1">
                     {players.map(player => (
-                      <div key={player.id} className="flex items-center gap-3">
+                      <div key={player.id} className="flex items-center gap-4">
                         <Label 
                           htmlFor={`penalty-${player.id}`}
                           className="flex-1 text-base font-semibold"
@@ -93,7 +93,7 @@ export const EndGameDialog = ({
                               [player.id]: value
                             }));
                           }}
-                          className="w-24 text-center"
+                          className="w-28 text-center"
                         />
                       </div>
                     ))}
