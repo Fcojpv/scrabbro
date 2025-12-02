@@ -243,7 +243,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                 
                 <div>
                   <div className="flex items-center gap-2 font-semibold text-foreground">
-                    <span>{player.name}</span>
+                    <span className="truncate max-w-[100px] sm:max-w-[140px]">{player.name}</span>
                     {(showSurpriseEmojis || playerEmoji) && (
                       <motion.span 
                         className="text-lg"
@@ -312,6 +312,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                 onChange={(e) => setEditedName(e.target.value)}
                 className="text-lg"
                 autoFocus
+                maxLength={15}
               />
             </div>
             

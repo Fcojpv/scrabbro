@@ -76,6 +76,7 @@ export const PlayerSetup = ({ onStart }: PlayerSetupProps) => {
                   value={name}
                   onChange={(e) => handleNameChange(index, e.target.value)}
                   className="text-center font-medium"
+                  maxLength={15}
                 />
               </div>
             ))}
