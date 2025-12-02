@@ -70,14 +70,19 @@ export const PlayerSetup = ({ onStart }: PlayerSetupProps) => {
                 <label className="text-sm text-muted-foreground">
                   {t.player} {index + 1}
                 </label>
-                <Input
-                  type="text"
-                  placeholder={`${t.player} ${index + 1}`}
-                  value={name}
-                  onChange={(e) => handleNameChange(index, e.target.value)}
-                  className="text-center font-medium"
-                  maxLength={15}
-                />
+                <div className="relative group">
+                  <Input
+                    type="text"
+                    placeholder={`${t.player} ${index + 1}`}
+                    value={name}
+                    onChange={(e) => handleNameChange(index, e.target.value)}
+                    className="text-center font-medium pr-10"
+                    maxLength={15}
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/50 opacity-0 group-focus-within:opacity-100 transition-opacity">
+                    {15 - name.length}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
