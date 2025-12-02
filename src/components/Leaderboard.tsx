@@ -306,14 +306,19 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">{t.playerName}</label>
-              <Input
-                type="text"
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-                className="text-lg"
-                autoFocus
-                maxLength={15}
-              />
+              <div className="relative group">
+                <Input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  className="text-lg pr-10"
+                  autoFocus
+                  maxLength={15}
+                />
+                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/50 opacity-0 group-focus-within:opacity-100 transition-opacity">
+                  {15 - editedName.length}
+                </span>
+              </div>
             </div>
             
             <div className="space-y-2">
