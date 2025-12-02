@@ -271,8 +271,8 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
               </div>
 
               <div className="text-right flex items-center gap-2">
-                <div>
-                  <div className="text-2xl font-bold text-primary">
+                <div className="min-w-[60px]">
+                  <div className={`font-bold text-primary ${player.score > 999 ? 'text-xl' : 'text-2xl'}`}>
                     {player.score}
                   </div>
                   <div className="text-xs text-muted-foreground">{t.points}</div>
@@ -326,8 +326,14 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
               <Input
                 type="number"
                 min="0"
+                max={9999}
                 value={editedScore}
-                onChange={(e) => setEditedScore(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 9999)) {
+                    setEditedScore(val);
+                  }
+                }}
                 className="text-2xl text-center font-bold"
               />
             </div>

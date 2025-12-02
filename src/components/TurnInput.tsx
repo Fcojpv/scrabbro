@@ -50,7 +50,7 @@ export const TurnInput = ({
   };
 
   const handleBingo = () => {
-    const newScore = (parseInt(score || "0") + 50).toString();
+    const newScore = Math.min(parseInt(score || "0") + 50, 9999).toString();
     setScore(newScore);
     setWasBingo(true);
     
@@ -105,10 +105,16 @@ export const TurnInput = ({
           <Input
             type="number"
             value={score}
-            onChange={(e) => setScore(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 9999)) {
+                setScore(val);
+              }
+            }}
             placeholder={t.enterScore}
             onKeyPress={handleKeyPress}
             className="text-2xl text-center font-bold h-12"
+            max={9999}
           />
           {score.length > 0 && (
             <Button 
@@ -135,7 +141,10 @@ export const TurnInput = ({
               key={quickScore}
               variant="outline"
               size="sm"
-              onClick={() => setScore((prev) => (parseInt(prev || "0") + quickScore).toString())}
+              onClick={() => setScore((prev) => {
+                const newVal = parseInt(prev || "0") + quickScore;
+                return Math.min(newVal, 9999).toString();
+              })}
               className="flex-1 min-w-[50px]"
             >
               +{quickScore}
