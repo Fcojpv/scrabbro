@@ -447,22 +447,22 @@ const Index = () => {
               />
             </CarouselItem>
           </CarouselContent>
-
-          {/* Dot indicators */}
-          <div className="flex justify-center gap-2 mt-4">
-            {[0, 1].map((index) => (
-              <button
-                key={index}
-                onClick={() => carouselApi?.scrollTo(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  currentSlide === index 
-                    ? "bg-foreground" 
-                    : "bg-foreground/20"
-                }`}
-              />
-            ))}
-          </div>
         </Carousel>
+
+        {/* Fixed dot indicators at bottom */}
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {[0, 1].map((index) => (
+            <button
+              key={index}
+              onClick={() => carouselApi?.scrollTo(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                currentSlide === index 
+                  ? "bg-foreground" 
+                  : "bg-foreground/20"
+              }`}
+            />
+          ))}
+        </div>
 
         {/* Fixed chevron navigation - Right (only on first screen) */}
         {currentSlide === 0 && (
