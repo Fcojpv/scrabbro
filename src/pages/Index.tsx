@@ -448,26 +448,6 @@ const Index = () => {
             </CarouselItem>
           </CarouselContent>
 
-          {/* Navigation indicators - Right chevron (only on first screen) */}
-          {currentSlide === 0 && (
-            <button
-              onClick={() => carouselApi?.scrollNext()}
-              className="absolute right-1 top-1/2 -translate-y-1/2 z-10 text-foreground/20 hover:text-foreground/40 transition-colors"
-            >
-              <ChevronRight className="w-8 h-8" />
-            </button>
-          )}
-
-          {/* Navigation indicators - Left chevron (only on second screen) */}
-          {currentSlide === 1 && (
-            <button
-              onClick={() => carouselApi?.scrollPrev()}
-              className="absolute left-1 top-1/2 -translate-y-1/2 z-10 text-foreground/20 hover:text-foreground/40 transition-colors"
-            >
-              <ChevronLeft className="w-8 h-8" />
-            </button>
-          )}
-
           {/* Dot indicators */}
           <div className="flex justify-center gap-2 mt-4">
             {[0, 1].map((index) => (
@@ -483,6 +463,26 @@ const Index = () => {
             ))}
           </div>
         </Carousel>
+
+        {/* Fixed chevron navigation - Right (only on first screen) */}
+        {currentSlide === 0 && (
+          <button
+            onClick={() => carouselApi?.scrollNext()}
+            className="fixed right-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors"
+          >
+            <ChevronRight className="w-8 h-8" />
+          </button>
+        )}
+
+        {/* Fixed chevron navigation - Left (only on second screen) */}
+        {currentSlide === 1 && (
+          <button
+            onClick={() => carouselApi?.scrollPrev()}
+            className="fixed left-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors"
+          >
+            <ChevronLeft className="w-8 h-8" />
+          </button>
+        )}
       </div>
 
       {/* Desktop view - no carousel */}
