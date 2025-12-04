@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ShareButton } from "@/components/ShareButton";
+import { getGraphemeLength, truncateByGraphemes } from "@/lib/utils";
 
 interface Player {
   id: number;
@@ -310,13 +311,12 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                 <Input
                   type="text"
                   value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
+                  onChange={(e) => setEditedName(truncateByGraphemes(e.target.value, 15))}
                   className="text-lg pr-10"
                   autoFocus
-                  maxLength={15}
                 />
                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/50 opacity-0 group-focus-within:opacity-100 transition-opacity">
-                  {15 - editedName.length}
+                  {15 - getGraphemeLength(editedName)}
                 </span>
               </div>
             </div>

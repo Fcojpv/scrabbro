@@ -447,6 +447,7 @@ const Index = () => {
               />
             </CarouselItem>
           </CarouselContent>
+        </Carousel>
 
           {/* Dot indicators */}
           <div className="flex justify-center gap-2 mt-4">
