@@ -21,12 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselApi,
-} from "@/components/ui/carousel";
+import { SwipeableViews } from "@/components/SwipeableViews";
 
 interface Player {
   id: number;
@@ -54,8 +49,7 @@ const Index = () => {
   const [showKofiDialog, setShowKofiDialog] = useState(false);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentView, setCurrentView] = useState(0);
   const [scoreHistory, setScoreHistory] = useState<RoundScore[][]>([]);
   const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
@@ -115,14 +109,6 @@ const Index = () => {
     return cleanup;
   }, []);
 
-  // Carousel slide tracking
-  useEffect(() => {
-    if (!carouselApi) return;
-
-    carouselApi.on("select", () => {
-      setCurrentSlide(carouselApi.selectedScrollSnap());
-    });
-  }, [carouselApi]);
 
   const toggleRadio = () => {
     if (!audioRef.current) {
@@ -302,184 +288,174 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 pb-8">
-      {/* Mobile carousel view */}
-      <div className="md:hidden">
-        <Carousel 
-          setApi={setCarouselApi}
-          opts={{
-            align: "start",
-            loop: false,
-          }}
-          className="w-full"
-        >
-          <CarouselContent>
-            {/* Screen 1: Main game */}
-            <CarouselItem>
-              <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
-                <div className="flex justify-between items-center pt-2">
-                  <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => setShowKofiDialog(true)}
-                      className="flex flex-col items-center justify-center gap-0 h-10 p-1"
-                    >
-                      <Heart 
-                        className={`w-4 h-4 transition-all duration-300 ${
-                          isHeartFilled ? "fill-orange-500 text-orange-500" : ""
-                        }`} 
-                      />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={toggleRadio}
-                      className="flex flex-col items-center justify-center gap-0 h-10 p-1"
-                    >
-                    <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
-                    {isRadioPlaying && (
-                      <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
-                        {t.radioLive}
-                      </span>
-                    )}
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+      {/* Mobile swipeable view */}
+      <div className="md:hidden h-screen overflow-hidden flex flex-col">
+        <SwipeableViews currentView={currentView} onViewChange={setCurrentView}>
+          {/* Screen 1: Main game */}
+          <div className="h-full overflow-y-auto pb-20 px-4">
+            <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
+              <div className="flex justify-between items-center pt-2">
+                <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => setShowKofiDialog(true)}
+                    className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                  >
+                    <Heart 
+                      className={`w-4 h-4 transition-all duration-300 ${
+                        isHeartFilled ? "fill-orange-500 text-orange-500" : ""
+                      }`} 
+                    />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={toggleRadio}
+                    className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                  >
+                  <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
+                  {isRadioPlaying && (
+                    <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                      {t.radioLive}
+                    </span>
+                  )}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                      >
+                      <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
+                      {(turnTimer.isActive || gameTimer.isCountdownActive) && (
+                        <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                          {t.timerOn}
+                        </span>
+                      )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                        {t.turnTimer}
+                      </div>
+                      {[1, 2, 3, 4, 5].map((minutes) => (
+                        <DropdownMenuItem
+                          key={`turn-${minutes}`}
+                          onClick={() => handleTurnTimerChange(minutes)}
+                          className="cursor-pointer"
                         >
-                        <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
-                        {(turnTimer.isActive || gameTimer.isCountdownActive) && (
-                          <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
-                            {t.timerOn}
-                          </span>
-                        )}
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
-                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                          {t.turnTimer}
-                        </div>
-                        {[1, 2, 3, 4, 5].map((minutes) => (
-                          <DropdownMenuItem
-                            key={`turn-${minutes}`}
-                            onClick={() => handleTurnTimerChange(minutes)}
-                            className="cursor-pointer"
-                          >
-                            {minutes} {minutes === 1 ? t.minute : t.minutes}
-                          </DropdownMenuItem>
-                        ))}
-                        {turnTimer.isActive && (
-                          <DropdownMenuItem
-                            onClick={() => turnTimer.stopTimer()}
-                            className="cursor-pointer text-destructive"
-                          >
-                            {t.stopTimer}
-                          </DropdownMenuItem>
-                        )}
-                        <div className="h-px bg-border my-1" />
-                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                          {t.gameTimer}
-                        </div>
-                        {[15, 30, 45, 60, 90].map((minutes) => (
-                          <DropdownMenuItem
-                            key={`game-${minutes}`}
-                            onClick={() => gameTimer.startCountdown(minutes)}
-                            className="cursor-pointer"
-                          >
-                            {minutes} {t.minutes}
-                          </DropdownMenuItem>
-                        ))}
-                        {gameTimer.isCountdownActive && (
-                          <DropdownMenuItem
-                            onClick={() => gameTimer.stopCountdown()}
-                            className="cursor-pointer text-destructive"
-                          >
-                            {t.stopTimer}
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setShowResetDialog(true)}
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </Button>
-                    <SettingsMenu />
-                  </div>
+                          {minutes} {minutes === 1 ? t.minute : t.minutes}
+                        </DropdownMenuItem>
+                      ))}
+                      {turnTimer.isActive && (
+                        <DropdownMenuItem
+                          onClick={() => turnTimer.stopTimer()}
+                          className="cursor-pointer text-destructive"
+                        >
+                          {t.stopTimer}
+                        </DropdownMenuItem>
+                      )}
+                      <div className="h-px bg-border my-1" />
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                        {t.gameTimer}
+                      </div>
+                      {[15, 30, 45, 60, 90].map((minutes) => (
+                        <DropdownMenuItem
+                          key={`game-${minutes}`}
+                          onClick={() => gameTimer.startCountdown(minutes)}
+                          className="cursor-pointer"
+                        >
+                          {minutes} {t.minutes}
+                        </DropdownMenuItem>
+                      ))}
+                      {gameTimer.isCountdownActive && (
+                        <DropdownMenuItem
+                          onClick={() => gameTimer.stopCountdown()}
+                          className="cursor-pointer text-destructive"
+                        >
+                          {t.stopTimer}
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowResetDialog(true)}
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </Button>
+                  <SettingsMenu />
                 </div>
-
-                <TurnInput
-                  currentPlayer={currentPlayer.id}
-                  currentPlayerName={currentPlayer.name}
-                  onSubmitScore={handleSubmitScore}
-                  timerDisplay={turnTimer.formatTime()}
-                  timerColorClass={turnTimer.getColorClass()}
-                  isTimerFinished={turnTimer.isFinished}
-                  onEndGame={handleEndGame}
-                />
-
-                <Leaderboard 
-                  players={players} 
-                  onPositionChange={handlePositionChange} 
-                  roundNumber={roundNumber} 
-                  onEditPlayer={handleEditPlayer}
-                  gameTime={gameTimer.formatTime()}
-                  gameTimeColor={gameTimer.getColorClass()}
-                  isGameTimeFinished={gameTimer.isFinished}
-                  showSurpriseEmojis={showSurpriseEmojis}
-                />
               </div>
-            </CarouselItem>
 
-            {/* Screen 2: Score History */}
-            <CarouselItem>
-              <ScoreHistory 
+              <TurnInput
+                currentPlayer={currentPlayer.id}
+                currentPlayerName={currentPlayer.name}
+                onSubmitScore={handleSubmitScore}
+                timerDisplay={turnTimer.formatTime()}
+                timerColorClass={turnTimer.getColorClass()}
+                isTimerFinished={turnTimer.isFinished}
+                onEndGame={handleEndGame}
+              />
+
+              <Leaderboard 
                 players={players} 
-                scoreHistory={scoreHistory}
-                currentRoundScores={currentRoundScores}
-                currentTurn={currentTurn}
+                onPositionChange={handlePositionChange} 
+                roundNumber={roundNumber} 
+                onEditPlayer={handleEditPlayer}
+                gameTime={gameTimer.formatTime()}
+                gameTimeColor={gameTimer.getColorClass()}
+                isGameTimeFinished={gameTimer.isFinished}
+                showSurpriseEmojis={showSurpriseEmojis}
               />
-            </CarouselItem>
-          </CarouselContent>
-        </Carousel>
-
-          {/* Dot indicators */}
-          <div className="flex justify-center gap-2 mt-4">
-            {[0, 1].map((index) => (
-              <button
-                key={index}
-                onClick={() => carouselApi?.scrollTo(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  currentSlide === index 
-                    ? "bg-foreground" 
-                    : "bg-foreground/20"
-                }`}
-              />
-            ))}
+            </div>
           </div>
-        </Carousel>
+
+          {/* Screen 2: Score History */}
+          <div className="h-full overflow-y-auto pb-20 px-4">
+            <ScoreHistory 
+              players={players} 
+              scoreHistory={scoreHistory}
+              currentRoundScores={currentRoundScores}
+              currentTurn={currentTurn}
+            />
+          </div>
+        </SwipeableViews>
+
+        {/* Fixed dot indicators */}
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {[0, 1].map((index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentView(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                currentView === index 
+                  ? "bg-foreground" 
+                  : "bg-foreground/20"
+              }`}
+            />
+          ))}
+        </div>
 
         {/* Fixed chevron navigation - Right (only on first screen) */}
-        {currentSlide === 0 && (
+        {currentView === 0 && (
           <button
-            onClick={() => carouselApi?.scrollNext()}
-            className="fixed right-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors"
+            onClick={() => setCurrentView(1)}
+            className="fixed right-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors md:hidden"
           >
             <ChevronRight className="w-8 h-8" />
           </button>
         )}
 
         {/* Fixed chevron navigation - Left (only on second screen) */}
-        {currentSlide === 1 && (
+        {currentView === 1 && (
           <button
-            onClick={() => carouselApi?.scrollPrev()}
-            className="fixed left-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors"
+            onClick={() => setCurrentView(0)}
+            className="fixed left-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors md:hidden"
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
