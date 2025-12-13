@@ -47,17 +47,17 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
 
   useEffect(() => {
     const currentRankings = sortedPlayers.map(p => p.id);
-    
+
     if (previousRankings.length > 0) {
       const changed = currentRankings.some((id, idx) => previousRankings[idx] !== id);
-      
+
       if (changed) {
         const improvedPlayers = new Set<number>();
         const newEmojis = new Map<number, string>();
-        
+
         currentRankings.forEach((id, newRank) => {
           const oldRank = previousRankings.indexOf(id);
-          
+
           if (oldRank !== -1) {
             if (oldRank > newRank) {
               // Player improved position - show happy emoji
@@ -78,12 +78,12 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
         });
 
         setPlayerEmojis(newEmojis);
-        
+
         if (improvedPlayers.size > 0) {
           setCelebratingPlayers(improvedPlayers);
           onPositionChange?.();
         }
-        
+
         setTimeout(() => {
           setCelebratingPlayers(new Set());
           setPlayerEmojis(new Map());
@@ -112,14 +112,14 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
   const calculateRankings = () => {
     const rankings: { player: Player; rank: number; displayIndex: number }[] = [];
     let currentRank = 1;
-    
+
     sortedPlayers.forEach((player, index) => {
       if (index > 0 && player.score < sortedPlayers[index - 1].score) {
         currentRank = index + 1;
       }
       rankings.push({ player, rank: currentRank, displayIndex: index });
     });
-    
+
     return rankings;
   };
 
@@ -137,12 +137,12 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
       const newName = editedName.trim();
       const newScore = parseInt(editedScore) || 0;
       const newCustomTimer = parseInt(editedCustomTimer) || 0;
-      
+
       if (newName.length > 0 && newScore >= 0 && newCustomTimer >= 0) {
         onEditPlayer(
-          editingPlayer.id, 
-          newName, 
-          newScore, 
+          editingPlayer.id,
+          newName,
+          newScore,
           newCustomTimer > 0 ? newCustomTimer : undefined
         );
         setEditingPlayer(null);
@@ -168,221 +168,223 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
   return (
     <div className="space-y-2">
       <div id="leaderboard-capture" className="space-y-2 bg-background p-4 rounded-lg">
-      <div className="flex items-center justify-between text-foreground mb-4">
-        <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-primary" />
-          <h2 className="text-base font-semibold">{t.leaderboard}</h2>
-        </div>
-        <div className="flex items-center gap-3">
-          <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
-          {gameTime && (
-            <div className="flex flex-col items-center gap-0.5">
-              <div className={`flex items-center gap-1.5 text-sm font-semibold ${gameTimeColor || 'text-muted-foreground'}`}>
-                <Clock className="w-3.5 h-3.5" />
-                <span className="relative">
-                  {gameTime}
-                  {isGameTimeFinished && (
-                    <Bell className="w-2 h-2 absolute -top-1 -right-2.5 text-muted-foreground" />
-                  )}
-                </span>
+        <div className="flex items-center justify-between text-foreground mb-4">
+          <div className="flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-primary" />
+            <h2 className="text-base font-semibold">{t.leaderboard}</h2>
+          </div>
+          <div className="flex items-center gap-3">
+
+            {gameTime && (
+              <div className="flex flex-col items-center gap-0.5 shrink-0">
+                <div className={`flex items-center gap-1.5 text-sm font-semibold whitespace-nowrap ${gameTimeColor || 'text-muted-foreground'}`}>
+                  <Clock className="w-3.5 h-3.5" />
+                  <span className="relative">
+                    {gameTime}
+                    {isGameTimeFinished && (
+                      <Bell className="w-2 h-2 absolute -top-1 -right-2.5 text-muted-foreground" />
+                    )}
+                  </span>
+                </div>
+                {isGameTimeFinished && (
+                  <span className="text-[9px] font-semibold text-muted-foreground leading-none">
+                    {t.timeOut}
+                  </span>
+                )}
               </div>
-              {isGameTimeFinished && (
-                <span className="text-[9px] font-semibold text-muted-foreground leading-none">
-                  {t.timeOut}
-                </span>
-              )}
+            )}
+            <div className="text-sm font-medium text-muted-foreground whitespace-nowrap shrink-0">
+              {t.round} {roundNumber}
             </div>
-          )}
-          <div className="text-sm font-medium text-muted-foreground">
-            {t.round} {roundNumber}
           </div>
         </div>
-      </div>
 
-      <AnimatePresence mode="popLayout">
-        {rankedPlayers.map(({ player, rank, displayIndex }) => {
-          const difference = leaderScore - player.score;
-          const isCelebrating = celebratingPlayers.has(player.id);
-          const playerEmoji = playerEmojis.get(player.id);
+        <AnimatePresence mode="popLayout">
+          {rankedPlayers.map(({ player, rank, displayIndex }) => {
+            const difference = leaderScore - player.score;
+            const isCelebrating = celebratingPlayers.has(player.id);
+            const playerEmoji = playerEmojis.get(player.id);
 
-          return (
-            <motion.div
-              key={player.id}
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{
-                layout: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 },
-                scale: { duration: 0.2 }
-              }}
-            >
-              <Card
-                className={`
+            return (
+              <motion.div
+                key={player.id}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{
+                  layout: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                  scale: { duration: 0.2 }
+                }}
+              >
+                <Card
+                  className={`
                   p-3 border-2 transition-all relative overflow-hidden
                   ${getPositionColor(rank)}
                   ${isCelebrating ? "animate-pulse-subtle" : ""}
                 `}
-              >
-            {isCelebrating && (
-              <div className="absolute top-2 right-2 animate-celebrate text-2xl">
-                🎉
-              </div>
-            )}
-
-              <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 min-w-[50px]">
-                  <span className="text-xl font-bold text-foreground">
-                    #{rank}
-                  </span>
-                  {getMedalEmoji(rank) && (
-                    <span className="text-xl">{getMedalEmoji(rank)}</span>
-                  )}
-                </div>
-                
-                <div>
-                  <div className="flex items-center gap-2 font-semibold text-foreground">
-                    <span className="truncate max-w-[100px] sm:max-w-[140px]">{player.name}</span>
-                    {(showSurpriseEmojis || playerEmoji) && (
-                      <motion.span 
-                        className="text-lg"
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {showSurpriseEmojis ? "😮" : playerEmoji}
-                      </motion.span>
-                    )}
-                  </div>
-                  {difference > 0 && (
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <TrendingUp className="w-3 h-3" />
-                      <span>-{difference} {t.fromLeader}</span>
-                    </div>
-                  )}
-                  {difference === 0 && displayIndex > 0 && (
-                    <div className="text-sm text-muted-foreground">
-                      {t.tiedWithLeader}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="text-right flex items-center gap-2">
-                <div className="min-w-[60px]">
-                  <div className={`font-bold text-primary ${player.score > 999 ? 'text-xl' : 'text-2xl'}`}>
-                    {player.score}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{t.points}</div>
-                </div>
-                {onEditPlayer && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 relative"
-                    onClick={() => handleEditClick(player)}
-                  >
-                    <Pencil className="w-4 h-4" />
-                    {player.customTimerMinutes && player.customTimerMinutes > 0 && (
-                      <Hourglass className="w-3 h-3 absolute -top-1 -right-1 text-primary/30" />
-                    )}
-                  </Button>
-                )}
-              </div>
-            </div>
-              </Card>
-            </motion.div>
-          );
-        })}
-      </AnimatePresence>
-
-      <Dialog open={!!editingPlayer} onOpenChange={() => setEditingPlayer(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t.editPlayer}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t.playerName}</label>
-              <div className="relative group">
-                <Input
-                  type="text"
-                  value={editedName}
-                  onChange={(e) => setEditedName(truncateByGraphemes(e.target.value, 15))}
-                  className="text-lg pr-10"
-                  autoFocus
-                />
-                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/50 opacity-0 group-focus-within:opacity-100 transition-opacity">
-                  {15 - getGraphemeLength(editedName)}
-                </span>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t.newScore}</label>
-              <Input
-                type="number"
-                min="0"
-                max={9999}
-                value={editedScore}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 9999)) {
-                    setEditedScore(val);
-                  }
-                }}
-                className="text-2xl text-center font-bold"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">{t.customTimer}</label>
-              <p className="text-xs text-muted-foreground">{t.customTimerDescription}</p>
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={decrementTimer}
-                  disabled={parseInt(editedCustomTimer) <= 0}
                 >
-                  <Minus className="w-4 h-4" />
-                </Button>
+                  {isCelebrating && (
+                    <div className="absolute top-2 right-2 animate-celebrate text-2xl">
+                      🎉
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 min-w-[50px]">
+                        <span className="text-xl font-bold text-foreground">
+                          #{rank}
+                        </span>
+                        {getMedalEmoji(rank) && (
+                          <span className="text-xl">{getMedalEmoji(rank)}</span>
+                        )}
+                      </div>
+
+                      <div>
+                        <div className="flex items-center gap-2 font-semibold text-foreground">
+                          <span className="truncate max-w-[100px] sm:max-w-[140px]">{player.name}</span>
+                          {(showSurpriseEmojis || playerEmoji) && (
+                            <motion.span
+                              className="text-lg"
+                              initial={{ opacity: 0, scale: 0.5 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.5 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              {showSurpriseEmojis ? "😮" : playerEmoji}
+                            </motion.span>
+                          )}
+                        </div>
+                        {difference > 0 && (
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <TrendingUp className="w-3 h-3" />
+                            <span>-{difference} {t.fromLeader}</span>
+                          </div>
+                        )}
+                        {difference === 0 && displayIndex > 0 && (
+                          <div className="text-sm text-muted-foreground">
+                            {t.tiedWithLeader}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-right flex items-center gap-2">
+                      <div className="min-w-[60px]">
+                        <div className={`font-bold text-primary ${player.score > 999 ? 'text-xl' : 'text-2xl'}`}>
+                          {player.score}
+                        </div>
+                        <div className="text-xs text-muted-foreground">{t.points}</div>
+                      </div>
+                      {onEditPlayer && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 relative"
+                          onClick={() => handleEditClick(player)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                          {player.customTimerMinutes && player.customTimerMinutes > 0 && (
+                            <Hourglass className="w-3 h-3 absolute -top-1 -right-1 text-primary/30" />
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+
+        <Dialog open={!!editingPlayer} onOpenChange={() => setEditingPlayer(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t.editPlayer}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t.playerName}</label>
+                <div className="relative group">
+                  <Input
+                    type="text"
+                    value={editedName}
+                    onChange={(e) => setEditedName(truncateByGraphemes(e.target.value, 15))}
+                    className="text-lg pr-10"
+                    autoFocus
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/50 opacity-0 group-focus-within:opacity-100 transition-opacity">
+                    {15 - getGraphemeLength(editedName)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t.newScore}</label>
                 <Input
                   type="number"
                   min="0"
-                  value={editedCustomTimer}
-                  onChange={(e) => setEditedCustomTimer(e.target.value)}
-                  className="text-xl text-center font-bold flex-1"
+                  max={9999}
+                  value={editedScore}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 9999)) {
+                      setEditedScore(val);
+                    }
+                  }}
+                  className="text-2xl text-center font-bold"
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={incrementTimer}
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
               </div>
-              {parseInt(editedCustomTimer) === 0 && (
-                <p className="text-xs text-muted-foreground italic">{t.noCustomTimer}</p>
-              )}
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t.customTimer}</label>
+                <p className="text-xs text-muted-foreground">{t.customTimerDescription}</p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={decrementTimer}
+                    disabled={parseInt(editedCustomTimer) <= 0}
+
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={editedCustomTimer}
+                    onChange={(e) => setEditedCustomTimer(e.target.value)}
+                    className="text-xl text-center font-bold flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={incrementTimer}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                {parseInt(editedCustomTimer) === 0 && (
+                  <p className="text-xs text-muted-foreground italic">{t.noCustomTimer}</p>
+                )}
+              </div>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingPlayer(null)}>
-              {t.cancel}
-            </Button>
-            <Button onClick={handleSaveEdit}>
-              {t.save}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditingPlayer(null)}>
+                {t.cancel}
+              </Button>
+              <Button onClick={handleSaveEdit}>
+                {t.save}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
 };
+
