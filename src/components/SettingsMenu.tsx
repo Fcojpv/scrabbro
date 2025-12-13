@@ -26,19 +26,19 @@ export const SettingsMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
+        <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
           <Settings className="w-5 h-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
+      <DropdownMenuContent
+        align="end"
         className="w-72 bg-card/95 backdrop-blur-sm border-2 z-50"
       >
         <DropdownMenuLabel className="text-base font-semibold">
           {t.settings}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
+
         {/* Color Theme Section */}
         <div className="p-3 space-y-3">
           <div className="text-sm font-medium text-muted-foreground">
@@ -52,8 +52,8 @@ export const SettingsMenu = () => {
                 className={`
                   w-full flex items-center justify-between p-3 rounded-lg border-2 
                   transition-all hover:scale-[1.02]
-                  ${theme === themeOption 
-                    ? 'bg-primary/10 border-primary shadow-sm' 
+                  ${theme === themeOption
+                    ? 'bg-primary/10 border-primary shadow-sm'
                     : 'bg-card border-border hover:border-primary/30'
                   }
                 `}
@@ -76,7 +76,7 @@ export const SettingsMenu = () => {
         </div>
 
         <DropdownMenuSeparator />
-        
+
         {/* Language Section */}
         <div className="p-3 space-y-3">
           <div className="text-sm font-medium text-muted-foreground">

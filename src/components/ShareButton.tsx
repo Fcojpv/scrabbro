@@ -28,10 +28,10 @@ export const ShareButton = ({ players, roundNumber, leaderboardId }: ShareButton
   const { t } = useLanguage();
   const [showShareDialog, setShowShareDialog] = React.useState(false);
   const [isCapturing, setIsCapturing] = React.useState(false);
-  
+
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const hasScores = sortedPlayers.some(p => p.score > 0);
-  
+
   if (!hasScores) return null;
 
   const getMedalEmoji = (rank: number) => {
@@ -65,7 +65,7 @@ ${t.playHere} ${window.location.origin}
 
   const captureLeaderboard = async (): Promise<Blob | null> => {
     if (!leaderboardId) return null;
-    
+
     const element = document.getElementById(leaderboardId);
     if (!element) {
       console.error("Leaderboard element not found");
@@ -74,7 +74,7 @@ ${t.playHere} ${window.location.origin}
 
     try {
       setIsCapturing(true);
-      
+
       // Capture with better quality for mobile
       const canvas = await html2canvas(element, {
         scale: 2, // Higher quality
@@ -100,7 +100,7 @@ ${t.playHere} ${window.location.origin}
 
   const handleShareAsImage = async () => {
     setShowShareDialog(false);
-    
+
     const imageBlob = await captureLeaderboard();
     if (!imageBlob) {
       toast.error("No se pudo capturar la imagen");
@@ -146,7 +146,7 @@ ${t.playHere} ${window.location.origin}
   const handleShareAsText = async () => {
     setShowShareDialog(false);
     const shareText = generateShareText();
-    
+
     // Try Web Share API first (native sharing on mobile)
     if (navigator.share) {
       try {
@@ -202,7 +202,7 @@ ${t.playHere} ${window.location.origin}
               Elige cómo quieres compartir tus resultados
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-3 py-4">
             {leaderboardId && (
               <Button
@@ -218,7 +218,7 @@ ${t.playHere} ${window.location.origin}
                 </div>
               </Button>
             )}
-            
+
             <Button
               onClick={handleShareAsText}
               className="w-full h-auto py-4 flex flex-col gap-2"
