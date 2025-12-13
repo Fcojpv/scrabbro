@@ -8,6 +8,7 @@ import { EndGameDialog } from "@/components/EndGameDialog";
 import { KofiDialog } from "@/components/KofiDialog";
 import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
+import { ShareButton } from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
 import { toast } from "sonner";
@@ -60,7 +61,7 @@ const Index = () => {
   const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
-  
+
   const gameTimer = useGameTimer(gameStarted);
   const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
   const { saveGameState, loadGameState, clearSavedGame, getSavedGameInfo } = useGamePersistence();
@@ -96,21 +97,21 @@ const Index = () => {
     const cycle = () => {
       // Empty for 60 seconds
       setIsHeartFilled(false);
-      
+
       const fillTimeout = setTimeout(() => {
         // Filled for 5 seconds
         setIsHeartFilled(true);
-        
+
         const emptyTimeout = setTimeout(() => {
           cycle(); // Restart cycle
         }, 5000);
-        
+
         return () => clearTimeout(emptyTimeout);
       }, 60000);
-      
+
       return () => clearTimeout(fillTimeout);
     };
-    
+
     const cleanup = cycle();
     return cleanup;
   }, []);
@@ -160,7 +161,7 @@ const Index = () => {
     if (savedState) {
       // Close dialog first
       setShowRestoreDialog(false);
-      
+
       // Batch all state updates - set gameStarted LAST to ensure proper render
       setPlayers(savedState.players);
       setCurrentTurn(savedState.currentTurn);
@@ -168,7 +169,7 @@ const Index = () => {
       setScoreHistory(savedState.scoreHistory);
       setCurrentRoundScores(savedState.currentRoundScores);
       setGameStarted(true); // Set this LAST and explicitly to true
-      
+
       // Show success message after a small delay to ensure UI has updated
       setTimeout(() => {
         toast.success(t.gameRestored, { duration: 3000 });
@@ -183,7 +184,7 @@ const Index = () => {
 
   const handleSubmitScore = (score: number, wasBingo: boolean) => {
     const currentPlayerId = players[currentTurn].id;
-    
+
     setPlayers(prev =>
       prev.map(p =>
         p.id === currentPlayerId
@@ -205,7 +206,7 @@ const Index = () => {
 
     const nextTurn = (currentTurn + 1) % players.length;
     setCurrentTurn(nextTurn);
-    
+
     // Increment round when all players have played
     if (nextTurn === 0) {
       // Save completed round to history
@@ -304,7 +305,7 @@ const Index = () => {
     <div className="min-h-screen bg-background p-4 pb-8">
       {/* Mobile carousel view */}
       <div className="md:hidden">
-        <Carousel 
+        <Carousel
           setApi={setCarouselApi}
           opts={{
             align: "start",
@@ -318,45 +319,44 @@ const Index = () => {
               <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
                 <div className="flex justify-between items-center pt-2">
                   <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
+                  <div className="flex items-center gap-0.5">
+                    <Button
+                      variant="ghost"
                       size="icon"
                       onClick={() => setShowKofiDialog(true)}
-                      className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                      className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1"
                     >
-                      <Heart 
-                        className={`w-4 h-4 transition-all duration-300 ${
-                          isHeartFilled ? "fill-orange-500 text-orange-500" : ""
-                        }`} 
+                      <Heart
+                        className={`w-3.5 h-3.5 transition-all duration-300 ${isHeartFilled ? "fill-orange-500 text-orange-500" : ""
+                          }`}
                       />
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="icon"
                       onClick={toggleRadio}
-                      className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                      className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1"
                     >
-                    <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
-                    {isRadioPlaying && (
-                      <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
-                        {t.radioLive}
-                      </span>
-                    )}
+                      <Music className={`w-3.5 h-3.5 ${isRadioPlaying ? "text-orange-500" : ""}`} />
+                      {isRadioPlaying && (
+                        <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                          {t.radioLive}
+                        </span>
+                      )}
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="ghost"
                           size="icon"
-                          className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                          className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1"
                         >
-                        <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
-                        {(turnTimer.isActive || gameTimer.isCountdownActive) && (
-                          <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
-                            {t.timerOn}
-                          </span>
-                        )}
+                          <Hourglass className={`w-3.5 h-3.5 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
+                          {(turnTimer.isActive || gameTimer.isCountdownActive) && (
+                            <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                              {t.timerOn}
+                            </span>
+                          )}
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
@@ -407,9 +407,11 @@ const Index = () => {
                       variant="ghost"
                       size="icon"
                       onClick={() => setShowResetDialog(true)}
+                      className="h-8 w-8"
                     >
                       <RotateCcw className="w-4 h-4" />
                     </Button>
+                    <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
                     <SettingsMenu />
                   </div>
                 </div>
@@ -424,10 +426,10 @@ const Index = () => {
                   onEndGame={handleEndGame}
                 />
 
-                <Leaderboard 
-                  players={players} 
-                  onPositionChange={handlePositionChange} 
-                  roundNumber={roundNumber} 
+                <Leaderboard
+                  players={players}
+                  onPositionChange={handlePositionChange}
+                  roundNumber={roundNumber}
                   onEditPlayer={handleEditPlayer}
                   gameTime={gameTimer.formatTime()}
                   gameTimeColor={gameTimer.getColorClass()}
@@ -439,8 +441,8 @@ const Index = () => {
 
             {/* Screen 2: Score History */}
             <CarouselItem>
-              <ScoreHistory 
-                players={players} 
+              <ScoreHistory
+                players={players}
                 scoreHistory={scoreHistory}
                 currentRoundScores={currentRoundScores}
                 currentTurn={currentTurn}
@@ -454,11 +456,10 @@ const Index = () => {
               <button
                 key={index}
                 onClick={() => carouselApi?.scrollTo(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  currentSlide === index 
-                    ? "bg-foreground" 
-                    : "bg-foreground/20"
-                }`}
+                className={`w-2 h-2 rounded-full transition-all ${currentSlide === index
+                  ? "bg-foreground"
+                  : "bg-foreground/20"
+                  }`}
               />
             ))}
           </div>
@@ -491,44 +492,43 @@ const Index = () => {
           <div className="flex justify-between items-center pt-2">
             <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
             <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={() => setShowKofiDialog(true)}
                 className="flex flex-col items-center justify-center gap-0 h-10 p-1"
               >
-                <Heart 
-                  className={`w-4 h-4 transition-all duration-300 ${
-                    isHeartFilled ? "fill-orange-500 text-orange-500" : ""
-                  }`} 
+                <Heart
+                  className={`w-4 h-4 transition-all duration-300 ${isHeartFilled ? "fill-orange-500 text-orange-500" : ""
+                    }`}
                 />
               </Button>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={toggleRadio}
                 className="flex flex-col items-center justify-center gap-0 h-10 p-1"
               >
-              <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
-              {isRadioPlaying && (
-                <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
-                  {t.radioLive}
-                </span>
-              )}
+                <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
+                {isRadioPlaying && (
+                  <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                    {t.radioLive}
+                  </span>
+                )}
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="icon"
                     className="flex flex-col items-center justify-center gap-0 h-10 p-1"
                   >
-                  <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
-                  {(turnTimer.isActive || gameTimer.isCountdownActive) && (
-                    <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
-                      {t.timerOn}
-                    </span>
-                  )}
+                    <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
+                    {(turnTimer.isActive || gameTimer.isCountdownActive) && (
+                      <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                        {t.timerOn}
+                      </span>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
@@ -582,6 +582,7 @@ const Index = () => {
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
+              <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
               <SettingsMenu />
             </div>
           </div>
@@ -596,10 +597,10 @@ const Index = () => {
             onEndGame={handleEndGame}
           />
 
-          <Leaderboard 
-            players={players} 
-            onPositionChange={handlePositionChange} 
-            roundNumber={roundNumber} 
+          <Leaderboard
+            players={players}
+            onPositionChange={handlePositionChange}
+            roundNumber={roundNumber}
             onEditPlayer={handleEditPlayer}
             gameTime={gameTimer.formatTime()}
             gameTimeColor={gameTimer.getColorClass()}
@@ -614,19 +615,19 @@ const Index = () => {
         onOpenChange={setShowResetDialog}
         onConfirm={handleReset}
       />
-      
+
       <KofiDialog
         open={showKofiDialog}
         onOpenChange={setShowKofiDialog}
       />
-      
+
       <EndGameDialog
         open={showEndGameDialog}
         onOpenChange={setShowEndGameDialog}
         players={players}
         onApplyPenalties={handleApplyPenalties}
       />
-      
+
       <RestoreGameDialog
         open={showRestoreDialog}
         onOpenChange={setShowRestoreDialog}
