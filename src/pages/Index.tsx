@@ -288,12 +288,12 @@ const Index = () => {
   const currentPlayer = players[currentTurn];
 
   return (
-    <div className="min-h-screen bg-background p-4 pb-8">
+    <div className="h-[100dvh] bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
       {/* Mobile swipeable view */}
-      <div className="md:hidden h-screen overflow-hidden flex flex-col">
+      <div className="md:hidden h-full flex flex-col">
         <SwipeableViews currentView={currentView} onViewChange={setCurrentView}>
           {/* Screen 1: Main game */}
-          <div className="h-full overflow-y-auto pb-20 px-4">
+          <div className="h-full overflow-y-auto p-4 pb-20">
             <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
               <div className="flex justify-between items-center pt-2 gap-2">
                 <h1 className="text-2xl font-bold text-foreground flex-shrink min-w-0">{t.scrabbleScore}</h1>
@@ -424,7 +424,7 @@ const Index = () => {
           </div>
 
           {/* Screen 2: Score History */}
-          <div className="h-full overflow-y-auto pb-20 px-4">
+          <div className="h-full overflow-y-auto p-4 pb-20">
             <ScoreHistory
               players={players}
               scoreHistory={scoreHistory}
@@ -441,8 +441,8 @@ const Index = () => {
               key={index}
               onClick={() => setCurrentView(index)}
               className={`w-2 h-2 rounded-full transition-all ${currentView === index
-                  ? "bg-foreground"
-                  : "bg-foreground/20"
+                ? "bg-foreground"
+                : "bg-foreground/20"
                 }`}
             />
           ))}
