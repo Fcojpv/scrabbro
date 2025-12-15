@@ -187,7 +187,7 @@ ${t.playHere} ${window.location.origin}
         variant="ghost"
         size="icon"
         onClick={handleShare}
-        className="h-8 w-8 text-primary hover:text-primary/80"
+        className="h-8 w-8"
         title={t.shareResults}
         disabled={isCapturing}
       >

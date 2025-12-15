@@ -25,6 +25,8 @@ interface LeaderboardProps {
   gameTimeColor?: string;
   isGameTimeFinished?: boolean;
   showSurpriseEmojis?: boolean;
+  currentTurn?: number;
+  playersCount?: number;
 }
 
 // Emojis for different position changes
@@ -32,7 +34,27 @@ const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "�
 const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶"];
 const MAINTAIN_EMOJI = "😉";
 
-export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlayer, gameTime, gameTimeColor, isGameTimeFinished, showSurpriseEmojis }: LeaderboardProps) => {
+// Componente para el indicador de progreso de turnos
+const TurnProgressIndicator = ({ currentTurn, totalPlayers }: { currentTurn: number; totalPlayers: number }) => {
+  const completedTurns = currentTurn;
+  
+  return (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: totalPlayers }).map((_, index) => (
+        <div
+          key={index}
+          className={`w-1.5 h-1.5 rounded-full transition-colors ${
+            index < completedTurns
+              ? 'bg-muted-foreground'
+              : 'border border-muted-foreground/50 bg-transparent'
+          }`}
+        />
+      ))}
+    </div>
+  );
+};
+
+export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlayer, gameTime, gameTimeColor, isGameTimeFinished, showSurpriseEmojis, currentTurn = 0, playersCount = 0 }: LeaderboardProps) => {
   const { t } = useLanguage();
   const [previousRankings, setPreviousRankings] = useState<number[]>([]);
   const [celebratingPlayers, setCelebratingPlayers] = useState<Set<number>>(new Set());
@@ -168,16 +190,15 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
   return (
     <div className="space-y-2">
       <div id="leaderboard-capture" className="space-y-2 bg-background p-4 rounded-lg">
-        <div className="flex items-center justify-between text-foreground mb-4">
+        <div className="flex items-baseline justify-between text-foreground mb-4">
           <div className="flex items-center gap-2">
             <Trophy className="w-4 h-4 text-primary" />
-            <h2 className="text-base font-semibold">{t.leaderboard}</h2>
+            <h2 className="text-base font-semibold leading-none">{t.leaderboard}</h2>
           </div>
-          <div className="flex items-center gap-3">
-
+          <div className="flex items-baseline gap-3">
             {gameTime && (
-              <div className="flex flex-col items-center gap-0.5 shrink-0">
-                <div className={`flex items-center gap-1.5 text-sm font-semibold whitespace-nowrap ${gameTimeColor || 'text-muted-foreground'}`}>
+              <div className="flex flex-col items-end gap-0.5 shrink-0">
+                <div className={`flex items-center gap-1.5 text-sm font-semibold whitespace-nowrap leading-none ${gameTimeColor || 'text-muted-foreground'}`}>
                   <Clock className="w-3.5 h-3.5" />
                   <span className="relative">
                     {gameTime}
@@ -193,8 +214,13 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                 )}
               </div>
             )}
-            <div className="text-sm font-medium text-muted-foreground whitespace-nowrap shrink-0">
+            <div className="text-sm font-medium text-muted-foreground whitespace-nowrap leading-none shrink-0">
               {t.round} {roundNumber}
+              {currentTurn > 0 && playersCount > 0 && (
+                <div className="mt-1">
+                  <TurnProgressIndicator currentTurn={currentTurn} totalPlayers={playersCount} />
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -295,17 +295,17 @@ const Index = () => {
           {/* Screen 1: Main game */}
           <div className="h-full overflow-y-auto pb-20 px-4">
             <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
-              <div className="flex justify-between items-center pt-2">
-                <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
-                <div className="flex items-center gap-2">
+              <div className="flex justify-between items-center pt-2 gap-2">
+                <h1 className="text-2xl font-bold text-foreground flex-shrink min-w-0">{t.scrabbleScore}</h1>
+                <div className="flex items-center gap-1 flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowKofiDialog(true)}
-                    className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                    className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1 flex-shrink-0"
                   >
                     <Heart
-                      className={`w-4 h-4 transition-all duration-300 ${isHeartFilled ? "fill-orange-500 text-orange-500" : ""
+                      className={`w-3.5 h-3.5 transition-all duration-300 ${isHeartFilled ? "fill-orange-500 text-orange-500" : ""
                         }`}
                     />
                   </Button>
@@ -313,11 +313,11 @@ const Index = () => {
                     variant="ghost"
                     size="icon"
                     onClick={toggleRadio}
-                    className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                    className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1 flex-shrink-0"
                   >
-                    <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
+                    <Music className={`w-3.5 h-3.5 ${isRadioPlaying ? "text-orange-500" : ""}`} />
                     {isRadioPlaying && (
-                      <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                      <span className="text-[8px] font-semibold text-orange-500 leading-none -mt-0.5">
                         {t.radioLive}
                       </span>
                     )}
@@ -327,11 +327,11 @@ const Index = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                        className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1 flex-shrink-0"
                       >
-                        <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
+                        <Hourglass className={`w-3.5 h-3.5 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
                         {(turnTimer.isActive || gameTimer.isCountdownActive) && (
-                          <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                          <span className="text-[8px] font-semibold text-orange-500 leading-none -mt-0.5">
                             {t.timerOn}
                           </span>
                         )}
@@ -385,11 +385,16 @@ const Index = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowResetDialog(true)}
+                    className="h-8 w-8 flex-shrink-0"
                   >
-                    <RotateCcw className="w-4 h-4" />
+                    <RotateCcw className="w-3.5 h-3.5" />
                   </Button>
-                  <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
-                  <SettingsMenu />
+                  <div className="flex-shrink-0">
+                    <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
+                  </div>
+                  <div className="flex-shrink-0">
+                    <SettingsMenu />
+                  </div>
                 </div>
               </div>
 
@@ -412,6 +417,8 @@ const Index = () => {
                 gameTimeColor={gameTimer.getColorClass()}
                 isGameTimeFinished={gameTimer.isFinished}
                 showSurpriseEmojis={showSurpriseEmojis}
+                currentTurn={currentTurn}
+                playersCount={players.length}
               />
             </div>
           </div>
@@ -465,14 +472,14 @@ const Index = () => {
       {/* Desktop view - no carousel */}
       <div className="hidden md:block">
         <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
-          <div className="flex justify-between items-center pt-2">
-            <h1 className="text-2xl font-bold text-foreground">{t.scrabbleScore}</h1>
-            <div className="flex items-center gap-2">
+          <div className="flex justify-between items-center pt-2 gap-2">
+            <h1 className="text-2xl font-bold text-foreground flex-shrink min-w-0">{t.scrabbleScore}</h1>
+            <div className="flex items-center gap-2 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowKofiDialog(true)}
-                className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                className="flex flex-col items-center justify-center gap-0 h-10 p-1 flex-shrink-0"
               >
                 <Heart
                   className={`w-4 h-4 transition-all duration-300 ${isHeartFilled ? "fill-orange-500 text-orange-500" : ""
@@ -483,7 +490,7 @@ const Index = () => {
                 variant="ghost"
                 size="icon"
                 onClick={toggleRadio}
-                className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                className="flex flex-col items-center justify-center gap-0 h-10 p-1 flex-shrink-0"
               >
                 <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
                 {isRadioPlaying && (
@@ -497,7 +504,7 @@ const Index = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="flex flex-col items-center justify-center gap-0 h-10 p-1"
+                    className="flex flex-col items-center justify-center gap-0 h-10 p-1 flex-shrink-0"
                   >
                     <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
                     {(turnTimer.isActive || gameTimer.isCountdownActive) && (
@@ -555,11 +562,16 @@ const Index = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowResetDialog(true)}
+                className="flex-shrink-0"
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
-              <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
-              <SettingsMenu />
+              <div className="flex-shrink-0">
+                <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
+              </div>
+              <div className="flex-shrink-0">
+                <SettingsMenu />
+              </div>
             </div>
           </div>
 
@@ -582,6 +594,8 @@ const Index = () => {
             gameTimeColor={gameTimer.getColorClass()}
             isGameTimeFinished={gameTimer.isFinished}
             showSurpriseEmojis={showSurpriseEmojis}
+            currentTurn={currentTurn}
+            playersCount={players.length}
           />
         </div>
       </div>
