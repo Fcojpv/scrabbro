@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Trophy, TrendingUp, Pencil, Clock, Bell, Hourglass, Plus, Minus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -35,19 +35,46 @@ const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "�
 const MAINTAIN_EMOJI = "😉";
 
 // Componente para el indicador de progreso de turnos
-const TurnProgressIndicator = ({ currentTurn, totalPlayers }: { currentTurn: number; totalPlayers: number }) => {
-  const completedTurns = currentTurn;
-  
+const TurnProgressIndicator = ({
+  currentTurn,
+  totalPlayers,
+  roundNumber
+}: {
+  currentTurn: number;
+  totalPlayers: number;
+  roundNumber: number;
+}) => {
+  const [visualState, setVisualState] = useState(currentTurn);
+  const prevRoundRef = useRef(roundNumber);
+
+  useEffect(() => {
+    // Si el número de ronda aumentó, significa que se completó el ciclo
+    if (roundNumber > prevRoundRef.current) {
+      // Mostrar todos llenos brevemente
+      setVisualState(totalPlayers);
+
+      const timer = setTimeout(() => {
+        setVisualState(0); // Reiniciar a 0 (inicio de nueva ronda)
+      }, 600); // 600ms para mostrar la vuelta completa
+
+      prevRoundRef.current = roundNumber;
+      return () => clearTimeout(timer);
+    } else {
+      // Cambio normal de turno dentro de la misma ronda
+      setVisualState(currentTurn);
+      prevRoundRef.current = roundNumber;
+    }
+  }, [currentTurn, roundNumber, totalPlayers]);
+
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1.5">
       {Array.from({ length: totalPlayers }).map((_, index) => (
         <div
           key={index}
-          className={`w-1.5 h-1.5 rounded-full transition-colors ${
-            index < completedTurns
-              ? 'bg-muted-foreground'
-              : 'border border-muted-foreground/50 bg-transparent'
-          }`}
+          className={`w-2 h-2 rounded-full transition-all duration-500 ease-out ${index < visualState
+              ? 'bg-muted-foreground scale-100 shadow-sm'
+              : 'bg-muted-foreground/20 scale-85'
+            }`}
         />
       ))}
     </div>
@@ -216,9 +243,13 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
             )}
             <div className="text-sm font-medium text-muted-foreground whitespace-nowrap leading-none shrink-0">
               {t.round} {roundNumber}
-              {currentTurn > 0 && playersCount > 0 && (
+              {playersCount > 0 && (
                 <div className="mt-1">
-                  <TurnProgressIndicator currentTurn={currentTurn} totalPlayers={playersCount} />
+                  <TurnProgressIndicator
+                    currentTurn={currentTurn}
+                    totalPlayers={playersCount}
+                    roundNumber={roundNumber}
+                  />
                 </div>
               )}
             </div>
