@@ -256,3 +256,13 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Contenedor móvil con fallback robusto para altura de viewport */
+.mobile-viewport-container {
+  /* Fallback universal: funciona en iframes y contextos problemáticos */
+  height: 100vh;
+  
+  /* Override inteligente: usa dynamic viewport donde funcione correctamente */
+  /* Esto es CRÍTICO para móviles - ajusta altura cuando aparece/desaparece el teclado */
+  height: 100dvh;
+}

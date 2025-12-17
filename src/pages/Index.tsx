@@ -288,7 +288,7 @@ const Index = () => {
   const currentPlayer = players[currentTurn];
 
   return (
-    <div className="h-[100dvh] bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
+    <div className="mobile-viewport-container bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
       {/* Mobile swipeable view */}
       <div className="md:hidden h-full flex flex-col">
         <SwipeableViews currentView={currentView} onViewChange={setCurrentView}>
