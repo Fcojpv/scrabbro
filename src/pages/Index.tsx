@@ -424,7 +424,7 @@ const Index = () => {
           </div>
 
           {/* Screen 2: Score History */}
-          <div className="h-full overflow-y-auto p-4 pb-20">
+          <div className="h-full overflow-hidden pb-20">
             <ScoreHistory
               players={players}
               scoreHistory={scoreHistory}
