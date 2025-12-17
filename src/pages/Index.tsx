@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { PlayerSetup } from "@/components/PlayerSetup";
 import { Leaderboard } from "@/components/Leaderboard";
 import { TurnInput } from "@/components/TurnInput";
@@ -10,7 +11,7 @@ import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
 import { ShareButton } from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
+import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useGameTimer } from "@/hooks/useGameTimer";
@@ -309,6 +310,15 @@ const Index = () => {
                         }`}
                     />
                   </Button>
+                  <Link to="/story">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1 flex-shrink-0"
+                    >
+                      <BookOpen className="w-3.5 h-3.5" />
+                    </Button>
+                  </Link>
                   <Button
                     variant="ghost"
                     size="icon"
