@@ -241,16 +241,16 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                 )}
               </div>
             )}
-            <div className="text-sm font-medium text-muted-foreground whitespace-nowrap leading-none shrink-0">
-              {t.round} {roundNumber}
+            <div className="flex flex-col items-end gap-0.5 shrink-0">
+              <span className="text-sm font-medium text-muted-foreground whitespace-nowrap leading-none">
+                {t.round} {roundNumber}
+              </span>
               {playersCount > 0 && (
-                <div className="mt-1">
-                  <TurnProgressIndicator
-                    currentTurn={currentTurn}
-                    totalPlayers={playersCount}
-                    roundNumber={roundNumber}
-                  />
-                </div>
+                <TurnProgressIndicator
+                  currentTurn={currentTurn}
+                  totalPlayers={playersCount}
+                  roundNumber={roundNumber}
+                />
               )}
             </div>
           </div>
