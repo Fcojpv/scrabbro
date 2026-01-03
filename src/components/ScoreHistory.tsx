@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -40,6 +41,24 @@ const PLAYER_COLORS = [
 
 export const ScoreHistory = ({ players, scoreHistory, currentRoundScores = [], currentTurn = 0 }: ScoreHistoryProps) => {
   const { t } = useLanguage();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [legendOpacity, setLegendOpacity] = useState(1);
+  
+  // Detect scroll position to fade out legend
+  useEffect(() => {
+    const container = containerRef.current?.closest('.overflow-y-auto');
+    if (!container) return;
+    
+    const handleScroll = () => {
+      const scrollTop = container.scrollTop;
+      // Fade out between 0-60px of scroll
+      const opacity = Math.max(0, 1 - scrollTop / 60);
+      setLegendOpacity(opacity);
+    };
+    
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
   
   // Combine completed rounds with current round in progress
   const allRounds = [...scoreHistory];
@@ -79,15 +98,19 @@ export const ScoreHistory = ({ players, scoreHistory, currentRoundScores = [], c
   const useFullNames = players.length <= 2;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4 animate-slide-up p-4">
-      <Card className="border-primary/20">
-        <CardHeader className="pb-3">
+    <div ref={containerRef} className="max-w-4xl mx-auto animate-slide-up p-4">
+      <Card className="border-primary/20 overflow-visible">
+        {/* Sticky header */}
+        <CardHeader className="pb-3 sticky top-0 z-20 bg-card/95 backdrop-blur-sm rounded-t-lg">
           <CardTitle className="text-xl">{t.scoreHistory || "Historial de Puntajes"}</CardTitle>
         </CardHeader>
-        <CardContent>
-          {/* Legend for 3+ players */}
+        <CardContent className="pt-0">
+          {/* Legend with gradual fade out */}
           {!useFullNames && (
-            <div className="mb-4 p-3 bg-muted/30 rounded-lg">
+            <div 
+              className="mb-4 p-3 bg-muted/30 rounded-lg transition-opacity duration-200"
+              style={{ opacity: legendOpacity, display: legendOpacity === 0 ? 'none' : 'block' }}
+            >
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {players.map((player, index) => (
                   <div key={player.id} className="flex items-center">
@@ -101,16 +124,16 @@ export const ScoreHistory = ({ players, scoreHistory, currentRoundScores = [], c
             </div>
           )}
 
-          {/* Score table */}
+          {/* Score table with sticky header */}
           <div className="w-full">
             <Table>
-              <TableHeader>
+              <TableHeader className="sticky top-[52px] z-10 bg-card/95 backdrop-blur-sm shadow-[0_1px_0_0_hsl(var(--border)/0.3)]">
                 <TableRow>
-                  <TableHead className="text-center font-bold w-12 px-1">{t.round || "Ronda"}</TableHead>
+                  <TableHead className="text-center font-bold w-12 px-1 bg-transparent">{t.round || "Ronda"}</TableHead>
                   {players.map((player, index) => (
                     <TableHead 
                       key={player.id} 
-                      className={`text-center font-bold px-2 ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}
+                      className={`text-center font-bold px-2 bg-transparent ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}
                     >
                       <span className="block truncate">{useFullNames ? player.name : getInitials(player.name)}</span>
                     </TableHead>
