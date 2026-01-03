@@ -101,16 +101,16 @@ export const ScoreHistory = ({ players, scoreHistory, currentRoundScores = [], c
             </div>
           )}
 
-          {/* Score table */}
-          <div className="w-full">
+          {/* Score table with sticky header */}
+          <div className="w-full max-h-[60vh] overflow-y-auto rounded-lg border border-border/50">
             <Table>
-              <TableHeader>
+              <TableHeader className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm shadow-[0_1px_3px_0_rgba(0,0,0,0.1)] transition-shadow">
                 <TableRow>
-                  <TableHead className="text-center font-bold w-12 px-1">{t.round || "Ronda"}</TableHead>
+                  <TableHead className="text-center font-bold w-12 px-1 bg-transparent">{t.round || "Ronda"}</TableHead>
                   {players.map((player, index) => (
                     <TableHead 
                       key={player.id} 
-                      className={`text-center font-bold px-2 ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}
+                      className={`text-center font-bold px-2 bg-transparent ${PLAYER_COLORS[index % PLAYER_COLORS.length]}`}
                     >
                       <span className="block truncate">{useFullNames ? player.name : getInitials(player.name)}</span>
                     </TableHead>
