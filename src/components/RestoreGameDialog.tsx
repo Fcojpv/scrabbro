@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Clock } from "lucide-react";
+import { useRef, useEffect } from "react";
 
 interface RestoreGameDialogProps {
   open: boolean;
