@@ -55,6 +55,11 @@ const Index = () => {
   const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
+  const restoreDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const restoreToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const endGameTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartFillTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartEmptyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const gameTimer = useGameTimer(gameStarted);
   const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
