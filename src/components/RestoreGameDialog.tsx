@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Clock } from "lucide-react";
+import { useRef, useEffect } from "react";
 
 interface RestoreGameDialogProps {
   open: boolean;
@@ -31,6 +32,15 @@ export const RestoreGameDialog = ({
   onNewGame 
 }: RestoreGameDialogProps) => {
   const { t } = useLanguage();
+  const restoreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (restoreTimeoutRef.current) {
+        clearTimeout(restoreTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!gameInfo) return null;
 
@@ -51,7 +61,7 @@ export const RestoreGameDialog = ({
   const handleRestore = () => {
     onOpenChange(false); // Close dialog FIRST
     // Give dialog time to close before restoring
-    setTimeout(() => {
+    restoreTimeoutRef.current = setTimeout(() => {
       onRestore();
     }, 50);
   };

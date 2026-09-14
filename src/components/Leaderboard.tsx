@@ -90,6 +90,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
   const [editedName, setEditedName] = useState("");
   const [editedScore, setEditedScore] = useState("");
   const [editedCustomTimer, setEditedCustomTimer] = useState("");
+  const celebrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const leaderScore = sortedPlayers[0]?.score || 0;
@@ -133,7 +134,10 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
           onPositionChange?.();
         }
 
-        setTimeout(() => {
+        if (celebrationTimeoutRef.current) {
+          clearTimeout(celebrationTimeoutRef.current);
+        }
+        celebrationTimeoutRef.current = setTimeout(() => {
           setCelebratingPlayers(new Set());
           setPlayerEmojis(new Map());
         }, 5000);
@@ -141,6 +145,12 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
     }
 
     setPreviousRankings(currentRankings);
+
+    return () => {
+      if (celebrationTimeoutRef.current) {
+        clearTimeout(celebrationTimeoutRef.current);
+      }
+    };
   }, [sortedPlayers.map(p => `${p.id}-${p.score}`).join(',')]);
 
   const getMedalEmoji = (rank: number) => {

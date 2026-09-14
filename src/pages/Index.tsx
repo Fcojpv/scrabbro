@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { PlayerSetup } from "@/components/PlayerSetup";
 import { Leaderboard } from "@/components/Leaderboard";
 import { TurnInput } from "@/components/TurnInput";
@@ -53,8 +53,15 @@ const Index = () => {
   const [currentView, setCurrentView] = useState(0);
   const [scoreHistory, setScoreHistory] = useState<RoundScore[][]>([]);
   const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
+  const currentRoundScoresRef = useRef<RoundScore[]>([]);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
+  const restoreDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const restoreToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const endGameTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartFillTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartEmptyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedStateRef = useRef<string | null>(null);
 
   const gameTimer = useGameTimer(gameStarted);
   const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
@@ -66,25 +73,41 @@ const Index = () => {
     if (info) {
       setSavedGameInfo(info);
       // Small delay to ensure all other effects have run
-      setTimeout(() => {
+      restoreDialogTimeoutRef.current = setTimeout(() => {
         setShowRestoreDialog(true);
       }, 100);
     }
+
+    return () => {
+      if (restoreDialogTimeoutRef.current) {
+        clearTimeout(restoreDialogTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Auto-save game state when it changes
   useEffect(() => {
     if (gameStarted) {
-      saveGameState({
+      const newState = {
         gameStarted,
         players,
         currentTurn,
         roundNumber,
         scoreHistory,
         currentRoundScores,
-      });
+      };
+      const serialized = JSON.stringify(newState);
+      if (serialized !== lastSavedStateRef.current) {
+        saveGameState(newState);
+        lastSavedStateRef.current = serialized;
+      }
     }
   }, [gameStarted, players, currentTurn, roundNumber, scoreHistory, currentRoundScores]);
+
+  // Keep ref in sync with current round scores for reliable history updates
+  useEffect(() => {
+    currentRoundScoresRef.current = currentRoundScores;
+  }, [currentRoundScores]);
 
   // Heart animation cycle: 60s empty -> 5s filled -> repeat
   useEffect(() => {
@@ -92,22 +115,38 @@ const Index = () => {
       // Empty for 60 seconds
       setIsHeartFilled(false);
 
-      const fillTimeout = setTimeout(() => {
+      heartFillTimeoutRef.current = setTimeout(() => {
         // Filled for 5 seconds
         setIsHeartFilled(true);
 
-        const emptyTimeout = setTimeout(() => {
+        heartEmptyTimeoutRef.current = setTimeout(() => {
           cycle(); // Restart cycle
         }, 5000);
-
-        return () => clearTimeout(emptyTimeout);
       }, 60000);
-
-      return () => clearTimeout(fillTimeout);
     };
 
-    const cleanup = cycle();
-    return cleanup;
+    cycle();
+
+    return () => {
+      if (heartFillTimeoutRef.current) {
+        clearTimeout(heartFillTimeoutRef.current);
+      }
+      if (heartEmptyTimeoutRef.current) {
+        clearTimeout(heartEmptyTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Cleanup remaining timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (restoreToastTimeoutRef.current) {
+        clearTimeout(restoreToastTimeoutRef.current);
+      }
+      if (endGameTimeoutRef.current) {
+        clearTimeout(endGameTimeoutRef.current);
+      }
+    };
   }, []);
 
 
@@ -157,7 +196,7 @@ const Index = () => {
       setGameStarted(true); // Set this LAST and explicitly to true
 
       // Show success message after a small delay to ensure UI has updated
-      setTimeout(() => {
+      restoreToastTimeoutRef.current = setTimeout(() => {
         toast.success(t.gameRestored, { duration: 3000 });
       }, 100);
     }
@@ -169,7 +208,10 @@ const Index = () => {
   };
 
   const handleSubmitScore = (score: number, wasBingo: boolean) => {
-    const currentPlayerId = players[currentTurn].id;
+    const currentPlayer = players[currentTurn];
+    if (!currentPlayer) return;
+    const currentPlayerId = currentPlayer.id;
+    const newRoundScore = { playerId: currentPlayerId, score, wasBingo };
 
     setPlayers(prev =>
       prev.map(p =>
@@ -180,10 +222,7 @@ const Index = () => {
     );
 
     // Track score for current round
-    setCurrentRoundScores(prev => [
-      ...prev,
-      { playerId: currentPlayerId, score, wasBingo }
-    ]);
+    setCurrentRoundScores(prev => [...prev, newRoundScore]);
 
     const playerName = players.find(p => p.id === currentPlayerId)?.name || `${t.player} ${currentPlayerId}`;
     toast.success(`${playerName}: +${score} ${t.points}`, {
@@ -195,8 +234,8 @@ const Index = () => {
 
     // Increment round when all players have played
     if (nextTurn === 0) {
-      // Save completed round to history
-      setScoreHistory(prev => [...prev, currentRoundScores.concat([{ playerId: currentPlayerId, score, wasBingo }])]);
+      // Save completed round to history using the ref to avoid stale closure
+      setScoreHistory(prev => [...prev, [...currentRoundScoresRef.current, newRoundScore]]);
       setCurrentRoundScores([]);
       setRoundNumber(prev => prev + 1);
     }
@@ -243,7 +282,7 @@ const Index = () => {
   const handleEndGame = () => {
     setShowSurpriseEmojis(true);
     // Small delay to ensure emojis change before dialog opens
-    setTimeout(() => {
+    endGameTimeoutRef.current = setTimeout(() => {
       setShowEndGameDialog(true);
     }, 100);
   };
@@ -286,6 +325,11 @@ const Index = () => {
   }
 
   const currentPlayer = players[currentTurn];
+
+  // Guard against invalid turn state
+  if (!currentPlayer) {
+    return null;
+  }
 
   return (
     <div className="h-[100dvh] bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
