@@ -12,7 +12,7 @@ export const useTurnTimer = (currentTurn: number, isActive: boolean, customTimer
     if (previousTurnRef.current !== currentTurn) {
       setIsFinished(false);
       // Priority: customTimerMinutes > configuredMinutes (global) > null
-      const minutesToUse = customTimerMinutes !== undefined ? customTimerMinutes : configuredMinutes;
+      const minutesToUse = customTimerMinutes ?? configuredMinutes;
       if (minutesToUse !== null && minutesToUse > 0) {
         setRemainingSeconds(minutesToUse * 60);
       } else {
