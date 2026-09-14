@@ -137,6 +137,18 @@ const Index = () => {
     };
   }, []);
 
+  // Cleanup remaining timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (restoreToastTimeoutRef.current) {
+        clearTimeout(restoreToastTimeoutRef.current);
+      }
+      if (endGameTimeoutRef.current) {
+        clearTimeout(endGameTimeoutRef.current);
+      }
+    };
+  }, []);
+
 
   const toggleRadio = () => {
     if (!audioRef.current) {
