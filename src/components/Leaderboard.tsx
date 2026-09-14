@@ -134,7 +134,10 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
           onPositionChange?.();
         }
 
-        setTimeout(() => {
+        if (celebrationTimeoutRef.current) {
+          clearTimeout(celebrationTimeoutRef.current);
+        }
+        celebrationTimeoutRef.current = setTimeout(() => {
           setCelebratingPlayers(new Set());
           setPlayerEmojis(new Map());
         }, 5000);
@@ -142,6 +145,12 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
     }
 
     setPreviousRankings(currentRankings);
+
+    return () => {
+      if (celebrationTimeoutRef.current) {
+        clearTimeout(celebrationTimeoutRef.current);
+      }
+    };
   }, [sortedPlayers.map(p => `${p.id}-${p.score}`).join(',')]);
 
   const getMedalEmoji = (rank: number) => {
