@@ -270,7 +270,7 @@ const Index = () => {
   const handleEndGame = () => {
     setShowSurpriseEmojis(true);
     // Small delay to ensure emojis change before dialog opens
-    setTimeout(() => {
+    endGameTimeoutRef.current = setTimeout(() => {
       setShowEndGameDialog(true);
     }, 100);
   };
