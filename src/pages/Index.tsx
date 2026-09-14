@@ -60,6 +60,7 @@ const Index = () => {
   const endGameTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heartFillTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heartEmptyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedStateRef = useRef<string | null>(null);
 
   const gameTimer = useGameTimer(gameStarted);
   const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
