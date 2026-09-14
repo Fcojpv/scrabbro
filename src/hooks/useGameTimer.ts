@@ -5,11 +5,13 @@ export const useGameTimer = (isActive: boolean) => {
   const [countdownMinutes, setCountdownMinutes] = useState<number | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const startTimeRef = useRef<number | null>(null);
+  const finishedRef = useRef(false);
 
   useEffect(() => {
     if (!isActive) {
       setElapsedSeconds(0);
       startTimeRef.current = null;
+      finishedRef.current = false;
       setIsFinished(false);
       return;
     }
@@ -26,7 +28,8 @@ export const useGameTimer = (isActive: boolean) => {
         // Check if countdown timer reached zero
         if (countdownMinutes !== null) {
           const totalSeconds = countdownMinutes * 60;
-          if (elapsed >= totalSeconds && !isFinished) {
+          if (elapsed >= totalSeconds && !finishedRef.current) {
+            finishedRef.current = true;
             setIsFinished(true);
           }
         }
@@ -34,7 +37,7 @@ export const useGameTimer = (isActive: boolean) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isActive, countdownMinutes, isFinished]);
+  }, [isActive, countdownMinutes]);
 
   const startCountdown = (minutes: number) => {
     setCountdownMinutes(minutes);
