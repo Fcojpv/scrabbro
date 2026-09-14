@@ -109,22 +109,26 @@ const Index = () => {
       // Empty for 60 seconds
       setIsHeartFilled(false);
 
-      const fillTimeout = setTimeout(() => {
+      heartFillTimeoutRef.current = setTimeout(() => {
         // Filled for 5 seconds
         setIsHeartFilled(true);
 
-        const emptyTimeout = setTimeout(() => {
+        heartEmptyTimeoutRef.current = setTimeout(() => {
           cycle(); // Restart cycle
         }, 5000);
-
-        return () => clearTimeout(emptyTimeout);
       }, 60000);
-
-      return () => clearTimeout(fillTimeout);
     };
 
-    const cleanup = cycle();
-    return cleanup;
+    cycle();
+
+    return () => {
+      if (heartFillTimeoutRef.current) {
+        clearTimeout(heartFillTimeoutRef.current);
+      }
+      if (heartEmptyTimeoutRef.current) {
+        clearTimeout(heartEmptyTimeoutRef.current);
+      }
+    };
   }, []);
 
 
