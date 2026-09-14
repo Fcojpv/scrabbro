@@ -196,7 +196,10 @@ const Index = () => {
   };
 
   const handleSubmitScore = (score: number, wasBingo: boolean) => {
-    const currentPlayerId = players[currentTurn].id;
+    const currentPlayer = players[currentTurn];
+    if (!currentPlayer) return;
+    const currentPlayerId = currentPlayer.id;
+    const newRoundScore = { playerId: currentPlayerId, score, wasBingo };
 
     setPlayers(prev =>
       prev.map(p =>
@@ -207,10 +210,7 @@ const Index = () => {
     );
 
     // Track score for current round
-    setCurrentRoundScores(prev => [
-      ...prev,
-      { playerId: currentPlayerId, score, wasBingo }
-    ]);
+    setCurrentRoundScores(prev => [...prev, newRoundScore]);
 
     const playerName = players.find(p => p.id === currentPlayerId)?.name || `${t.player} ${currentPlayerId}`;
     toast.success(`${playerName}: +${score} ${t.points}`, {
@@ -222,8 +222,8 @@ const Index = () => {
 
     // Increment round when all players have played
     if (nextTurn === 0) {
-      // Save completed round to history
-      setScoreHistory(prev => [...prev, currentRoundScores.concat([{ playerId: currentPlayerId, score, wasBingo }])]);
+      // Save completed round to history using the ref to avoid stale closure
+      setScoreHistory(prev => [...prev, [...currentRoundScoresRef.current, newRoundScore]]);
       setCurrentRoundScores([]);
       setRoundNumber(prev => prev + 1);
     }
