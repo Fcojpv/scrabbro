@@ -104,6 +104,11 @@ const Index = () => {
     }
   }, [gameStarted, players, currentTurn, roundNumber, scoreHistory, currentRoundScores]);
 
+  // Keep ref in sync with current round scores for reliable history updates
+  useEffect(() => {
+    currentRoundScoresRef.current = currentRoundScores;
+  }, [currentRoundScores]);
+
   // Heart animation cycle: 60s empty -> 5s filled -> repeat
   useEffect(() => {
     const cycle = () => {
