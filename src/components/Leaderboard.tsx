@@ -90,6 +90,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
   const [editedName, setEditedName] = useState("");
   const [editedScore, setEditedScore] = useState("");
   const [editedCustomTimer, setEditedCustomTimer] = useState("");
+  const celebrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const leaderScore = sortedPlayers[0]?.score || 0;
