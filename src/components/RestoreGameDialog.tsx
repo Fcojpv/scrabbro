@@ -61,7 +61,7 @@ export const RestoreGameDialog = ({
   const handleRestore = () => {
     onOpenChange(false); // Close dialog FIRST
     // Give dialog time to close before restoring
-    setTimeout(() => {
+    restoreTimeoutRef.current = setTimeout(() => {
       onRestore();
     }, 50);
   };
