@@ -71,10 +71,16 @@ const Index = () => {
     if (info) {
       setSavedGameInfo(info);
       // Small delay to ensure all other effects have run
-      setTimeout(() => {
+      restoreDialogTimeoutRef.current = setTimeout(() => {
         setShowRestoreDialog(true);
       }, 100);
     }
+
+    return () => {
+      if (restoreDialogTimeoutRef.current) {
+        clearTimeout(restoreDialogTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Auto-save game state when it changes
