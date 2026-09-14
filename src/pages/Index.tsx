@@ -326,6 +326,11 @@ const Index = () => {
 
   const currentPlayer = players[currentTurn];
 
+  // Guard against invalid turn state
+  if (!currentPlayer) {
+    return null;
+  }
+
   return (
     <div className="h-[100dvh] bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
       {/* Mobile swipeable view */}
