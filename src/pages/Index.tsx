@@ -178,7 +178,7 @@ const Index = () => {
       setGameStarted(true); // Set this LAST and explicitly to true
 
       // Show success message after a small delay to ensure UI has updated
-      setTimeout(() => {
+      restoreToastTimeoutRef.current = setTimeout(() => {
         toast.success(t.gameRestored, { duration: 3000 });
       }, 100);
     }
