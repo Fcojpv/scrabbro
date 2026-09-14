@@ -53,6 +53,7 @@ const Index = () => {
   const [currentView, setCurrentView] = useState(0);
   const [scoreHistory, setScoreHistory] = useState<RoundScore[][]>([]);
   const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
+  const currentRoundScoresRef = useRef<RoundScore[]>([]);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
   const restoreDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
