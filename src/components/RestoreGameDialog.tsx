@@ -32,6 +32,15 @@ export const RestoreGameDialog = ({
   onNewGame 
 }: RestoreGameDialogProps) => {
   const { t } = useLanguage();
+  const restoreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (restoreTimeoutRef.current) {
+        clearTimeout(restoreTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!gameInfo) return null;
 
