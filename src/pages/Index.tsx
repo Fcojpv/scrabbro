@@ -87,14 +87,19 @@ const Index = () => {
   // Auto-save game state when it changes
   useEffect(() => {
     if (gameStarted) {
-      saveGameState({
+      const newState = {
         gameStarted,
         players,
         currentTurn,
         roundNumber,
         scoreHistory,
         currentRoundScores,
-      });
+      };
+      const serialized = JSON.stringify(newState);
+      if (serialized !== lastSavedStateRef.current) {
+        saveGameState(newState);
+        lastSavedStateRef.current = serialized;
+      }
     }
   }, [gameStarted, players, currentTurn, roundNumber, scoreHistory, currentRoundScores]);
 
