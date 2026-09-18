@@ -477,11 +477,16 @@ const Index = () => {
               currentTurn={currentTurn}
             />
           </div>
+
+          {/* Screen 3: Story comic */}
+          <div className="h-full overflow-y-auto p-4 pb-20">
+            <StoryContent />
+          </div>
         </SwipeableViews>
 
         {/* Fixed dot indicators */}
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-          {[0, 1].map((index) => (
+          {[0, 1, 2].map((index) => (
             <button
               key={index}
               onClick={() => setCurrentView(index)}
