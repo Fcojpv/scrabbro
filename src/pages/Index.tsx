@@ -10,7 +10,7 @@ import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
 import { ShareButton } from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
+import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useGameTimer } from "@/hooks/useGameTimer";
@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SwipeableViews } from "@/components/SwipeableViews";
+import { StoryContent } from "@/components/StoryContent";
 
 interface Player {
   id: number;
