@@ -105,6 +105,21 @@ export interface Translations {
   day: string;
   days: string;
   gameRestored: string;
+
+  // Story comic view
+  storyTitle: string;
+  storyCaption1: string;
+  storyCaption2: string;
+  storyCaption3: string;
+  storyCaption4: string;
+  storyCaption5: string;
+  storyCaption6: string;
+  storyAlt1: string;
+  storyAlt2: string;
+  storyAlt3: string;
+  storyAlt4: string;
+  storyAlt5: string;
+  storyAlt6: string;
 }
 
 export const translations: Record<Language, Translations> = {
