@@ -10,7 +10,7 @@ import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
 import { ShareButton } from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
+import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useGameTimer } from "@/hooks/useGameTimer";
@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SwipeableViews } from "@/components/SwipeableViews";
+import { StoryContent } from "@/components/StoryContent";
 
 interface Player {
   id: number;
@@ -476,11 +477,16 @@ const Index = () => {
               currentTurn={currentTurn}
             />
           </div>
+
+          {/* Screen 3: Story comic */}
+          <div className="h-full overflow-y-auto p-4 pb-20">
+            <StoryContent />
+          </div>
         </SwipeableViews>
 
         {/* Fixed dot indicators */}
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-          {[0, 1].map((index) => (
+          {[0, 1, 2].map((index) => (
             <button
               key={index}
               onClick={() => setCurrentView(index)}
@@ -492,20 +498,20 @@ const Index = () => {
           ))}
         </div>
 
-        {/* Fixed chevron navigation - Right (only on first screen) */}
-        {currentView === 0 && (
+        {/* Fixed chevron navigation - Right (not on last screen) */}
+        {currentView < 2 && (
           <button
-            onClick={() => setCurrentView(1)}
+            onClick={() => setCurrentView(currentView + 1)}
             className="fixed right-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors md:hidden"
           >
             <ChevronRight className="w-8 h-8" />
           </button>
         )}
 
-        {/* Fixed chevron navigation - Left (only on second screen) */}
-        {currentView === 1 && (
+        {/* Fixed chevron navigation - Left (not on first screen) */}
+        {currentView > 0 && (
           <button
-            onClick={() => setCurrentView(0)}
+            onClick={() => setCurrentView(currentView - 1)}
             className="fixed left-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors md:hidden"
           >
             <ChevronLeft className="w-8 h-8" />
@@ -641,6 +647,11 @@ const Index = () => {
             currentTurn={currentTurn}
             playersCount={players.length}
           />
+
+          {/* Story comic (desktop) */}
+          <div className="pt-6 border-t border-border">
+            <StoryContent />
+          </div>
         </div>
       </div>
 
