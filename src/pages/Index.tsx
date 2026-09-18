@@ -647,6 +647,11 @@ const Index = () => {
             currentTurn={currentTurn}
             playersCount={players.length}
           />
+
+          {/* Story comic (desktop) */}
+          <div className="pt-6 border-t border-border">
+            <StoryContent />
+          </div>
         </div>
       </div>
 
