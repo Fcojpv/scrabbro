@@ -30,9 +30,15 @@ interface LeaderboardProps {
 }
 
 // Emojis for different position changes
-const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "🔥", "⭐", "🎯"];
-const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶"];
-const MAINTAIN_EMOJI = "😉";
+const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "🔥", "⭐", "🎯",
+  "🚀", "💪", "😄", "😎", "🤩", "🙌", "👏", "🥇", "🎈", "💥"];
+const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶",
+  "😞", "😟", "😢", "😥", "😓", "🙁", "😩", "😖", "🥴", "👎"];
+const MAINTAIN_EMOJIS = ["😉", "😏", "😌", "🙂", "😇", "🤗", "😺", "🤝", "👍", "✌️"];
+
+// Margen de tiempo aleatorio para la desaparición de cada emoji (ms)
+const EMOJI_MIN_DURATION = 2500;
+const EMOJI_MAX_DURATION = 5500;
 
 // Componente para el indicador de progreso de turnos
 const TurnProgressIndicator = ({
