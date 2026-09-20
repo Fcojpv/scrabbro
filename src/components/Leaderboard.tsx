@@ -145,6 +145,8 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
         // Cada emoji desaparece en un tiempo aleatorio dentro del margen,
         // dando dinamismo: no todos se van a la vez.
         newEmojis.forEach((_, playerId) => {
+          const prevTimeout = emojiTimeoutsRef.current.get(playerId);
+          if (prevTimeout) clearTimeout(prevTimeout);
           const duration = EMOJI_MIN_DURATION + Math.random() * (EMOJI_MAX_DURATION - EMOJI_MIN_DURATION);
           const timeout = setTimeout(() => {
             emojiTimeoutsRef.current.delete(playerId);
