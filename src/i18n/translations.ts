@@ -107,19 +107,6 @@ export interface Translations {
   gameRestored: string;
 
   // Story comic view
-  storyTitle: string;
-  storyCaption1: string;
-  storyCaption2: string;
-  storyCaption3: string;
-  storyCaption4: string;
-  storyCaption5: string;
-  storyCaption6: string;
-  storyAlt1: string;
-  storyAlt2: string;
-  storyAlt3: string;
-  storyAlt4: string;
-  storyAlt5: string;
-  storyAlt6: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -203,19 +190,6 @@ export const translations: Record<Language, Translations> = {
     day: 'day',
     days: 'days',
     gameRestored: 'Game restored successfully',
-    storyTitle: 'The Story of ScrabBro',
-    storyCaption1: 'A family lived in the city: a dad, a mom, and a 10-year-old son. They dreamed of green fields and quiet days.',
-    storyCaption2: 'So they packed their car and traveled from the city to the countryside, chasing the life they imagined.',
-    storyCaption3: 'They made a cozy country house their home, surrounded by gardens, trees, and mountains.',
-    storyCaption4: 'At night, the dad worked on a little idea of his own: ScrabBro, an app to track Scrabble scores with friends and family.',
-    storyCaption5: 'From the porch of their country home, he shared ScrabBro with the world so anyone could enjoy it.',
-    storyCaption6: 'Thanks to your donations, he can keep improving ScrabBro. Thank you for supporting the community!',
-    storyAlt1: 'Illustration of a family on a city balcony looking at the countryside',
-    storyAlt2: 'Illustration of a family driving from the city to the countryside',
-    storyAlt3: 'Illustration of a family unpacking at their country house',
-    storyAlt4: 'Illustration of a father developing an app at night',
-    storyAlt5: 'Illustration of a father sharing the app with the world',
-    storyAlt6: 'Illustration of a family waving gratefully among floating hearts',
   },
   es: {
     scrabbleScore: 'ScrabBro',
@@ -297,19 +271,6 @@ export const translations: Record<Language, Translations> = {
     day: 'día',
     days: 'días',
     gameRestored: 'Partida restaurada exitosamente',
-    storyTitle: 'La Historia de ScrabBro',
-    storyCaption1: 'Una familia vivía en la ciudad: un papá, una mamá y un hijo de 10 años. Soñaban con campos verdes y días tranquilos.',
-    storyCaption2: 'Así que empacaron su auto y viajaron de la ciudad al campo, persiguiendo la vida que imaginaban.',
-    storyCaption3: 'Convirtieron una acogedora casa de campo en su hogar, rodeados de jardines, árboles y montañas.',
-    storyCaption4: 'Por las noches, el papá trabajaba en su pequeña idea: ScrabBro, una app para llevar los puntajes del Scrabble con amigos y familia.',
-    storyCaption5: 'Desde el porche de su casa en el campo, compartió ScrabBro con el mundo para que todos pudieran disfrutarlo.',
-    storyCaption6: 'Gracias a tus donaciones, puede seguir mejorando ScrabBro. ¡Gracias por apoyar a la comunidad!',
-    storyAlt1: 'Ilustración de una familia en un balcón de la ciudad mirando al campo',
-    storyAlt2: 'Ilustración de una familia viajando de la ciudad al campo en auto',
-    storyAlt3: 'Ilustración de una familia desempacando en su casa de campo',
-    storyAlt4: 'Ilustración de un papá desarrollando una app de noche',
-    storyAlt5: 'Ilustración de un papá compartiendo la app con el mundo',
-    storyAlt6: 'Ilustración de una familia despidiéndose con agradecimiento entre corazones flotantes',
   },
   zh: {
     scrabbleScore: 'ScrabBro',
@@ -391,19 +352,6 @@ export const translations: Record<Language, Translations> = {
     day: '天',
     days: '天',
     gameRestored: '游戏恢复成功',
-    storyTitle: 'ScrabBro 的故事',
-    storyCaption1: '一家人住在城市里：爸爸、妈妈和一个 10 岁的儿子。他们梦想着绿色的田野和宁静的生活。',
-    storyCaption2: '于是他们收拾行李，开车从城市来到乡村，追寻心中的生活。',
-    storyCaption3: '他们把一座温馨的乡村小屋变成了家，周围是花园、树木和群山。',
-    storyCaption4: '夜里，爸爸埋头于自己的小点子：ScrabBro，一款与亲友一起记录拼字游戏分数的应用。',
-    storyCaption5: '在乡村小屋的门廊上，他把 ScrabBro 分享给了全世界，让每个人都能使用。',
-    storyCaption6: '多亏了您的捐助，他才能继续改进 ScrabBro。感谢您对社区的支持！',
-    storyAlt1: '一家人在城市场阳台眺望乡村的插画',
-    storyAlt2: '一家人开车从城市前往乡村的插画',
-    storyAlt3: '一家人在乡村小屋前卸行李的插画',
-    storyAlt4: '爸爸在夜里开发应用的插画',
-    storyAlt5: '爸爸向世界分享应用的插画',
-    storyAlt6: '一家人在飘浮爱心间挥手致谢的插画',
   },
   hi: {
     scrabbleScore: 'ScrabBro',
@@ -485,19 +433,6 @@ export const translations: Record<Language, Translations> = {
     day: 'दिन',
     days: 'दिन',
     gameRestored: 'खेल सफलतापूर्वक पुनर्स्थापित हो गया',
-    storyTitle: 'ScrabBro की कहानी',
-    storyCaption1: 'एक परिवार शहर में रहता था: पिता, माता और 10 साल का बेटा। वे हरे खेतों और शांत दिनों के सपने देखते थे।',
-    storyCaption2: 'इसलिए उन्होंने सामान बाँधा और अपने सपनों की ज़िंदगी की तलाश में शहर से गाँव की ओर चल पड़े।',
-    storyCaption3: 'उन्होंने एक प्यारे देहाती घर को अपना घर बनाया, जो बगीचों, पेड़ों और पहाड़ों से घिरा था।',
-    storyCaption4: 'रातों में, पिता अपने एक छोटे विचार पर काम करते थे: ScrabBro, दोस्तों और परिवार के साथ स्क्रैबल स्कोर रखने के लिए एक ऐप।',
-    storyCaption5: 'देहाती घर की बरामदे से उन्होंने ScrabBro को दुनिया के साथ साझा किया ताकि सब इसका आनंद ले सकें।',
-    storyCaption6: 'आपके दान की बदौलत वे ScrabBro को बेहतर बनाते रह सकते हैं। समुदाय का समर्थन करने के लिए धन्यवाद!',
-    storyAlt1: 'शहर की बालकनी से देहात को देखता एक परिवार - चित्र',
-    storyAlt2: 'शहर से देहात तक गाड़ी चलाता एक परिवार - चित्र',
-    storyAlt3: 'देहाती घर में सामान खोलता एक परिवार - चित्र',
-    storyAlt4: 'रात में ऐप विकसित करते पिता का चित्र',
-    storyAlt5: 'दुनिया के साथ ऐप साझा करते पिता का चित्र',
-    storyAlt6: 'तैरते दिलों के बीच कृतज्ञता से हाथ हिलाता परिवार - चित्र',
   },
   ar: {
     scrabbleScore: 'ScrabBro',
@@ -579,19 +514,6 @@ export const translations: Record<Language, Translations> = {
     day: 'يوم',
     days: 'أيام',
     gameRestored: 'تم استعادة اللعبة بنجاح',
-    storyTitle: 'قصة ScrabBro',
-    storyCaption1: 'عاشت عائلة في المدينة: الأب والأم وابن عمره 10 سنوات. حلموا بالحقول الخضراء والأيام الهادئة.',
-    storyCaption2: 'فحملوا أمتعتهم وسافروا من المدينة إلى الريف باحثين عن الحياة التي تصوروها.',
-    storyCaption3: 'جعلوا من منزل ريفي دافئ بيتهم، محاطين بالحدائق والأشجار والجبال.',
-    storyCaption4: 'في الليل، كان الأب يعمل على فكرته الصغيرة: ScrabBro، تطبيق لتسجيل نقاط سكرابل مع الأصدقاء والعائلة.',
-    storyCaption5: 'من شرفة منزله الريفي، شارك ScrabBro مع العالم ليتمتع به الجميع.',
-    storyCaption6: 'بفضل تبرعاتكم، يستطيع مواصلة تحسين ScrabBro. شكرًا لدعمكم للمجتمع!',
-    storyAlt1: 'رسم توضيحي لعائلة على شرفة في المدينة تنظر إلى الريف',
-    storyAlt2: 'رسم توضيحي لعائلة تسافر بالسيارة من المدينة إلى الريف',
-    storyAlt3: 'رسم توضيحي لعائلة تفك أمتعتها في منزلها الريفي',
-    storyAlt4: 'رسم توضيحي لأب يطور تطبيقًا في الليل',
-    storyAlt5: 'رسم توضيحي لأب يشارك التطبيق مع العالم',
-    storyAlt6: 'رسم توضيحي لعائلة تلوح بامتنان بين قلوب طائرة',
   },
   pt: {
     scrabbleScore: 'ScrabBro',
@@ -673,19 +595,6 @@ export const translations: Record<Language, Translations> = {
     day: 'dia',
     days: 'dias',
     gameRestored: 'Jogo restaurado com sucesso',
-    storyTitle: 'A História do ScrabBro',
-    storyCaption1: 'Uma família vivia na cidade: um pai, uma mãe e um filho de 10 anos. Eles sonhavam com campos verdes e dias tranquilos.',
-    storyCaption2: 'Então arrumaram o carro e viajaram da cidade para o campo, perseguindo a vida que imaginavam.',
-    storyCaption3: 'Fizeram de uma aconchegante casa de campo o seu lar, cercados por jardins, árvores e montanhas.',
-    storyCaption4: 'À noite, o pai trabalhava na sua pequena ideia: ScrabBro, um app para acompanhar as pontuações do Scrabble com amigos e família.',
-    storyCaption5: 'Da varanda da casa no campo, ele compartilhou o ScrabBro com o mundo para que todos pudessem aproveitá-lo.',
-    storyCaption6: 'Graças às suas doações, ele pode continuar melhorando o ScrabBro. Obrigado por apoiar a comunidade!',
-    storyAlt1: 'Ilustração de uma família numa varanda da cidade olhando para o campo',
-    storyAlt2: 'Ilustração de uma família viajando de carro da cidade para o campo',
-    storyAlt3: 'Ilustração de uma família descarregando malas na casa de campo',
-    storyAlt4: 'Ilustração de um pai desenvolvendo um app à noite',
-    storyAlt5: 'Ilustração de um pai compartilhando o app com o mundo',
-    storyAlt6: 'Ilustração de uma família acenando com gratidão entre corações flutuantes',
   },
 };
 
