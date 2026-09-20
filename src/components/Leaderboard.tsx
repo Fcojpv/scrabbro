@@ -30,9 +30,15 @@ interface LeaderboardProps {
 }
 
 // Emojis for different position changes
-const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "🔥", "⭐", "🎯"];
-const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶"];
-const MAINTAIN_EMOJI = "😉";
+const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "🔥", "⭐", "🎯",
+  "🚀", "💪", "😄", "😎", "🤩", "🙌", "👏", "🥇", "🎈", "💥"];
+const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶",
+  "😞", "😟", "😢", "😥", "😓", "🙁", "😩", "😖", "🥴", "👎"];
+const MAINTAIN_EMOJIS = ["😉", "😏", "😌", "🙂", "😇", "🤗", "😺", "🤝", "👍", "✌️"];
+
+// Margen de tiempo aleatorio para la desaparición de cada emoji (ms)
+const EMOJI_MIN_DURATION = 2500;
+const EMOJI_MAX_DURATION = 5500;
 
 // Componente para el indicador de progreso de turnos
 const TurnProgressIndicator = ({
@@ -91,6 +97,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
   const [editedScore, setEditedScore] = useState("");
   const [editedCustomTimer, setEditedCustomTimer] = useState("");
   const celebrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const emojiTimeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const leaderScore = sortedPlayers[0]?.score || 0;
@@ -121,8 +128,9 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
               const randomUpsetEmoji = UPSET_EMOJIS[Math.floor(Math.random() * UPSET_EMOJIS.length)];
               newEmojis.set(id, randomUpsetEmoji);
             } else {
-              // Player maintained position - show wink emoji
-              newEmojis.set(id, MAINTAIN_EMOJI);
+              // Player maintained position - show maintain emoji
+              const randomMaintainEmoji = MAINTAIN_EMOJIS[Math.floor(Math.random() * MAINTAIN_EMOJIS.length)];
+              newEmojis.set(id, randomMaintainEmoji);
             }
           }
         });
@@ -134,13 +142,28 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
           onPositionChange?.();
         }
 
-        if (celebrationTimeoutRef.current) {
-          clearTimeout(celebrationTimeoutRef.current);
-        }
-        celebrationTimeoutRef.current = setTimeout(() => {
-          setCelebratingPlayers(new Set());
-          setPlayerEmojis(new Map());
-        }, 5000);
+        // Cada emoji desaparece en un tiempo aleatorio dentro del margen,
+        // dando dinamismo: no todos se van a la vez.
+        newEmojis.forEach((_, playerId) => {
+          const prevTimeout = emojiTimeoutsRef.current.get(playerId);
+          if (prevTimeout) clearTimeout(prevTimeout);
+          const duration = EMOJI_MIN_DURATION + Math.random() * (EMOJI_MAX_DURATION - EMOJI_MIN_DURATION);
+          const timeout = setTimeout(() => {
+            emojiTimeoutsRef.current.delete(playerId);
+            setPlayerEmojis(prev => {
+              const next = new Map(prev);
+              next.delete(playerId);
+              return next;
+            });
+            setCelebratingPlayers(prev => {
+              if (!prev.has(playerId)) return prev;
+              const next = new Set(prev);
+              next.delete(playerId);
+              return next;
+            });
+          }, duration);
+          emojiTimeoutsRef.current.set(playerId, timeout);
+        });
       }
     }
 
@@ -152,6 +175,15 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
       }
     };
   }, [sortedPlayers.map(p => `${p.id}-${p.score}`).join(',')]);
+
+  // Limpieza de todos los temporizadores de emojis al desmontar
+  useEffect(() => {
+    const timeouts = emojiTimeoutsRef.current;
+    return () => {
+      timeouts.forEach(clearTimeout);
+      timeouts.clear();
+    };
+  }, []);
 
   const getMedalEmoji = (rank: number) => {
     if (rank === 1) return "🥇";
