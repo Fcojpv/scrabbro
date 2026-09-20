@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { PlayerSetup } from "@/components/PlayerSetup";
 import { Leaderboard } from "@/components/Leaderboard";
 import { TurnInput } from "@/components/TurnInput";
@@ -332,7 +332,7 @@ const Index = () => {
   }
 
   return (
-    <div className="h-[100dvh] bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
+    <div className="h-screen supports-[height:100svh]:h-[100svh] bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
       {/* Mobile swipeable view */}
       <div className="md:hidden h-full flex flex-col">
         <SwipeableViews currentView={currentView} onViewChange={setCurrentView}>
