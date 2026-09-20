@@ -10,7 +10,7 @@ import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
 import { ShareButton } from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart, BookOpen } from "lucide-react";
+import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useGameTimer } from "@/hooks/useGameTimer";
@@ -23,7 +23,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SwipeableViews } from "@/components/SwipeableViews";
-import { StoryContent } from "@/components/StoryContent";
 
 interface Player {
   id: number;
@@ -478,15 +477,11 @@ const Index = () => {
             />
           </div>
 
-          {/* Screen 3: Story comic */}
-          <div className="h-full overflow-y-auto p-4 pb-20">
-            <StoryContent />
-          </div>
         </SwipeableViews>
 
         {/* Fixed dot indicators */}
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-          {[0, 1, 2].map((index) => (
+          {[0, 1].map((index) => (
             <button
               key={index}
               onClick={() => setCurrentView(index)}
@@ -499,7 +494,7 @@ const Index = () => {
         </div>
 
         {/* Fixed chevron navigation - Right (not on last screen) */}
-        {currentView < 2 && (
+        {currentView < 1 && (
           <button
             onClick={() => setCurrentView(currentView + 1)}
             className="fixed right-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors md:hidden"
@@ -648,10 +643,6 @@ const Index = () => {
             playersCount={players.length}
           />
 
-          {/* Story comic (desktop) */}
-          <div className="pt-6 border-t border-border">
-            <StoryContent />
-          </div>
         </div>
       </div>
 
