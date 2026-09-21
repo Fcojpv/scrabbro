@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme, ColorTheme } from "@/contexts/ThemeContext";
-import { Language, languageFlags, languageNames } from "@/i18n/translations";
+import { Language, languageNames } from "@/i18n/translations";
 
 const themeColors: Record<ColorTheme, string[]> = {
   classic: ['#8B4F47', '#E8D4C0', '#A8C7D8'],
@@ -57,7 +57,7 @@ export const SettingsMenu = () => {
         <DropdownMenuSeparator />
 
         {/* Color Theme Section */}
-        <div className="p-3 space-y-3">
+        <div className="space-y-2 p-2">
           <div className="text-sm font-medium text-muted-foreground">
             {t.colorTheme}
           </div>
@@ -99,7 +99,7 @@ export const SettingsMenu = () => {
           <div className="text-sm font-medium text-muted-foreground">
             {t.language}
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             {languages.map((lang) => (
               <Button
                 key={lang}
