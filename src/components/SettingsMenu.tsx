@@ -1,4 +1,12 @@
-import { Settings, ChevronDown } from "lucide-react";
+import { Settings } from "lucide-react";
+import {
+  US,
+  ES,
+  CN,
+  IN,
+  SA,
+  BR,
+} from "country-flag-icons/react/3x2";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +23,15 @@ const themeColors: Record<ColorTheme, string[]> = {
   classic: ['#8B4F47', '#E8D4C0', '#A8C7D8'],
   deluxe: ['#2C5F2D', '#FFD700', '#8B0000'],
   vintage: ['#5D4E37', '#D4AF37', '#8B7355'],
+};
+
+const languageFlagIcons: Record<Language, typeof US> = {
+  en: US,
+  es: ES,
+  zh: CN,
+  hi: IN,
+  ar: SA,
+  pt: BR,
 };
 
 export const SettingsMenu = () => {
@@ -84,25 +101,30 @@ export const SettingsMenu = () => {
           </div>
           <div className="space-y-1.5">
             {languages.map((lang) => (
-              <button
+              <Button
                 key={lang}
+                type="button"
+                variant="ghost"
                 onClick={() => setLanguage(lang)}
                 className={`
-                  w-full flex items-center justify-between p-2.5 rounded-lg
+                  h-9 w-full justify-between rounded-md px-2.5 py-1.5
                   transition-all hover:bg-accent/50
                   ${language === lang ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}
                 `}
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{languageFlags[lang]}</span>
-                  <span className="text-sm font-medium">
+                <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                  {(() => {
+                    const FlagIcon = languageFlagIcons[lang];
+                    return <FlagIcon className="h-4 w-6 shrink-0 rounded-[2px]" aria-hidden="true" />;
+                  })()}
+                  <span className="min-w-0 flex-1 text-start text-sm font-medium leading-none">
                     {languageNames[lang]}
                   </span>
                 </div>
                 {language === lang && (
-                  <div className="w-2 h-2 rounded-full bg-primary" />
+                  <div className="h-2 w-2 shrink-0 rounded-full bg-primary" />
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
