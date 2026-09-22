@@ -370,27 +370,33 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                       </div>
                     </div>
 
-                    <div className="text-right flex items-center gap-2">
-                      <div className="min-w-[60px]">
+                    <div className="flex items-center justify-end gap-2 shrink-0">
+                      <div className="flex flex-col items-center justify-center w-[64px] leading-tight">
                         <div className={`font-bold text-primary ${player.score > 999 ? 'text-xl' : 'text-2xl'}`}>
                           {player.score}
                         </div>
                         <div className="text-xs text-muted-foreground">{t.points}</div>
                       </div>
                       {onEditPlayer && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 relative"
-                          onClick={() => handleEditClick(player)}
-                        >
-                          <Pencil className="w-4 h-4" />
-                          {player.customTimerMinutes && player.customTimerMinutes > 0 && (
-                            <Hourglass className="w-3 h-3 absolute -top-1 -right-1 text-primary/30" />
-                          )}
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleEditClick(player)}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <span className="w-3 flex items-center justify-center">
+                            {player.customTimerMinutes && player.customTimerMinutes > 0 && (
+                              <Hourglass className="w-3 h-3 text-primary/40 pointer-events-none" />
+                            )}
+                          </span>
+
+                        </div>
                       )}
                     </div>
+
                   </div>
                 </Card>
               </motion.div>
