@@ -6,22 +6,35 @@ En la tarjeta de cada jugador, el texto "-224 del líder" se corta y salta a una
 
 ## Solución propuesta
 
-1. Forzar que esa línea nunca se parta: el texto se mantiene en una sola línea y, si de verdad no cabe, se recorta con "..." en lugar de bajar a otra línea.
-2. Dar al bloque de nombre e información un ancho flexible real, para que ceda espacio de forma ordenada en vez de empujar el texto hacia abajo.
-3. Reducir levemente el tamaño del texto de la diferencia en pantallas angostas (se mantiene igual en pantallas más anchas), sin tocar el nombre, el puesto, el puntaje, el lápiz ni el reloj de arena.
-4. Aplicar el mismo tratamiento al mensaje de empate, que es el texto más largo en varios idiomas.
+1. Reemplazar la palabra "líder" por "#1" en los seis idiomas. El texto pasa a ser muy corto y cabe siempre en una línea:
+   - Diferencia: "-224 vs #1"
+   - Empate: "Empate con #1"
+   Además queda coherente con el "#3" que ya se muestra a la izquierda de cada jugador.
+2. Forzar que esa línea no se parta nunca (sin puntos suspensivos: con el texto corto ya no hay recorte).
+3. Dar al bloque de nombre e información un ancho flexible real, para que ceda espacio de forma ordenada en vez de empujar el texto hacia abajo.
 
-Las proporciones del resto de los elementos del jugador quedan intactas: la columna de puntaje conserva su ancho fijo y los iconos su posición.
+Las proporciones del resto de los elementos del jugador quedan intactas: el puesto, el nombre, la columna de puntaje con su ancho fijo, el lápiz y el reloj de arena no se mueven.
+
+## Textos por idioma
+
+| Idioma | Diferencia | Empate |
+|---|---|---|
+| Inglés | vs #1 | Tied with #1 |
+| Español | vs #1 | Empate con #1 |
+| Chino | 落后 #1 | 与 #1 并列 |
+| Hindi | #1 से | #1 के बराबर |
+| Árabe | مقابل #1 | تعادل مع #1 |
+| Portugués | vs #1 | Empate com #1 |
 
 ## Detalle técnico
 
-En `src/components/Leaderboard.tsx`, filas 333-371:
-- Contenedor izquierdo: `flex items-center gap-4` pasa a incluir `min-w-0 flex-1`; el bloque de nombre/diferencia recibe `min-w-0`.
-- Línea de diferencia (`difference > 0`): añadir `whitespace-nowrap` al contenedor y `truncate` al `<span>`, con `text-[11px] sm:text-sm`; el icono `TrendingUp` lleva `shrink-0`.
-- Mensaje de empate: mismas clases `truncate whitespace-nowrap text-[11px] sm:text-sm`.
-- El bloque derecho ya es `shrink-0`, así que no cede ni crece.
+- `src/i18n/translations.ts`: actualizar `fromLeader` y `tiedWithLeader` en los seis idiomas con los valores de la tabla.
+- `src/components/Leaderboard.tsx`, filas 333-371:
+  - Contenedor izquierdo: añadir `min-w-0 flex-1`; el bloque de nombre/diferencia recibe `min-w-0`.
+  - Línea de diferencia y mensaje de empate: `whitespace-nowrap`; el icono `TrendingUp` lleva `shrink-0`.
+  - El bloque derecho ya es `shrink-0`, así que no cede ni crece.
 
 ## Verificación
 
 - Compilación sin errores.
-- Revisión visual en móvil (394 px) con puntajes de 3-4 dígitos y nombres largos, en español, portugués, hindi y chino, confirmando una sola línea en todos los casos.
+- Revisión visual en móvil (394 px) con puntajes de 3-4 dígitos y nombres largos, en los seis idiomas, confirmando una sola línea en todos los casos.
