@@ -330,9 +330,9 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 min-w-[50px]">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-4 min-w-0 flex-1">
+                      <div className="flex items-center gap-2 min-w-[50px] shrink-0">
                         <span className="text-xl font-bold text-foreground">
                           #{rank}
                         </span>
@@ -341,7 +341,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                         )}
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex items-center gap-2 font-semibold text-foreground">
                           <span className="truncate max-w-[100px] sm:max-w-[140px]">{player.name}</span>
                           {(showSurpriseEmojis || playerEmoji) && (
@@ -357,18 +357,19 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                           )}
                         </div>
                         {difference > 0 && (
-                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <TrendingUp className="w-3 h-3" />
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
+                            <TrendingUp className="w-3 h-3 shrink-0" />
                             <span>-{difference} {t.fromLeader}</span>
                           </div>
                         )}
                         {difference === 0 && displayIndex > 0 && (
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-sm text-muted-foreground whitespace-nowrap">
                             {t.tiedWithLeader}
                           </div>
                         )}
                       </div>
                     </div>
+
 
                     <div className="flex items-center justify-end gap-2 shrink-0">
                       <div className="flex flex-col items-center justify-center w-[64px] leading-tight">
