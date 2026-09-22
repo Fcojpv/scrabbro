@@ -387,9 +387,12 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                           >
                             <Pencil className="w-4 h-4" />
                           </Button>
-                          {player.customTimerMinutes && player.customTimerMinutes > 0 && (
-                            <Hourglass className="w-3 h-3 text-primary/40 pointer-events-none" />
-                          )}
+                          <span className="w-3 flex items-center justify-center">
+                            {player.customTimerMinutes && player.customTimerMinutes > 0 && (
+                              <Hourglass className="w-3 h-3 text-primary/40 pointer-events-none" />
+                            )}
+                          </span>
+
                         </div>
                       )}
                     </div>
