@@ -3,7 +3,7 @@ import { Share2, Camera, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
-import html2canvas from "html2canvas";
+import { toBlob } from "html-to-image";
 import {
   Dialog,
   DialogContent,
@@ -75,23 +75,21 @@ ${t.playHere} ${window.location.origin}
     try {
       setIsCapturing(true);
 
-      // Capture with better quality for mobile
-      const canvas = await html2canvas(element, {
-        scale: 2, // Higher quality
-        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--background').trim() || '#ffffff',
-        logging: false,
-        useCORS: true,
-      });
-
-      // Convert to blob
-      return new Promise((resolve) => {
-        canvas.toBlob((blob) => {
-          resolve(blob);
-        }, 'image/png', 1.0);
-      });
+      const bgVar = getComputedStyle(document.documentElement).getPropertyValue("--background").trim();
+      const backgroundColor = bgVar ? `hsl(${bgVar})` : "#ffffff";
+      const opts = {
+        pixelRatio: 2,
+        backgroundColor,
+        cacheBust: true,
+        style: { margin: "0" },
+        filter: (node: HTMLElement) => !(node instanceof HTMLElement && node.hasAttribute?.("data-capture-ignore")),
+      };
+      // First pass warms up fonts/images (Safari), second is the real one
+      await toBlob(element, opts).catch(() => null);
+      return await toBlob(element, opts);
     } catch (error) {
       console.error("Error capturing leaderboard:", error);
-      toast.error("Error al capturar la imagen");
+      toast.error(t.imageCaptureError);
       return null;
     } finally {
       setIsCapturing(false);
@@ -103,7 +101,7 @@ ${t.playHere} ${window.location.origin}
 
     const imageBlob = await captureLeaderboard();
     if (!imageBlob) {
-      toast.error("No se pudo capturar la imagen");
+      toast.error(t.imageCaptureError);
       return;
     }
 
@@ -123,12 +121,13 @@ ${t.playHere} ${window.location.origin}
           console.error("Error sharing image:", error);
           // Fallback: download the image
           downloadImage(imageBlob);
+          toast.success(t.imageDownloaded);
         }
       }
     } else {
       // Fallback for browsers that don't support file sharing
       downloadImage(imageBlob);
-      toast.success("Imagen descargada. Puedes compartirla desde tu galería.");
+      toast.success(t.imageDownloaded);
     }
   };
 
@@ -197,9 +196,9 @@ ${t.playHere} ${window.location.origin}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-center">Compartir Resultados</DialogTitle>
+            <DialogTitle className="text-center">{t.shareDialogTitle}</DialogTitle>
             <DialogDescription className="text-center">
-              Elige cómo quieres compartir tus resultados
+              {t.shareDialogDesc}
             </DialogDescription>
           </DialogHeader>
 
@@ -213,8 +212,8 @@ ${t.playHere} ${window.location.origin}
               >
                 <Camera className="w-6 h-6" />
                 <div className="text-center">
-                  <div className="font-semibold">Compartir como Imagen</div>
-                  <div className="text-xs opacity-80">Captura bonita del leaderboard</div>
+                  <div className="font-semibold">{t.shareAsImage}</div>
+                  <div className="text-xs opacity-80">{t.shareAsImageDesc}</div>
                 </div>
               </Button>
             )}
@@ -226,8 +225,8 @@ ${t.playHere} ${window.location.origin}
             >
               <MessageSquare className="w-6 h-6" />
               <div className="text-center">
-                <div className="font-semibold">Compartir como Texto</div>
-                <div className="text-xs opacity-80">Ranking en formato texto</div>
+                <div className="font-semibold">{t.shareAsText}</div>
+                <div className="text-xs opacity-80">{t.shareAsTextDesc}</div>
               </div>
             </Button>
           </div>

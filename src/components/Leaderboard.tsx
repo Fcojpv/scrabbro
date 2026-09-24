@@ -384,6 +384,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
+                            data-capture-ignore
                             onClick={() => handleEditClick(player)}
                           >
                             <Pencil className="w-4 h-4" />
