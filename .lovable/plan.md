@@ -1,30 +1,38 @@
-# Cierre seguro desde Configuración
+# Cierre seguro y sin ambigüedad
 
-## Resultado
-- Añadir una **X** en el extremo derecho del encabezado “Configuración”, alineada con el título y con el mismo estilo visual de los iconos actuales.
-- Al tocarla durante una partida, mostrar una advertencia breve indicando que la partida se guardará antes de salir.
-- Ofrecer dos acciones claras: **Cancelar** y **Guardar y cerrar**.
-- Traducir el título, la explicación, los botones y los avisos a inglés, español, chino, hindi, árabe y portugués.
+## Decisión de experiencia
+No usar una **X** para cerrar la aplicación. En el encabezado de Configuración, una X significa convencionalmente “cerrar este menú” y podría provocar un cierre accidental.
 
-## Comportamiento
-- **Android instalado:** guardar inmediatamente el estado más reciente y cerrar la aplicación después de confirmar.
-- **Vista web o preview:** guardar inmediatamente y mostrar un aviso indicando que la partida quedó guardada y que el usuario puede cerrar la pestaña o aplicación. Los navegadores no permiten que una página cierre por sí sola una pestaña que el usuario abrió.
-- **Sin partida activa:** permitir cerrar sin mostrar información innecesaria sobre una partida.
-- Si el guardado falla, no cerrar y mostrar un mensaje de error para evitar pérdida de datos.
+En su lugar:
+- Mantener el encabezado “Configuración” limpio.
+- Añadir al final del menú una fila independiente con icono de encendido y el texto **“Guardar y cerrar aplicación”**.
+- Separarla de Idioma mediante una línea divisoria.
+- Usar el color normal del menú; reservar el color de advertencia para la ventana de confirmación, evitando que parezca una acción peligrosa permanente.
+- Mantener un área táctil amplia, alineación consistente y diseño compacto.
 
-## Ajustes de seguridad y experiencia
-- Incorporar una función de guardado inmediato, separada del guardado automático actual de 500 ms, para que el último puntaje o turno no se pierda al cerrar rápidamente.
-- Mantener el guardado automático existente durante el juego.
-- Detener radio y temporizadores antes del cierre confirmado.
-- Evitar que la X cierre solamente el menú por accidente: será un comando explícito con nombre accesible y área táctil adecuada.
-- Conservar el tamaño compacto del menú y comprobar la alineación en pantalla móvil y en dirección derecha-a-izquierda para árabe.
+## Flujo al pulsarla
+1. Abrir una confirmación con el título **“¿Guardar y cerrar?”**.
+2. Explicar: **“Tu partida actual se guardará y podrás continuarla cuando vuelvas.”**
+3. Mostrar **Cancelar** como acción secundaria y **Guardar y cerrar** como acción principal.
+4. Guardar inmediatamente el estado más reciente antes de intentar cerrar.
+5. Si el guardado falla, mantener la aplicación abierta y mostrar un aviso.
+
+## Comportamiento por entorno
+- **Aplicación Android:** detener radio y temporizadores, guardar y cerrar tras confirmar.
+- **Web y vista previa:** guardar y mostrar “Partida guardada. Ya puedes cerrar esta ventana”; no intentar un cierre bloqueado por el navegador.
+- **Sin partida activa:** mostrar **“Cerrar aplicación”** y omitir la referencia al guardado.
+
+## Idiomas y accesibilidad
+- Traducir la opción, confirmación y avisos a inglés, español, chino, hindi, árabe y portugués.
+- Añadir nombre accesible al icono, foco visible y soporte correcto para árabe de derecha a izquierda.
+- Respetar las dimensiones y tipografía actuales del menú.
 
 ## Preparación Android
-- Configurar Capacitor con el identificador `app.lovable.e20652a9c0c345adb08d3f07dbccc65c` y nombre `scrabbro`.
-- Añadir la capacidad nativa necesaria para cerrar la aplicación en Android.
-- Mantener una alternativa segura para web, donde el cierre programático está restringido.
+- Configurar Capacitor con identificador `app.lovable.e20652a9c0c345adb08d3f07dbccc65c` y nombre `scrabbro`.
+- Incorporar la capacidad nativa de cierre solo para Android.
+- Conservar el comportamiento seguro alternativo en navegador.
 
 ## Verificación
-- Comprobar la advertencia, Cancelar, guardado y cierre/fallback web.
-- Confirmar que una partida cerrada se ofrece para restaurar al abrir nuevamente.
-- Revisar visualmente el encabezado de Configuración en móvil, incluidos los seis idiomas.
+- Comprobar Cancelar, guardado inmediato, error de guardado y cierre/fallback web.
+- Confirmar que la partida guardada aparece para restaurarse al volver.
+- Revisar el menú y la confirmación en móvil, en los seis idiomas y en dirección derecha-a-izquierda.
