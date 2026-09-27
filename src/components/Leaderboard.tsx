@@ -30,9 +30,15 @@ interface LeaderboardProps {
 }
 
 // Emojis for different position changes
-const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "🔥", "⭐", "🎯"];
-const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶"];
-const MAINTAIN_EMOJI = "😉";
+const HAPPY_EMOJIS = ["🎉", "🥳", "🌟", "✨", "🎊", "🏆", "💫", "🔥", "⭐", "🎯",
+  "🚀", "💪", "😄", "😎", "🤩", "🙌", "👏", "🥇", "🎈", "💥"];
+const UPSET_EMOJIS = ["😮", "😯", "😲", "🤔", "😕", "😬", "😐", "😑", "🫤", "😶",
+  "😞", "😟", "😢", "😥", "😓", "🙁", "😩", "😖", "🥴", "👎"];
+const MAINTAIN_EMOJIS = ["😉", "😏", "😌", "🙂", "😇", "🤗", "😺", "🤝", "👍", "✌️"];
+
+// Margen de tiempo aleatorio para la desaparición de cada emoji (ms)
+const EMOJI_MIN_DURATION = 2500;
+const EMOJI_MAX_DURATION = 5500;
 
 // Componente para el indicador de progreso de turnos
 const TurnProgressIndicator = ({
@@ -90,6 +96,8 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
   const [editedName, setEditedName] = useState("");
   const [editedScore, setEditedScore] = useState("");
   const [editedCustomTimer, setEditedCustomTimer] = useState("");
+  const celebrationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const emojiTimeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const leaderScore = sortedPlayers[0]?.score || 0;
@@ -120,8 +128,9 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
               const randomUpsetEmoji = UPSET_EMOJIS[Math.floor(Math.random() * UPSET_EMOJIS.length)];
               newEmojis.set(id, randomUpsetEmoji);
             } else {
-              // Player maintained position - show wink emoji
-              newEmojis.set(id, MAINTAIN_EMOJI);
+              // Player maintained position - show maintain emoji
+              const randomMaintainEmoji = MAINTAIN_EMOJIS[Math.floor(Math.random() * MAINTAIN_EMOJIS.length)];
+              newEmojis.set(id, randomMaintainEmoji);
             }
           }
         });
@@ -133,15 +142,48 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
           onPositionChange?.();
         }
 
-        setTimeout(() => {
-          setCelebratingPlayers(new Set());
-          setPlayerEmojis(new Map());
-        }, 5000);
+        // Cada emoji desaparece en un tiempo aleatorio dentro del margen,
+        // dando dinamismo: no todos se van a la vez.
+        newEmojis.forEach((_, playerId) => {
+          const prevTimeout = emojiTimeoutsRef.current.get(playerId);
+          if (prevTimeout) clearTimeout(prevTimeout);
+          const duration = EMOJI_MIN_DURATION + Math.random() * (EMOJI_MAX_DURATION - EMOJI_MIN_DURATION);
+          const timeout = setTimeout(() => {
+            emojiTimeoutsRef.current.delete(playerId);
+            setPlayerEmojis(prev => {
+              const next = new Map(prev);
+              next.delete(playerId);
+              return next;
+            });
+            setCelebratingPlayers(prev => {
+              if (!prev.has(playerId)) return prev;
+              const next = new Set(prev);
+              next.delete(playerId);
+              return next;
+            });
+          }, duration);
+          emojiTimeoutsRef.current.set(playerId, timeout);
+        });
       }
     }
 
     setPreviousRankings(currentRankings);
+
+    return () => {
+      if (celebrationTimeoutRef.current) {
+        clearTimeout(celebrationTimeoutRef.current);
+      }
+    };
   }, [sortedPlayers.map(p => `${p.id}-${p.score}`).join(',')]);
+
+  // Limpieza de todos los temporizadores de emojis al desmontar
+  useEffect(() => {
+    const timeouts = emojiTimeoutsRef.current;
+    return () => {
+      timeouts.forEach(clearTimeout);
+      timeouts.clear();
+    };
+  }, []);
 
   const getMedalEmoji = (rank: number) => {
     if (rank === 1) return "🥇";
@@ -288,9 +330,9 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 min-w-[50px]">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-4 min-w-0 flex-1">
+                      <div className="flex items-center gap-2 min-w-[50px] shrink-0">
                         <span className="text-xl font-bold text-foreground">
                           #{rank}
                         </span>
@@ -299,7 +341,7 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                         )}
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex items-center gap-2 font-semibold text-foreground">
                           <span className="truncate max-w-[100px] sm:max-w-[140px]">{player.name}</span>
                           {(showSurpriseEmojis || playerEmoji) && (
@@ -315,40 +357,48 @@ export const Leaderboard = ({ players, onPositionChange, roundNumber, onEditPlay
                           )}
                         </div>
                         {difference > 0 && (
-                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <TrendingUp className="w-3 h-3" />
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
+                            <TrendingUp className="w-3 h-3 shrink-0" />
                             <span>-{difference} {t.fromLeader}</span>
                           </div>
                         )}
                         {difference === 0 && displayIndex > 0 && (
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-sm text-muted-foreground whitespace-nowrap">
                             {t.tiedWithLeader}
                           </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="text-right flex items-center gap-2">
-                      <div className="min-w-[60px]">
+
+                    <div className="flex items-center justify-end gap-2 shrink-0">
+                      <div className="flex flex-col items-center justify-center w-[64px] leading-tight">
                         <div className={`font-bold text-primary ${player.score > 999 ? 'text-xl' : 'text-2xl'}`}>
                           {player.score}
                         </div>
                         <div className="text-xs text-muted-foreground">{t.points}</div>
                       </div>
                       {onEditPlayer && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 relative"
-                          onClick={() => handleEditClick(player)}
-                        >
-                          <Pencil className="w-4 h-4" />
-                          {player.customTimerMinutes && player.customTimerMinutes > 0 && (
-                            <Hourglass className="w-3 h-3 absolute -top-1 -right-1 text-primary/30" />
-                          )}
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            data-capture-ignore
+                            onClick={() => handleEditClick(player)}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <span className="w-3 flex items-center justify-center">
+                            {player.customTimerMinutes && player.customTimerMinutes > 0 && (
+                              <Hourglass className="w-3 h-3 text-primary/40 pointer-events-none" />
+                            )}
+                          </span>
+
+                        </div>
                       )}
                     </div>
+
                   </div>
                 </Card>
               </motion.div>

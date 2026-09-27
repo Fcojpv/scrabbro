@@ -74,6 +74,14 @@ export interface Translations {
   // Share
   shareResults: string;
   copiedToClipboard: string;
+  shareDialogTitle: string;
+  shareDialogDesc: string;
+  shareAsImage: string;
+  shareAsImageDesc: string;
+  shareAsText: string;
+  shareAsTextDesc: string;
+  imageDownloaded: string;
+  imageCaptureError: string;
   shareNotSupported: string;
   results: string;
   roundsPlayed: string;
@@ -105,6 +113,8 @@ export interface Translations {
   day: string;
   days: string;
   gameRestored: string;
+
+  // Story comic view
 }
 
 export const translations: Record<Language, Translations> = {
@@ -120,8 +130,8 @@ export const translations: Record<Language, Translations> = {
     leaderboard: 'Leaderboard',
     round: 'Round',
     points: 'points',
-    fromLeader: 'from leader',
-    tiedWithLeader: 'Tied with leader',
+    fromLeader: 'vs #1',
+    tiedWithLeader: 'Tied with #1',
     editScore: 'Edit score',
     editPlayer: 'Edit Player',
     playerName: 'Player Name',
@@ -159,6 +169,14 @@ export const translations: Record<Language, Translations> = {
     comingSoon: 'Coming soon',
     shareResults: 'Share results',
     copiedToClipboard: 'Copied to clipboard!',
+    shareDialogTitle: 'Share results',
+    shareDialogDesc: 'Choose how to share your results',
+    shareAsImage: 'Share as image',
+    shareAsImageDesc: 'Leaderboard picture',
+    shareAsText: 'Share as text',
+    shareAsTextDesc: 'Ranking in text format',
+    imageDownloaded: 'Image downloaded. Share it from your gallery.',
+    imageCaptureError: 'Could not create the image',
     shareNotSupported: 'Copy text to share',
     results: 'Results',
     roundsPlayed: 'rounds played',
@@ -201,8 +219,8 @@ export const translations: Record<Language, Translations> = {
     leaderboard: 'Tabla de Posiciones',
     round: 'Ronda',
     points: 'puntos',
-    fromLeader: 'del líder',
-    tiedWithLeader: 'Empate con líder',
+    fromLeader: 'vs #1',
+    tiedWithLeader: 'Empate con #1',
     editScore: 'Editar puntaje',
     editPlayer: 'Editar Jugador',
     playerName: 'Nombre del Jugador',
@@ -240,6 +258,14 @@ export const translations: Record<Language, Translations> = {
     comingSoon: 'Próxima funcionalidad',
     shareResults: 'Compartir resultados',
     copiedToClipboard: '¡Copiado al portapapeles!',
+    shareDialogTitle: 'Compartir resultados',
+    shareDialogDesc: 'Elige cómo compartir tus resultados',
+    shareAsImage: 'Compartir como imagen',
+    shareAsImageDesc: 'Imagen del ranking',
+    shareAsText: 'Compartir como texto',
+    shareAsTextDesc: 'Ranking en formato texto',
+    imageDownloaded: 'Imagen descargada. Compártela desde tu galería.',
+    imageCaptureError: 'No se pudo crear la imagen',
     shareNotSupported: 'Copia el texto para compartir',
     results: 'Resultados',
     roundsPlayed: 'rondas jugadas',
@@ -282,8 +308,8 @@ export const translations: Record<Language, Translations> = {
     leaderboard: '排行榜',
     round: '轮',
     points: '分',
-    fromLeader: '落后领先者',
-    tiedWithLeader: '与领先者并列',
+    fromLeader: '落后 #1',
+    tiedWithLeader: '与 #1 并列',
     editScore: '编辑分数',
     editPlayer: '编辑玩家',
     playerName: '玩家名字',
@@ -321,6 +347,14 @@ export const translations: Record<Language, Translations> = {
     comingSoon: '即将推出',
     shareResults: '分享结果',
     copiedToClipboard: '已复制到剪贴板！',
+    shareDialogTitle: '分享结果',
+    shareDialogDesc: '选择分享方式',
+    shareAsImage: '以图片分享',
+    shareAsImageDesc: '排行榜图片',
+    shareAsText: '以文字分享',
+    shareAsTextDesc: '文字格式排名',
+    imageDownloaded: '图片已下载，可从相册分享。',
+    imageCaptureError: '无法生成图片',
     shareNotSupported: '复制文本以分享',
     results: '结果',
     roundsPlayed: '已玩轮数',
@@ -363,8 +397,8 @@ export const translations: Record<Language, Translations> = {
     leaderboard: 'लीडरबोर्ड',
     round: 'राउंड',
     points: 'अंक',
-    fromLeader: 'लीडर से',
-    tiedWithLeader: 'लीडर के साथ बराबरी',
+    fromLeader: '#1 से',
+    tiedWithLeader: '#1 के बराबर',
     editScore: 'स्कोर संपादित करें',
     editPlayer: 'खिलाड़ी संपादित करें',
     playerName: 'खिलाड़ी का नाम',
@@ -402,6 +436,14 @@ export const translations: Record<Language, Translations> = {
     comingSoon: 'जल्द आ रहा है',
     shareResults: 'परिणाम साझा करें',
     copiedToClipboard: 'क्लिपबोर्ड में कॉपी किया गया!',
+    shareDialogTitle: 'परिणाम साझा करें',
+    shareDialogDesc: 'साझा करने का तरीका चुनें',
+    shareAsImage: 'छवि के रूप में साझा करें',
+    shareAsImageDesc: 'लीडरबोर्ड की छवि',
+    shareAsText: 'टेक्स्ट के रूप में साझा करें',
+    shareAsTextDesc: 'टेक्स्ट में रैंकिंग',
+    imageDownloaded: 'छवि डाउनलोड हुई। गैलरी से साझा करें।',
+    imageCaptureError: 'छवि नहीं बन सकी',
     shareNotSupported: 'साझा करने के लिए टेक्स्ट कॉपी करें',
     results: 'परिणाम',
     roundsPlayed: 'राउंड खेले गए',
@@ -444,8 +486,8 @@ export const translations: Record<Language, Translations> = {
     leaderboard: 'لوحة المتصدرين',
     round: 'جولة',
     points: 'نقاط',
-    fromLeader: 'من المتصدر',
-    tiedWithLeader: 'تعادل مع المتصدر',
+    fromLeader: 'مقابل #1',
+    tiedWithLeader: 'تعادل مع #1',
     editScore: 'تحرير النتيجة',
     editPlayer: 'تحرير اللاعب',
     playerName: 'اسم اللاعب',
@@ -483,6 +525,14 @@ export const translations: Record<Language, Translations> = {
     comingSoon: 'قريباً',
     shareResults: 'مشاركة النتائج',
     copiedToClipboard: 'تم النسخ إلى الحافظة!',
+    shareDialogTitle: 'مشاركة النتائج',
+    shareDialogDesc: 'اختر طريقة المشاركة',
+    shareAsImage: 'مشاركة كصورة',
+    shareAsImageDesc: 'صورة الترتيب',
+    shareAsText: 'مشاركة كنص',
+    shareAsTextDesc: 'الترتيب بصيغة نصية',
+    imageDownloaded: 'تم تنزيل الصورة. شاركها من المعرض.',
+    imageCaptureError: 'تعذر إنشاء الصورة',
     shareNotSupported: 'انسخ النص للمشاركة',
     results: 'النتائج',
     roundsPlayed: 'جولات لعبت',
@@ -525,8 +575,8 @@ export const translations: Record<Language, Translations> = {
     leaderboard: 'Classificação',
     round: 'Rodada',
     points: 'pontos',
-    fromLeader: 'do líder',
-    tiedWithLeader: 'Empatado com o líder',
+    fromLeader: 'vs #1',
+    tiedWithLeader: 'Empate com #1',
     editScore: 'Editar pontuação',
     editPlayer: 'Editar Jogador',
     playerName: 'Nome do Jogador',
@@ -564,6 +614,14 @@ export const translations: Record<Language, Translations> = {
     comingSoon: 'Em breve',
     shareResults: 'Compartilhar resultados',
     copiedToClipboard: 'Copiado para a área de transferência!',
+    shareDialogTitle: 'Compartilhar resultados',
+    shareDialogDesc: 'Escolha como compartilhar',
+    shareAsImage: 'Compartilhar como imagem',
+    shareAsImageDesc: 'Imagem do ranking',
+    shareAsText: 'Compartilhar como texto',
+    shareAsTextDesc: 'Ranking em texto',
+    imageDownloaded: 'Imagem baixada. Compartilhe pela galeria.',
+    imageCaptureError: 'Não foi possível criar a imagem',
     shareNotSupported: 'Copie o texto para compartilhar',
     results: 'Resultados',
     roundsPlayed: 'rodadas jogadas',

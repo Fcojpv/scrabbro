@@ -32,7 +32,7 @@ interface StoredGameData {
 }
 
 export const useGamePersistence = () => {
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const saveGameState = (state: GameState) => {
     // Only save if game is actually started
