@@ -18,6 +18,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme, ColorTheme } from "@/contexts/ThemeContext";
 import { Language, languageNames } from "@/i18n/translations";
+import { useState } from "react";
 
 const themeColors: Record<ColorTheme, string[]> = {
   classic: ['#8B4F47', '#E8D4C0', '#A8C7D8'],
@@ -42,11 +43,12 @@ interface SettingsMenuProps {
 export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: SettingsMenuProps) => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
 
   const languages: Language[] = ['en', 'es', 'zh', 'hi', 'ar', 'pt'];
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
           <Settings className="w-5 h-5" />
@@ -138,7 +140,10 @@ export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: Settings
           <Button
             type="button"
             variant="ghost"
-            onClick={onRequestClose}
+            onClick={() => {
+              setOpen(false);
+              window.setTimeout(onRequestClose, 0);
+            }}
             className="h-10 w-full justify-start gap-2.5 px-2.5 text-sm font-medium"
           >
             <Power className="h-4 w-4 shrink-0" aria-hidden="true" />
