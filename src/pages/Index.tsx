@@ -323,7 +323,7 @@ const Index = () => {
       console.error("Error closing native app:", error);
     }
 
-    toast.success(t.gameSavedCloseWindow, { duration: 5000 });
+    toast.success(gameStarted ? t.gameSavedCloseWindow : t.closeWindow, { duration: 5000 });
   };
 
   const handleApplyPenalties = (penalties: Record<number, number>) => {
