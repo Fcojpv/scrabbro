@@ -36,9 +36,10 @@ const languageFlagIcons: Record<Language, typeof US> = {
 
 interface SettingsMenuProps {
   onRequestClose: () => void;
+  hasActiveGame?: boolean;
 }
 
-export const SettingsMenu = ({ onRequestClose }: SettingsMenuProps) => {
+export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: SettingsMenuProps) => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
 
@@ -141,7 +142,7 @@ export const SettingsMenu = ({ onRequestClose }: SettingsMenuProps) => {
             className="h-10 w-full justify-start gap-2.5 px-2.5 text-sm font-medium"
           >
             <Power className="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span className="text-start">{t.saveAndClose}</span>
+            <span className="text-start">{hasActiveGame ? t.saveAndClose : t.closeApp}</span>
           </Button>
         </div>
       </DropdownMenuContent>

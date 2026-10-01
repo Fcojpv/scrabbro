@@ -346,13 +346,19 @@ const Index = () => {
   if (!gameStarted && players.length === 0) {
     return (
       <>
-        <PlayerSetup onStart={handleStartGame} />
+        <PlayerSetup onStart={handleStartGame} onRequestClose={() => setShowCloseAppDialog(true)} />
         <RestoreGameDialog
           open={showRestoreDialog}
           onOpenChange={setShowRestoreDialog}
           gameInfo={savedGameInfo}
           onRestore={handleRestoreGame}
           onNewGame={handleNewGame}
+        />
+        <CloseAppDialog
+          open={showCloseAppDialog}
+          onOpenChange={setShowCloseAppDialog}
+          onConfirm={handleCloseApp}
+          hasActiveGame={false}
         />
       </>
     );
@@ -476,7 +482,7 @@ const Index = () => {
                     <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
                   </div>
                   <div className="flex-shrink-0">
-                    <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} />
+                    <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
                   </div>
                 </div>
               </div>
@@ -654,7 +660,7 @@ const Index = () => {
                 <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
               </div>
               <div className="flex-shrink-0">
-                <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} />
+                <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
               </div>
             </div>
           </div>
@@ -695,6 +701,7 @@ const Index = () => {
         open={showCloseAppDialog}
         onOpenChange={setShowCloseAppDialog}
         onConfirm={handleCloseApp}
+        hasActiveGame={gameStarted}
       />
 
       <KofiDialog
