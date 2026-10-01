@@ -64,17 +64,17 @@ export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: Settings
         <DropdownMenuSeparator />
 
         {/* Color Theme Section */}
-        <div className="space-y-2 p-2">
+        <div className="space-y-1.5 p-2">
           <div className="text-sm font-medium text-muted-foreground">
             {t.colorTheme}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {(['classic', 'deluxe', 'vintage'] as ColorTheme[]).map((themeOption) => (
               <button
                 key={themeOption}
                 onClick={() => setTheme(themeOption)}
                 className={`
-                  w-full flex items-center justify-between p-3 rounded-lg border-2 
+                  h-10 w-full flex items-center justify-between px-3 rounded-lg border-2 
                   transition-all hover:scale-[1.02]
                   ${theme === themeOption
                     ? 'bg-primary/10 border-primary shadow-sm'
@@ -102,11 +102,11 @@ export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: Settings
         <DropdownMenuSeparator />
 
         {/* Language Section */}
-        <div className="p-3 space-y-3">
+        <div className="p-2 space-y-1.5">
           <div className="text-sm font-medium text-muted-foreground">
             {t.language}
           </div>
-          <div className="space-y-1">
+          <div>
             {languages.map((lang) => (
               <Button
                 key={lang}
@@ -114,7 +114,7 @@ export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: Settings
                 variant="ghost"
                 onClick={() => setLanguage(lang)}
                 className={`
-                  h-9 w-full justify-between rounded-md px-2.5 py-1.5
+                  h-8 w-full justify-between rounded-md px-2.5 py-1
                   transition-all hover:bg-accent/50
                   ${language === lang ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}
                 `}
