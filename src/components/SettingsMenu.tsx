@@ -1,4 +1,4 @@
-import { Settings } from "lucide-react";
+import { Power, Settings } from "lucide-react";
 import {
   US,
   ES,
@@ -34,7 +34,11 @@ const languageFlagIcons: Record<Language, typeof US> = {
   pt: BR,
 };
 
-export const SettingsMenu = () => {
+interface SettingsMenuProps {
+  onRequestClose: () => void;
+}
+
+export const SettingsMenu = ({ onRequestClose }: SettingsMenuProps) => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
 
@@ -127,6 +131,18 @@ export const SettingsMenu = () => {
               </Button>
             ))}
           </div>
+        </div>
+        <DropdownMenuSeparator />
+        <div className="p-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onRequestClose}
+            className="h-10 w-full justify-start gap-2.5 px-2.5 text-sm font-medium"
+          >
+            <Power className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="text-start">{t.saveAndClose}</span>
+          </Button>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
