@@ -54,6 +54,15 @@ export interface Translations {
   classic: string;
   deluxe: string;
   vintage: string;
+  saveAndClose: string;
+  saveAndCloseTitle: string;
+  saveAndCloseDescription: string;
+  gameSavedCloseWindow: string;
+  gameSaveError: string;
+  closeApp: string;
+  closeAppTitle: string;
+  closeAppDescription: string;
+  closeWindow: string;
   
   // Ko-fi
   supportProject: string;
@@ -159,6 +168,15 @@ export const translations: Record<Language, Translations> = {
     classic: 'Classic',
     deluxe: 'Deluxe',
     vintage: 'Vintage',
+    saveAndClose: 'Save and close app',
+    saveAndCloseTitle: 'Save and close?',
+    saveAndCloseDescription: 'Your current game will be saved so you can continue when you return.',
+    gameSavedCloseWindow: 'Game saved. You can now close this window.',
+    gameSaveError: 'The game could not be saved. The app will remain open.',
+    closeApp: 'Close app',
+    closeAppTitle: 'Close app?',
+    closeAppDescription: 'The application will close.',
+    closeWindow: 'You can now close this window.',
     supportProject: 'Support the Project',
     supportDescription: 'Help us keep improving Scrabble Score. Your support means a lot!',
     radioStopped: 'Radio stopped',
@@ -248,6 +266,15 @@ export const translations: Record<Language, Translations> = {
     classic: 'Clásico',
     deluxe: 'Deluxe',
     vintage: 'Vintage',
+    saveAndClose: 'Guardar y cerrar aplicación',
+    saveAndCloseTitle: '¿Guardar y cerrar?',
+    saveAndCloseDescription: 'Tu partida actual se guardará y podrás continuarla cuando vuelvas.',
+    gameSavedCloseWindow: 'Partida guardada. Ya puedes cerrar esta ventana.',
+    gameSaveError: 'No se pudo guardar la partida. La aplicación permanecerá abierta.',
+    closeApp: 'Cerrar aplicación',
+    closeAppTitle: '¿Cerrar aplicación?',
+    closeAppDescription: 'La aplicación se cerrará.',
+    closeWindow: 'Ya puedes cerrar esta ventana.',
     supportProject: 'Apoyar el Proyecto',
     supportDescription: '¡Ayúdanos a seguir mejorando Scrabble Score. Tu apoyo significa mucho!',
     radioStopped: 'Radio detenida',
@@ -337,6 +364,15 @@ export const translations: Record<Language, Translations> = {
     classic: '经典',
     deluxe: '豪华',
     vintage: '复古',
+    saveAndClose: '保存并关闭应用',
+    saveAndCloseTitle: '保存并关闭？',
+    saveAndCloseDescription: '当前游戏将被保存，您回来后可以继续。',
+    gameSavedCloseWindow: '游戏已保存。您现在可以关闭此窗口。',
+    gameSaveError: '无法保存游戏。应用将保持打开。',
+    closeApp: '关闭应用',
+    closeAppTitle: '关闭应用？',
+    closeAppDescription: '应用将关闭。',
+    closeWindow: '您现在可以关闭此窗口。',
     supportProject: '支持项目',
     supportDescription: '帮助我们继续改进 Scrabble Score。您的支持意义重大！',
     radioStopped: '电台已停止',
@@ -426,6 +462,15 @@ export const translations: Record<Language, Translations> = {
     classic: 'क्लासिक',
     deluxe: 'डीलक्स',
     vintage: 'विंटेज',
+    saveAndClose: 'सहेजें और ऐप बंद करें',
+    saveAndCloseTitle: 'सहेजें और बंद करें?',
+    saveAndCloseDescription: 'आपका वर्तमान खेल सहेजा जाएगा ताकि लौटने पर आप इसे जारी रख सकें।',
+    gameSavedCloseWindow: 'खेल सहेजा गया। अब आप यह विंडो बंद कर सकते हैं।',
+    gameSaveError: 'खेल सहेजा नहीं जा सका। ऐप खुला रहेगा।',
+    closeApp: 'ऐप बंद करें',
+    closeAppTitle: 'ऐप बंद करें?',
+    closeAppDescription: 'एप्लिकेशन बंद हो जाएगा।',
+    closeWindow: 'अब आप यह विंडो बंद कर सकते हैं।',
     supportProject: 'परियोजना का समर्थन करें',
     supportDescription: 'Scrabble Score को बेहतर बनाने में हमारी मदद करें। आपका समर्थन बहुत मायने रखता है!',
     radioStopped: 'रेडियो बंद हो गया',
@@ -515,6 +560,15 @@ export const translations: Record<Language, Translations> = {
     classic: 'كلاسيكي',
     deluxe: 'ديلوكس',
     vintage: 'عتيق',
+    saveAndClose: 'حفظ وإغلاق التطبيق',
+    saveAndCloseTitle: 'الحفظ والإغلاق؟',
+    saveAndCloseDescription: 'سيتم حفظ لعبتك الحالية لتتمكن من متابعتها عند عودتك.',
+    gameSavedCloseWindow: 'تم حفظ اللعبة. يمكنك الآن إغلاق هذه النافذة.',
+    gameSaveError: 'تعذر حفظ اللعبة. سيبقى التطبيق مفتوحًا.',
+    closeApp: 'إغلاق التطبيق',
+    closeAppTitle: 'إغلاق التطبيق؟',
+    closeAppDescription: 'سيتم إغلاق التطبيق.',
+    closeWindow: 'يمكنك الآن إغلاق هذه النافذة.',
     supportProject: 'دعم المشروع',
     supportDescription: 'ساعدنا في الاستمرار في تحسين Scrabble Score. دعمك يعني الكثير!',
     radioStopped: 'توقف الراديو',
@@ -604,6 +658,15 @@ export const translations: Record<Language, Translations> = {
     classic: 'Clássico',
     deluxe: 'Deluxe',
     vintage: 'Vintage',
+    saveAndClose: 'Salvar e fechar aplicativo',
+    saveAndCloseTitle: 'Salvar e fechar?',
+    saveAndCloseDescription: 'Seu jogo atual será salvo para que você possa continuar quando voltar.',
+    gameSavedCloseWindow: 'Jogo salvo. Agora você pode fechar esta janela.',
+    gameSaveError: 'Não foi possível salvar o jogo. O aplicativo permanecerá aberto.',
+    closeApp: 'Fechar aplicativo',
+    closeAppTitle: 'Fechar aplicativo?',
+    closeAppDescription: 'O aplicativo será fechado.',
+    closeWindow: 'Agora você pode fechar esta janela.',
     supportProject: 'Apoiar o Projeto',
     supportDescription: 'Ajude-nos a continuar melhorando o Scrabble Score. Seu apoio significa muito!',
     radioStopped: 'Rádio parada',

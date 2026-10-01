@@ -1,4 +1,4 @@
-import { Settings } from "lucide-react";
+import { Power, Settings } from "lucide-react";
 import {
   US,
   ES,
@@ -18,6 +18,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme, ColorTheme } from "@/contexts/ThemeContext";
 import { Language, languageNames } from "@/i18n/translations";
+import { useState } from "react";
 
 const themeColors: Record<ColorTheme, string[]> = {
   classic: ['#8B4F47', '#E8D4C0', '#A8C7D8'],
@@ -34,14 +35,20 @@ const languageFlagIcons: Record<Language, typeof US> = {
   pt: BR,
 };
 
-export const SettingsMenu = () => {
+interface SettingsMenuProps {
+  onRequestClose: () => void;
+  hasActiveGame?: boolean;
+}
+
+export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: SettingsMenuProps) => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
 
   const languages: Language[] = ['en', 'es', 'zh', 'hi', 'ar', 'pt'];
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
           <Settings className="w-5 h-5" />
@@ -57,17 +64,17 @@ export const SettingsMenu = () => {
         <DropdownMenuSeparator />
 
         {/* Color Theme Section */}
-        <div className="space-y-2 p-2">
+        <div className="space-y-1.5 p-2">
           <div className="text-sm font-medium text-muted-foreground">
             {t.colorTheme}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {(['classic', 'deluxe', 'vintage'] as ColorTheme[]).map((themeOption) => (
               <button
                 key={themeOption}
                 onClick={() => setTheme(themeOption)}
                 className={`
-                  w-full flex items-center justify-between p-3 rounded-lg border-2 
+                  h-10 w-full flex items-center justify-between px-3 rounded-lg border-2 
                   transition-all hover:scale-[1.02]
                   ${theme === themeOption
                     ? 'bg-primary/10 border-primary shadow-sm'
@@ -95,11 +102,11 @@ export const SettingsMenu = () => {
         <DropdownMenuSeparator />
 
         {/* Language Section */}
-        <div className="p-3 space-y-3">
+        <div className="p-2 space-y-1.5">
           <div className="text-sm font-medium text-muted-foreground">
             {t.language}
           </div>
-          <div className="space-y-1">
+          <div>
             {languages.map((lang) => (
               <Button
                 key={lang}
@@ -107,7 +114,7 @@ export const SettingsMenu = () => {
                 variant="ghost"
                 onClick={() => setLanguage(lang)}
                 className={`
-                  h-9 w-full justify-between rounded-md px-2.5 py-1.5
+                  h-8 w-full justify-between rounded-md px-2.5 py-1
                   transition-all hover:bg-accent/50
                   ${language === lang ? 'bg-primary/10 border border-primary' : 'hover:bg-muted/50'}
                 `}
@@ -127,6 +134,21 @@ export const SettingsMenu = () => {
               </Button>
             ))}
           </div>
+        </div>
+        <DropdownMenuSeparator />
+        <div className="p-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              setOpen(false);
+              window.setTimeout(onRequestClose, 0);
+            }}
+            className="h-10 w-full justify-start gap-2.5 px-2.5 text-sm font-medium"
+          >
+            <Power className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="text-start">{hasActiveGame ? t.saveAndClose : t.closeApp}</span>
+          </Button>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

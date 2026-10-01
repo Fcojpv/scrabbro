@@ -34,6 +34,21 @@ interface StoredGameData {
 export const useGamePersistence = () => {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const writeGameState = (state: GameState): boolean => {
+    try {
+      const dataToSave: StoredGameData = {
+        version: STORAGE_VERSION,
+        timestamp: Date.now(),
+        gameData: state,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+      return true;
+    } catch (error) {
+      console.error('Error saving game state:', error);
+      return false;
+    }
+  };
+
   const saveGameState = (state: GameState) => {
     // Only save if game is actually started
     if (!state.gameStarted) {
@@ -45,18 +60,16 @@ export const useGamePersistence = () => {
       clearTimeout(saveTimeoutRef.current);
     }
 
-    saveTimeoutRef.current = setTimeout(() => {
-      try {
-        const dataToSave: StoredGameData = {
-          version: STORAGE_VERSION,
-          timestamp: Date.now(),
-          gameData: state,
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-      } catch (error) {
-        console.error('Error saving game state:', error);
-      }
-    }, 500);
+    saveTimeoutRef.current = setTimeout(() => writeGameState(state), 500);
+  };
+
+  const saveGameStateImmediately = (state: GameState): boolean => {
+    if (!state.gameStarted) return true;
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+    return writeGameState(state);
   };
 
   const loadGameState = (): GameState | null => {
@@ -128,6 +141,7 @@ export const useGamePersistence = () => {
 
   return {
     saveGameState,
+    saveGameStateImmediately,
     loadGameState,
     clearSavedGame,
     getSavedGameInfo,
