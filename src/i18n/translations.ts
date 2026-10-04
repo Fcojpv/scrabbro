@@ -266,7 +266,7 @@ export const translations: Record<Language, Translations> = {
     classic: 'Clásico',
     deluxe: 'Deluxe',
     vintage: 'Vintage',
-    saveAndClose: 'Guardar y cerrar aplicación',
+    saveAndClose: 'Guardar y Cerrar Aplicación',
     saveAndCloseTitle: '¿Guardar y cerrar?',
     saveAndCloseDescription: 'Tu partida actual se guardará y podrás continuarla cuando vuelvas.',
     gameSavedCloseWindow: 'Partida guardada. Ya puedes cerrar esta ventana.',
