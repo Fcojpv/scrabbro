@@ -146,7 +146,7 @@ export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: Settings
             }}
             className="h-10 w-full justify-start gap-2.5 px-2.5 text-sm font-medium"
           >
-            <Power className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Power className="h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
             <span className="text-start">{hasActiveGame ? t.saveAndClose : t.closeApp}</span>
           </Button>
         </div>
