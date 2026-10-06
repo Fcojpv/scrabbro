@@ -9,6 +9,7 @@ import { KofiDialog } from "@/components/KofiDialog";
 import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
 import { CloseAppDialog } from "@/components/CloseAppDialog";
+import { ClosedScreen } from "@/components/ClosedScreen";
 import { ShareButton } from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
@@ -57,6 +58,7 @@ const Index = () => {
   const currentRoundScoresRef = useRef<RoundScore[]>([]);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [showCloseAppDialog, setShowCloseAppDialog] = useState(false);
+  const [appClosed, setAppClosed] = useState(false);
   const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
   const restoreDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const restoreToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -315,7 +317,7 @@ const Index = () => {
         import("@capacitor/core"),
         import("@capacitor/app"),
       ]);
-      if (Capacitor.getPlatform() === "android") {
+      if (Capacitor.isNativePlatform()) {
         await App.exitApp();
         return;
       }
@@ -323,7 +325,14 @@ const Index = () => {
       console.error("Error closing native app:", error);
     }
 
-    toast.success(gameStarted ? t.gameSavedCloseWindow : t.closeWindow, { duration: 5000 });
+    try {
+      window.close();
+    } catch {
+      // ignored: browser may block closing
+    }
+    window.setTimeout(() => {
+      if (!window.closed) setAppClosed(true);
+    }, 300);
   };
 
   const handleApplyPenalties = (penalties: Record<number, number>) => {
@@ -360,6 +369,7 @@ const Index = () => {
           onConfirm={handleCloseApp}
           hasActiveGame={false}
         />
+        <ClosedScreen open={appClosed} onBack={() => setAppClosed(false)} />
       </>
     );
   }
@@ -703,6 +713,7 @@ const Index = () => {
         onConfirm={handleCloseApp}
         hasActiveGame={gameStarted}
       />
+      <ClosedScreen open={appClosed} onBack={() => setAppClosed(false)} />
 
       <KofiDialog
         open={showKofiDialog}

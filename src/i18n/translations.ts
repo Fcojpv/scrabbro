@@ -63,6 +63,9 @@ export interface Translations {
   closeAppTitle: string;
   closeAppDescription: string;
   closeWindow: string;
+  closedTitle: string;
+  closedDescription: string;
+  backToGame: string;
   
   // Ko-fi
   supportProject: string;
@@ -177,6 +180,9 @@ export const translations: Record<Language, Translations> = {
     closeAppTitle: 'Close app?',
     closeAppDescription: 'The application will close.',
     closeWindow: 'You can now close this window.',
+    closedTitle: "Game saved",
+    closedDescription: "ScrabBro is paused. You can leave with your phone's home button.",
+    backToGame: "Back to game",
     supportProject: 'Support the Project',
     supportDescription: 'Help us keep improving Scrabble Score. Your support means a lot!',
     radioStopped: 'Radio stopped',
@@ -275,6 +281,9 @@ export const translations: Record<Language, Translations> = {
     closeAppTitle: '¿Cerrar aplicación?',
     closeAppDescription: 'La aplicación se cerrará.',
     closeWindow: 'Ya puedes cerrar esta ventana.',
+    closedTitle: "Partida guardada",
+    closedDescription: "ScrabBro está en pausa. Puedes salir con el botón de inicio de tu teléfono.",
+    backToGame: "Volver a la partida",
     supportProject: 'Apoyar el Proyecto',
     supportDescription: '¡Ayúdanos a seguir mejorando Scrabble Score. Tu apoyo significa mucho!',
     radioStopped: 'Radio detenida',
@@ -373,6 +382,9 @@ export const translations: Record<Language, Translations> = {
     closeAppTitle: '关闭应用？',
     closeAppDescription: '应用将关闭。',
     closeWindow: '您现在可以关闭此窗口。',
+    closedTitle: "游戏已保存",
+    closedDescription: "ScrabBro 已暂停。您可以用手机的主屏幕按钮离开。",
+    backToGame: "返回游戏",
     supportProject: '支持项目',
     supportDescription: '帮助我们继续改进 Scrabble Score。您的支持意义重大！',
     radioStopped: '电台已停止',
@@ -471,6 +483,9 @@ export const translations: Record<Language, Translations> = {
     closeAppTitle: 'ऐप बंद करें?',
     closeAppDescription: 'एप्लिकेशन बंद हो जाएगा।',
     closeWindow: 'अब आप यह विंडो बंद कर सकते हैं।',
+    closedTitle: "खेल सहेजा गया",
+    closedDescription: "ScrabBro रुका हुआ है। आप फ़ोन के होम बटन से बाहर जा सकते हैं।",
+    backToGame: "खेल पर लौटें",
     supportProject: 'परियोजना का समर्थन करें',
     supportDescription: 'Scrabble Score को बेहतर बनाने में हमारी मदद करें। आपका समर्थन बहुत मायने रखता है!',
     radioStopped: 'रेडियो बंद हो गया',
@@ -569,6 +584,9 @@ export const translations: Record<Language, Translations> = {
     closeAppTitle: 'إغلاق التطبيق؟',
     closeAppDescription: 'سيتم إغلاق التطبيق.',
     closeWindow: 'يمكنك الآن إغلاق هذه النافذة.',
+    closedTitle: "تم حفظ اللعبة",
+    closedDescription: "ScrabBro متوقف مؤقتًا. يمكنك الخروج بزر الشاشة الرئيسية في هاتفك.",
+    backToGame: "العودة إلى اللعبة",
     supportProject: 'دعم المشروع',
     supportDescription: 'ساعدنا في الاستمرار في تحسين Scrabble Score. دعمك يعني الكثير!',
     radioStopped: 'توقف الراديو',
@@ -667,6 +685,9 @@ export const translations: Record<Language, Translations> = {
     closeAppTitle: 'Fechar aplicativo?',
     closeAppDescription: 'O aplicativo será fechado.',
     closeWindow: 'Agora você pode fechar esta janela.',
+    closedTitle: "Partida salva",
+    closedDescription: "O ScrabBro está pausado. Você pode sair com o botão de início do seu celular.",
+    backToGame: "Voltar à partida",
     supportProject: 'Apoiar o Projeto',
     supportDescription: 'Ajude-nos a continuar melhorando o Scrabble Score. Seu apoio significa muito!',
     radioStopped: 'Rádio parada',
