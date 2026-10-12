@@ -39,7 +39,7 @@ export const FeedbackDialog = ({ open, onOpenChange, hasActiveGame }: FeedbackDi
           <Button variant="link" asChild className="h-auto px-0 py-2"><a href={FEEDBACK_FORM_URL} target="_blank" rel="noopener noreferrer"><ExternalLink className="me-2 h-4 w-4" />{t.feedbackOpenExternal}</a></Button>
         </div>}
         <div className="shrink-0 p-3">
-          <DialogClose asChild><Button className="min-h-11 w-full">{hasActiveGame ? t.feedbackClose : t.closeApp.replace(t.closeApp, t.cancel)}</Button></DialogClose>
+          <DialogClose asChild><Button className="min-h-11 w-full">{hasActiveGame ? t.feedbackClose : t.cancel}</Button></DialogClose>
         </div>
       </DialogContent>
     </Dialog>
