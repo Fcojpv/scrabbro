@@ -19,7 +19,7 @@ Añadir dentro del menú de configuración una opción **“Enviar comentarios�
 - Si el guardado falla, no abrir el formulario y mostrar un aviso para evitar pérdida de información.
 
 ## Google Forms
-- Usar la URL de inserción (`.../viewform?embedded=true`) del formulario que proporciones.
+- Usar la URL de inserción que proporcionaste: `https://docs.google.com/forms/d/e/1FAIpQLSfwybqTctFu5NjWecKMSt3Qq5mhd7czf5fJt32u3QokicmDbA/viewform?embedded=true`.
 - El formulario y sus respuestas seguirán administrándose desde tu cuenta de Google.
 - Configurar Google Forms para no exigir inicio de sesión, salvo que quieras limitar quién responde.
 - Añadir un texto corto de privacidad dentro del propio formulario si se solicitan nombres o correos.
@@ -44,4 +44,4 @@ Añadir dentro del menú de configuración una opción **“Enviar comentarios�
 - Revisar los seis idiomas, dirección árabe, formulario largo con teclado abierto y alternativa si el formulario no carga.
 
 ## Necesario para conectarlo
-Antes de finalizar la integración necesitaré la **URL de inserción de tu Google Form**. En Google Forms: **Enviar → `<>` Insertar HTML → copiar únicamente la URL del atributo `src`**. No necesito acceso a tu cuenta ni al formulario.
+La **URL de inserción ya está recibida**. Durante la implementación se verificará que el formulario permite responder sin iniciar sesión y que su contenido y envío funcionan dentro de la ventana. No necesito acceso a tu cuenta. El diseño y el idioma del formulario los controla Google Forms; los textos de ScrabBro alrededor de él sí se traducirán a los seis idiomas. Por seguridad del navegador, ScrabBro no podrá leer las respuestas ni detectar automáticamente el envío dentro del formulario: después de enviarlo, el usuario cerrará la ventana para retomar la partida.
