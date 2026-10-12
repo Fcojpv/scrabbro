@@ -1,4 +1,4 @@
-import { Power, Settings } from "lucide-react";
+import { MessageSquarePlus, Power, Settings } from "lucide-react";
 import {
   US,
   ES,
@@ -37,10 +37,11 @@ const languageFlagIcons: Record<Language, typeof US> = {
 
 interface SettingsMenuProps {
   onRequestClose: () => void;
+  onRequestFeedback: () => void;
   hasActiveGame?: boolean;
 }
 
-export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: SettingsMenuProps) => {
+export const SettingsMenu = ({ onRequestClose, onRequestFeedback, hasActiveGame = false }: SettingsMenuProps) => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const [open, setOpen] = useState(false);
@@ -50,13 +51,13 @@ export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: Settings
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+        <Button aria-label={t.settings} variant="ghost" size="icon" className="rounded-full h-8 w-8">
           <Settings className="w-5 h-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-72 bg-card/95 backdrop-blur-sm border-2 z-50"
+        className="w-72 max-h-[calc(100dvh-4rem)] overflow-y-auto bg-card/95 backdrop-blur-sm border-2 z-50"
       >
         <DropdownMenuLabel className="text-base font-semibold">
           {t.settings}
@@ -134,6 +135,16 @@ export const SettingsMenu = ({ onRequestClose, hasActiveGame = false }: Settings
               </Button>
             ))}
           </div>
+        </div>
+        <DropdownMenuSeparator />
+        <div className="p-2">
+          <Button type="button" variant="ghost" onClick={() => {
+            setOpen(false);
+            window.setTimeout(onRequestFeedback, 0);
+          }} className="min-h-11 w-full justify-start gap-2.5 px-2.5 text-sm font-medium">
+            <MessageSquarePlus className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="text-start">{t.sendFeedback}</span>
+          </Button>
         </div>
         <DropdownMenuSeparator />
         <div className="p-2">
