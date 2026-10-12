@@ -1,5 +1,4 @@
-import { motion, PanInfo } from "framer-motion";
-import { Children, ReactNode } from "react";
+import { Children, ReactNode, useEffect, useRef } from "react";
 
 interface SwipeableViewsProps {
   children: ReactNode;
@@ -9,45 +8,73 @@ interface SwipeableViewsProps {
 
 export function SwipeableViews({ children, currentView, onViewChange }: SwipeableViewsProps) {
   const childArray = Children.toArray(children);
-  const viewCount = childArray.length;
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Ref to track if the last view change came from a user scroll
+  const isUserScrollingRef = useRef(false);
+  const lastScrollTime = useRef(0);
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const threshold = 50;
-    const velocity = info.velocity.x;
-    const offset = info.offset.x;
+  // Sincronizar prop currentView -> Posición de Scroll
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-    if (offset < -threshold || velocity < -500) {
-      // Swipe left → next view
-      onViewChange(Math.min(currentView + 1, viewCount - 1));
-    } else if (offset > threshold || velocity > 500) {
-      // Swipe right → previous view
-      onViewChange(Math.max(currentView - 1, 0));
+    // Si el cambio de vista vino del usuario haciendo scroll (detectado en handleScroll),
+    // NO forzamos un scrollTo programático para evitar pelear con la física nativa.
+    if (isUserScrollingRef.current) {
+      isUserScrollingRef.current = false;
+      return;
+    }
+
+    const targetScrollLeft = currentView * container.clientWidth;
+
+    // Solo desplazamos si hay una diferencia significativa
+    if (Math.abs(container.scrollLeft - targetScrollLeft) > 10) {
+      container.scrollTo({
+        left: targetScrollLeft,
+        behavior: "smooth"
+      });
+    }
+  }, [currentView]);
+
+  // Manejar evento de scroll nativo -> Actualizar prop onViewChange
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Actualizamos timestamp para saber que hubo interacción "reciente"
+    lastScrollTime.current = Date.now();
+
+    // Calcular índice basado en la posición actual
+    const index = Math.round(container.scrollLeft / container.clientWidth);
+
+    // Si el índice cambió, notificamos al padre
+    if (index !== currentView) {
+      // Marcamos que este cambio fue provocado por el usuario
+      isUserScrollingRef.current = true;
+      onViewChange(index);
     }
   };
 
   return (
-    <div className="h-full w-full overflow-hidden flex-1">
-      <motion.div
-        className="flex h-full touch-pan-y"
-        style={{ width: `${viewCount * 100}%` }}
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={1}
-        dragDirectionLock={true}
-        onDragEnd={handleDragEnd}
-        animate={{ x: `-${currentView * (100 / viewCount)}%` }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+    <div className="h-full w-full overflow-hidden flex-1 relative">
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
       >
         {childArray.map((child, index) => (
           <div
             key={index}
-            className="h-full flex-shrink-0"
-            style={{ width: `${100 / viewCount}%` }}
+            className="flex-shrink-0 w-full h-full snap-start snap-always overflow-hidden"
           >
             {child}
           </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }
