@@ -6,6 +6,7 @@ import { ScoreHistory } from "@/components/ScoreHistory";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { EndGameDialog } from "@/components/EndGameDialog";
 import { KofiDialog } from "@/components/KofiDialog";
+import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
 import { CloseAppDialog } from "@/components/CloseAppDialog";
@@ -59,6 +60,8 @@ const Index = () => {
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
   const [showCloseAppDialog, setShowCloseAppDialog] = useState(false);
   const [appClosed, setAppClosed] = useState(false);
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+  const feedbackRadioRef = useRef(false);
   const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
   const restoreDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const restoreToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -67,8 +70,8 @@ const Index = () => {
   const heartEmptyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedStateRef = useRef<string | null>(null);
 
-  const gameTimer = useGameTimer(gameStarted);
-  const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
+  const gameTimer = useGameTimer(gameStarted, showFeedbackDialog);
+  const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes, showFeedbackDialog);
   const { saveGameState, saveGameStateImmediately, loadGameState, clearSavedGame, getSavedGameInfo } = useGamePersistence();
 
   // Check for saved game on mount
@@ -291,6 +294,29 @@ const Index = () => {
     }, 100);
   };
 
+  const handleRequestFeedback = () => {
+    const saved = saveGameStateImmediately({ gameStarted, players, currentTurn, roundNumber, scoreHistory, currentRoundScores });
+    if (!saved) {
+      toast.error(t.feedbackSaveError);
+      return;
+    }
+    feedbackRadioRef.current = isRadioPlaying;
+    if (isRadioPlaying) {
+      audioRef.current?.pause();
+      setIsRadioPlaying(false);
+    }
+    setShowFeedbackDialog(true);
+  };
+
+  const handleFeedbackOpenChange = (open: boolean) => {
+    if (open) return;
+    setShowFeedbackDialog(false);
+    if (feedbackRadioRef.current && audioRef.current) {
+      audioRef.current.play().then(() => setIsRadioPlaying(true)).catch(() => toast.error(t.radioError));
+    }
+    feedbackRadioRef.current = false;
+  };
+
   const handleCloseApp = async () => {
     const saved = saveGameStateImmediately({
       gameStarted,
@@ -355,7 +381,8 @@ const Index = () => {
   if (!gameStarted && players.length === 0) {
     return (
       <>
-        <PlayerSetup onStart={handleStartGame} onRequestClose={() => setShowCloseAppDialog(true)} />
+        <PlayerSetup onStart={handleStartGame} onRequestClose={() => setShowCloseAppDialog(true)} onRequestFeedback={handleRequestFeedback} />
+        <FeedbackDialog open={showFeedbackDialog} onOpenChange={handleFeedbackOpenChange} hasActiveGame={false} />
         <RestoreGameDialog
           open={showRestoreDialog}
           onOpenChange={setShowRestoreDialog}
@@ -492,7 +519,7 @@ const Index = () => {
                     <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
                   </div>
                   <div className="flex-shrink-0">
-                    <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
+                    <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} onRequestFeedback={handleRequestFeedback} hasActiveGame />
                   </div>
                 </div>
               </div>
@@ -670,7 +697,7 @@ const Index = () => {
                 <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
               </div>
               <div className="flex-shrink-0">
-                <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
+                <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} onRequestFeedback={handleRequestFeedback} hasActiveGame />
               </div>
             </div>
           </div>
@@ -719,6 +746,7 @@ const Index = () => {
         open={showKofiDialog}
         onOpenChange={setShowKofiDialog}
       />
+      <FeedbackDialog open={showFeedbackDialog} onOpenChange={handleFeedbackOpenChange} hasActiveGame={gameStarted} />
 
       <EndGameDialog
         open={showEndGameDialog}

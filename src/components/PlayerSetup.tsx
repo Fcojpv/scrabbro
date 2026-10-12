@@ -10,9 +10,10 @@ import { getGraphemeLength, truncateByGraphemes } from "@/lib/utils";
 interface PlayerSetupProps {
   onStart: (players: { id: number; name: string; score: number }[]) => void;
   onRequestClose: () => void;
+  onRequestFeedback: () => void;
 }
 
-export const PlayerSetup = ({ onStart, onRequestClose }: PlayerSetupProps) => {
+export const PlayerSetup = ({ onStart, onRequestClose, onRequestFeedback }: PlayerSetupProps) => {
   const { t } = useLanguage();
   const [selectedCount, setSelectedCount] = useState(1);
   const [step, setStep] = useState<'count' | 'names'>('count');
@@ -45,7 +46,7 @@ export const PlayerSetup = ({ onStart, onRequestClose }: PlayerSetupProps) => {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-background relative">
         <div className="absolute top-4 right-4">
-          <SettingsMenu onRequestClose={onRequestClose} />
+          <SettingsMenu onRequestClose={onRequestClose} onRequestFeedback={onRequestFeedback} />
         </div>
         <Card className="w-full max-w-md p-8 space-y-6 animate-slide-up">
           <div className="text-center space-y-2">
@@ -103,7 +104,7 @@ export const PlayerSetup = ({ onStart, onRequestClose }: PlayerSetupProps) => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background relative">
       <div className="absolute top-4 right-4">
-        <SettingsMenu onRequestClose={onRequestClose} />
+        <SettingsMenu onRequestClose={onRequestClose} onRequestFeedback={onRequestFeedback} />
       </div>
       <Card className="w-full max-w-md p-8 space-y-6 animate-slide-up">
         <div className="text-center space-y-2">

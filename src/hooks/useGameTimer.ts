@@ -1,28 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPausableClock } from '@/lib/pausableClock';
 
-export const useGameTimer = (isActive: boolean) => {
+export const useGameTimer = (isActive: boolean, isPaused = false) => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [countdownMinutes, setCountdownMinutes] = useState<number | null>(null);
   const [isFinished, setIsFinished] = useState(false);
-  const startTimeRef = useRef<number | null>(null);
+  const clockRef = useRef(createPausableClock());
   const finishedRef = useRef(false);
 
   useEffect(() => {
     if (!isActive) {
       setElapsedSeconds(0);
-      startTimeRef.current = null;
+      clockRef.current.reset();
       finishedRef.current = false;
       setIsFinished(false);
       return;
     }
 
-    if (startTimeRef.current === null) {
-      startTimeRef.current = Date.now();
+    const clock = clockRef.current;
+    clock.start(Date.now());
+    if (isPaused) {
+      clock.pause(Date.now());
+      return;
     }
+    clock.resume(Date.now());
 
     const interval = setInterval(() => {
-      if (startTimeRef.current) {
-        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      {
+        const elapsed = Math.floor(clock.elapsed(Date.now()) / 1000);
         setElapsedSeconds(elapsed);
         
         // Check if countdown timer reached zero
@@ -37,13 +42,13 @@ export const useGameTimer = (isActive: boolean) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isActive, countdownMinutes]);
+  }, [isActive, countdownMinutes, isPaused]);
 
   const startCountdown = (minutes: number) => {
     setCountdownMinutes(minutes);
     setElapsedSeconds(0);
     setIsFinished(false);
-    startTimeRef.current = null;
+    clockRef.current.reset();
   };
 
   const stopCountdown = () => {

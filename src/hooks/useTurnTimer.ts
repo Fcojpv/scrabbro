@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPausableClock } from '@/lib/pausableClock';
 
-export const useTurnTimer = (currentTurn: number, isActive: boolean, customTimerMinutes?: number) => {
+export const useTurnTimer = (currentTurn: number, isActive: boolean, customTimerMinutes?: number, isPaused = false) => {
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [configuredMinutes, setConfiguredMinutes] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previousTurnRef = useRef(currentTurn);
+  const clockRef = useRef(createPausableClock());
+  const durationRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Reset and restart timer when turn changes
@@ -13,6 +16,8 @@ export const useTurnTimer = (currentTurn: number, isActive: boolean, customTimer
       setIsFinished(false);
       // Priority: customTimerMinutes > configuredMinutes (global) > null
       const minutesToUse = customTimerMinutes ?? configuredMinutes;
+      clockRef.current.reset();
+      durationRef.current = minutesToUse !== null && minutesToUse > 0 ? minutesToUse * 60 : null;
       if (minutesToUse !== null && minutesToUse > 0) {
         setRemainingSeconds(minutesToUse * 60);
       } else {
@@ -26,18 +31,21 @@ export const useTurnTimer = (currentTurn: number, isActive: boolean, customTimer
     if (!isActive || remainingSeconds === null || remainingSeconds <= 0) {
       return;
     }
+    const clock = clockRef.current;
+    clock.start(Date.now());
+    if (isPaused) {
+      clock.pause(Date.now());
+      return;
+    }
+    clock.resume(Date.now());
 
     const interval = setInterval(() => {
-      setRemainingSeconds((prev) => {
-        if (prev === null || prev <= 0) {
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const duration = durationRef.current;
+      if (duration !== null) setRemainingSeconds(Math.max(0, duration - Math.floor(clock.elapsed(Date.now()) / 1000)));
+    }, 200);
 
     return () => clearInterval(interval);
-  }, [isActive, remainingSeconds]);
+  }, [isActive, remainingSeconds, isPaused]);
 
   useEffect(() => {
     if (remainingSeconds === 0 && !isFinished) {
@@ -66,12 +74,16 @@ export const useTurnTimer = (currentTurn: number, isActive: boolean, customTimer
   };
 
   const startTimer = (minutes: number) => {
+    clockRef.current.reset();
+    durationRef.current = minutes * 60;
     setConfiguredMinutes(minutes);
     setRemainingSeconds(minutes * 60);
     setIsFinished(false);
   };
 
   const stopTimer = () => {
+    clockRef.current.reset();
+    durationRef.current = null;
     setConfiguredMinutes(null);
     setRemainingSeconds(null);
     setIsFinished(false);

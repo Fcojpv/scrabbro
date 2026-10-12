@@ -67,6 +67,15 @@ export interface Translations {
   closedDescription: string;
   backToGame: string;
   
+  // Feedback
+  sendFeedback: string;
+  feedbackDescription: string;
+  feedbackLoading: string;
+  feedbackUnavailable: string;
+  feedbackOpenExternal: string;
+  feedbackClose: string;
+  feedbackSaveError: string;
+
   // Ko-fi
   supportProject: string;
   supportDescription: string;
@@ -131,6 +140,13 @@ export interface Translations {
 
 export const translations: Record<Language, Translations> = {
   en: {
+    sendFeedback: "Send feedback",
+    feedbackDescription: "Your game is paused. Close this window to continue.",
+    feedbackLoading: "Loading form…",
+    feedbackUnavailable: "If the form does not appear, open it in another window. Your game will stay paused.",
+    feedbackOpenExternal: "Open form",
+    feedbackClose: "Close and continue",
+    feedbackSaveError: "Could not save your game. Please try again before sending feedback.",
     scrabbleScore: 'ScrabBro',
     howManyPlayers: 'How many players?',
     names: 'Names',
@@ -232,6 +248,13 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'Game restored successfully',
   },
   es: {
+    sendFeedback: "Enviar comentarios",
+    feedbackDescription: "Tu partida está pausada. Cierra esta ventana para continuar.",
+    feedbackLoading: "Cargando formulario…",
+    feedbackUnavailable: "Si el formulario no aparece, ábrelo en otra ventana. Tu partida seguirá pausada.",
+    feedbackOpenExternal: "Abrir formulario",
+    feedbackClose: "Cerrar y continuar",
+    feedbackSaveError: "No se pudo guardar tu partida. Intenta de nuevo antes de enviar comentarios.",
     scrabbleScore: 'ScrabBro',
     howManyPlayers: '¿Cuántos jugadores?',
     names: 'Nombres',
@@ -333,6 +356,13 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'Partida restaurada exitosamente',
   },
   zh: {
+    sendFeedback: "发送反馈",
+    feedbackDescription: "游戏已暂停。关闭此窗口即可继续。",
+    feedbackLoading: "正在加载表单…",
+    feedbackUnavailable: "如果表单未显示，请在其他窗口中打开。游戏将保持暂停。",
+    feedbackOpenExternal: "打开表单",
+    feedbackClose: "关闭并继续",
+    feedbackSaveError: "无法保存游戏。发送反馈前请重试。",
     scrabbleScore: 'ScrabBro',
     howManyPlayers: '多少位玩家？',
     names: '名字',
@@ -434,6 +464,13 @@ export const translations: Record<Language, Translations> = {
     gameRestored: '游戏恢复成功',
   },
   hi: {
+    sendFeedback: "प्रतिक्रिया भेजें",
+    feedbackDescription: "आपका खेल रुका हुआ है। जारी रखने के लिए यह विंडो बंद करें।",
+    feedbackLoading: "फ़ॉर्म लोड हो रहा है…",
+    feedbackUnavailable: "यदि फ़ॉर्म नहीं दिखता है, तो उसे दूसरी विंडो में खोलें। खेल रुका रहेगा।",
+    feedbackOpenExternal: "फ़ॉर्म खोलें",
+    feedbackClose: "बंद करें और जारी रखें",
+    feedbackSaveError: "खेल सहेजा नहीं जा सका। प्रतिक्रिया भेजने से पहले फिर प्रयास करें।",
     scrabbleScore: 'ScrabBro',
     howManyPlayers: 'कितने खिलाड़ी?',
     names: 'नाम',
@@ -535,6 +572,13 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'खेल सफलतापूर्वक पुनर्स्थापित हो गया',
   },
   ar: {
+    sendFeedback: "إرسال ملاحظات",
+    feedbackDescription: "لعبتك متوقفة مؤقتًا. أغلق هذه النافذة للمتابعة.",
+    feedbackLoading: "جارٍ تحميل النموذج…",
+    feedbackUnavailable: "إذا لم يظهر النموذج، افتحه في نافذة أخرى. ستبقى لعبتك متوقفة مؤقتًا.",
+    feedbackOpenExternal: "فتح النموذج",
+    feedbackClose: "إغلاق ومتابعة",
+    feedbackSaveError: "تعذر حفظ لعبتك. حاول مجددًا قبل إرسال الملاحظات.",
     scrabbleScore: 'ScrabBro',
     howManyPlayers: 'كم عدد اللاعبين؟',
     names: 'الأسماء',
@@ -636,6 +680,13 @@ export const translations: Record<Language, Translations> = {
     gameRestored: 'تم استعادة اللعبة بنجاح',
   },
   pt: {
+    sendFeedback: "Enviar comentários",
+    feedbackDescription: "Sua partida está pausada. Feche esta janela para continuar.",
+    feedbackLoading: "Carregando formulário…",
+    feedbackUnavailable: "Se o formulário não aparecer, abra-o em outra janela. Sua partida continuará pausada.",
+    feedbackOpenExternal: "Abrir formulário",
+    feedbackClose: "Fechar e continuar",
+    feedbackSaveError: "Não foi possível salvar sua partida. Tente novamente antes de enviar comentários.",
     scrabbleScore: 'ScrabBro',
     howManyPlayers: 'Quantos jogadores?',
     names: 'Nomes',
