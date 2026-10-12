@@ -8,6 +8,8 @@ import { EndGameDialog } from "@/components/EndGameDialog";
 import { KofiDialog } from "@/components/KofiDialog";
 import { SettingsMenu } from "@/components/SettingsMenu";
 import { RestoreGameDialog } from "@/components/RestoreGameDialog";
+import { CloseAppDialog } from "@/components/CloseAppDialog";
+import { ClosedScreen } from "@/components/ClosedScreen";
 import { ShareButton } from "@/components/ShareButton";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
@@ -55,6 +57,8 @@ const Index = () => {
   const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
   const currentRoundScoresRef = useRef<RoundScore[]>([]);
   const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+  const [showCloseAppDialog, setShowCloseAppDialog] = useState(false);
+  const [appClosed, setAppClosed] = useState(false);
   const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
   const restoreDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const restoreToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -65,7 +69,7 @@ const Index = () => {
 
   const gameTimer = useGameTimer(gameStarted);
   const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
-  const { saveGameState, loadGameState, clearSavedGame, getSavedGameInfo } = useGamePersistence();
+  const { saveGameState, saveGameStateImmediately, loadGameState, clearSavedGame, getSavedGameInfo } = useGamePersistence();
 
   // Check for saved game on mount
   useEffect(() => {
@@ -287,6 +291,50 @@ const Index = () => {
     }, 100);
   };
 
+  const handleCloseApp = async () => {
+    const saved = saveGameStateImmediately({
+      gameStarted,
+      players,
+      currentTurn,
+      roundNumber,
+      scoreHistory,
+      currentRoundScores,
+    });
+
+    if (!saved) {
+      toast.error(t.gameSaveError);
+      return;
+    }
+
+    audioRef.current?.pause();
+    setIsRadioPlaying(false);
+    turnTimer.stopTimer();
+    gameTimer.stopCountdown();
+    setShowCloseAppDialog(false);
+
+    try {
+      const [{ Capacitor }, { App }] = await Promise.all([
+        import("@capacitor/core"),
+        import("@capacitor/app"),
+      ]);
+      if (Capacitor.isNativePlatform()) {
+        await App.exitApp();
+        return;
+      }
+    } catch (error) {
+      console.error("Error closing native app:", error);
+    }
+
+    try {
+      window.close();
+    } catch {
+      // ignored: browser may block closing
+    }
+    window.setTimeout(() => {
+      if (!window.closed) setAppClosed(true);
+    }, 300);
+  };
+
   const handleApplyPenalties = (penalties: Record<number, number>) => {
     setPlayers(prev =>
       prev.map(p => ({
@@ -307,7 +355,7 @@ const Index = () => {
   if (!gameStarted && players.length === 0) {
     return (
       <>
-        <PlayerSetup onStart={handleStartGame} />
+        <PlayerSetup onStart={handleStartGame} onRequestClose={() => setShowCloseAppDialog(true)} />
         <RestoreGameDialog
           open={showRestoreDialog}
           onOpenChange={setShowRestoreDialog}
@@ -315,6 +363,13 @@ const Index = () => {
           onRestore={handleRestoreGame}
           onNewGame={handleNewGame}
         />
+        <CloseAppDialog
+          open={showCloseAppDialog}
+          onOpenChange={setShowCloseAppDialog}
+          onConfirm={handleCloseApp}
+          hasActiveGame={false}
+        />
+        <ClosedScreen open={appClosed} onBack={() => setAppClosed(false)} />
       </>
     );
   }
@@ -437,7 +492,7 @@ const Index = () => {
                     <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
                   </div>
                   <div className="flex-shrink-0">
-                    <SettingsMenu />
+                    <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
                   </div>
                 </div>
               </div>
@@ -615,7 +670,7 @@ const Index = () => {
                 <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
               </div>
               <div className="flex-shrink-0">
-                <SettingsMenu />
+                <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
               </div>
             </div>
           </div>
@@ -651,6 +706,14 @@ const Index = () => {
         onOpenChange={setShowResetDialog}
         onConfirm={handleReset}
       />
+
+      <CloseAppDialog
+        open={showCloseAppDialog}
+        onOpenChange={setShowCloseAppDialog}
+        onConfirm={handleCloseApp}
+        hasActiveGame={gameStarted}
+      />
+      <ClosedScreen open={appClosed} onBack={() => setAppClosed(false)} />
 
       <KofiDialog
         open={showKofiDialog}
