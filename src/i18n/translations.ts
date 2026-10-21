@@ -94,6 +94,13 @@ export interface Translations {
   shareAsTextDesc: string;
   imageDownloaded: string;
   imageCaptureError: string;
+  sharePreviewTitle: string;
+  shareImage: string;
+  saveImage: string;
+  imageSaved: string;
+  longPressHint: string;
+  closeLabel: string;
+  roundLabel: string;
   shareNotSupported: string;
   results: string;
   roundsPlayed: string;
@@ -201,6 +208,13 @@ export const translations: Record<Language, Translations> = {
     shareAsTextDesc: 'Ranking in text format',
     imageDownloaded: 'Image downloaded. Share it from your gallery.',
     imageCaptureError: 'Could not create the image',
+    sharePreviewTitle: 'Your result',
+    shareImage: 'Share image',
+    saveImage: 'Save image',
+    imageSaved: 'Image saved',
+    longPressHint: 'Press and hold the image to save or share it',
+    closeLabel: 'Close',
+    roundLabel: 'Round',
     shareNotSupported: 'Copy text to share',
     results: 'Results',
     roundsPlayed: 'rounds played',
@@ -302,6 +316,13 @@ export const translations: Record<Language, Translations> = {
     shareAsTextDesc: 'Ranking en formato texto',
     imageDownloaded: 'Imagen descargada. Compártela desde tu galería.',
     imageCaptureError: 'No se pudo crear la imagen',
+    sharePreviewTitle: 'Tu resultado',
+    shareImage: 'Compartir imagen',
+    saveImage: 'Guardar imagen',
+    imageSaved: 'Imagen guardada',
+    longPressHint: 'Mantén presionada la imagen para guardarla o compartirla',
+    closeLabel: 'Cerrar',
+    roundLabel: 'Ronda',
     shareNotSupported: 'Copia el texto para compartir',
     results: 'Resultados',
     roundsPlayed: 'rondas jugadas',
@@ -403,6 +424,13 @@ export const translations: Record<Language, Translations> = {
     shareAsTextDesc: '文字格式排名',
     imageDownloaded: '图片已下载，可从相册分享。',
     imageCaptureError: '无法生成图片',
+    sharePreviewTitle: '你的结果',
+    shareImage: '分享图片',
+    saveImage: '保存图片',
+    imageSaved: '图片已保存',
+    longPressHint: '长按图片即可保存或分享',
+    closeLabel: '关闭',
+    roundLabel: '回合',
     shareNotSupported: '复制文本以分享',
     results: '结果',
     roundsPlayed: '已玩轮数',
@@ -504,6 +532,13 @@ export const translations: Record<Language, Translations> = {
     shareAsTextDesc: 'टेक्स्ट में रैंकिंग',
     imageDownloaded: 'छवि डाउनलोड हुई। गैलरी से साझा करें।',
     imageCaptureError: 'छवि नहीं बन सकी',
+    sharePreviewTitle: 'आपका परिणाम',
+    shareImage: 'छवि साझा करें',
+    saveImage: 'छवि सहेजें',
+    imageSaved: 'छवि सहेजी गई',
+    longPressHint: 'सहेजने या साझा करने के लिए छवि को दबाकर रखें',
+    closeLabel: 'बंद करें',
+    roundLabel: 'राउंड',
     shareNotSupported: 'साझा करने के लिए टेक्स्ट कॉपी करें',
     results: 'परिणाम',
     roundsPlayed: 'राउंड खेले गए',
@@ -605,6 +640,13 @@ export const translations: Record<Language, Translations> = {
     shareAsTextDesc: 'الترتيب بصيغة نصية',
     imageDownloaded: 'تم تنزيل الصورة. شاركها من المعرض.',
     imageCaptureError: 'تعذر إنشاء الصورة',
+    sharePreviewTitle: 'نتيجتك',
+    shareImage: 'مشاركة الصورة',
+    saveImage: 'حفظ الصورة',
+    imageSaved: 'تم حفظ الصورة',
+    longPressHint: 'اضغط مطولاً على الصورة لحفظها أو مشاركتها',
+    closeLabel: 'إغلاق',
+    roundLabel: 'الجولة',
     shareNotSupported: 'انسخ النص للمشاركة',
     results: 'النتائج',
     roundsPlayed: 'جولات لعبت',
@@ -706,6 +748,13 @@ export const translations: Record<Language, Translations> = {
     shareAsTextDesc: 'Ranking em texto',
     imageDownloaded: 'Imagem baixada. Compartilhe pela galeria.',
     imageCaptureError: 'Não foi possível criar a imagem',
+    sharePreviewTitle: 'Seu resultado',
+    shareImage: 'Compartilhar imagem',
+    saveImage: 'Salvar imagem',
+    imageSaved: 'Imagem salva',
+    longPressHint: 'Toque e segure a imagem para salvar ou compartilhar',
+    closeLabel: 'Fechar',
+    roundLabel: 'Rodada',
     shareNotSupported: 'Copie o texto para compartilhar',
     results: 'Resultados',
     roundsPlayed: 'rodadas jogadas',
