@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { toBlob } from "html-to-image";
+import { ShareImageDialog } from "@/components/ShareImageDialog";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,10 @@ export const ShareButton = ({ players, roundNumber, leaderboardId }: ShareButton
   const { t } = useLanguage();
   const [showShareDialog, setShowShareDialog] = React.useState(false);
   const [isCapturing, setIsCapturing] = React.useState(false);
+  const [imageBlob, setImageBlob] = React.useState<Blob | null>(null);
+  const [showPreview, setShowPreview] = React.useState(false);
+  const cardRef = React.useRef<HTMLDivElement>(null);
+  const { language } = useLanguage();
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const hasScores = sortedPlayers.some(p => p.score > 0);
@@ -63,33 +68,19 @@ ${t.playHere} ${window.location.origin}
 #ScrabbleScore #Scrabble #BoardGame`;
   };
 
-  const captureLeaderboard = async (): Promise<Blob | null> => {
-    if (!leaderboardId) return null;
+  const imageShareText = `🎯 ScrabBro - ${t.results}\n${t.canYouBeatUs} 🔥\n${window.location.origin}`;
 
-    const element = document.getElementById(leaderboardId);
-    if (!element) {
-      console.error("Leaderboard element not found");
-      return null;
-    }
-
+  const captureCard = async (): Promise<Blob | null> => {
+    const element = cardRef.current;
+    if (!element) return null;
     try {
       setIsCapturing(true);
-
       const bgVar = getComputedStyle(document.documentElement).getPropertyValue("--background").trim();
-      const backgroundColor = bgVar ? `hsl(${bgVar})` : "#ffffff";
-      const opts = {
-        pixelRatio: 2,
-        backgroundColor,
-        cacheBust: true,
-        style: { margin: "0" },
-        filter: (node: HTMLElement) => !(node instanceof HTMLElement && node.hasAttribute?.("data-capture-ignore")),
-      };
-      // First pass warms up fonts/images (Safari), second is the real one
-      await toBlob(element, opts).catch(() => null);
+      const opts = { pixelRatio: 2, backgroundColor: bgVar ? `hsl(${bgVar})` : "#ffffff", cacheBust: true };
+      await toBlob(element, opts).catch(() => null); // warm-up pass (fonts)
       return await toBlob(element, opts);
     } catch (error) {
-      console.error("Error capturing leaderboard:", error);
-      toast.error(t.imageCaptureError);
+      console.error("Error capturing result card:", error);
       return null;
     } finally {
       setIsCapturing(false);
@@ -98,48 +89,10 @@ ${t.playHere} ${window.location.origin}
 
   const handleShareAsImage = async () => {
     setShowShareDialog(false);
-
-    const imageBlob = await captureLeaderboard();
-    if (!imageBlob) {
-      toast.error(t.imageCaptureError);
-      return;
-    }
-
-    const file = new File([imageBlob], 'scrabble-score.png', { type: 'image/png' });
-    const shareText = `🎯 Scrabble Score - ${t.results}\n\n⏱️ ${roundNumber} ${t.roundsPlayed}\n\n${t.canYouBeatUs} 🔥`;
-
-    // Try native share with image
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      try {
-        await navigator.share({
-          title: "Scrabble Score",
-          text: shareText,
-          files: [file],
-        });
-      } catch (error) {
-        if ((error as Error).name !== 'AbortError') {
-          console.error("Error sharing image:", error);
-          // Fallback: download the image
-          downloadImage(imageBlob);
-          toast.success(t.imageDownloaded);
-        }
-      }
-    } else {
-      // Fallback for browsers that don't support file sharing
-      downloadImage(imageBlob);
-      toast.success(t.imageDownloaded);
-    }
-  };
-
-  const downloadImage = (blob: Blob) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `scrabble-score-${Date.now()}.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const blob = await captureCard();
+    if (!blob) { toast.error(t.imageCaptureError); return; }
+    setImageBlob(blob);
+    setShowPreview(true);
   };
 
   const handleShareAsText = async () => {
@@ -203,7 +156,7 @@ ${t.playHere} ${window.location.origin}
           </DialogHeader>
 
           <div className="grid gap-3 py-4">
-            {leaderboardId && (
+            {(
               <Button
                 onClick={handleShareAsImage}
                 className="w-full h-auto py-4 flex flex-col gap-2"
@@ -232,6 +185,29 @@ ${t.playHere} ${window.location.origin}
           </div>
         </DialogContent>
       </Dialog>
+      <ShareImageDialog blob={imageBlob} open={showPreview} onOpenChange={setShowPreview} shareText={imageShareText} />
+
+      {/* Off-screen result card used only for image capture */}
+      <div aria-hidden="true" style={{ position: "fixed", left: "-10000px", top: 0, pointerEvents: "none" }}>
+        <div ref={cardRef} dir={language === "ar" ? "rtl" : "ltr"} className="w-[360px] p-6 bg-background text-foreground font-sans">
+          <div className="flex items-baseline justify-between border-b border-border pb-3 mb-4">
+            <span className="text-2xl font-bold tracking-tight text-primary">ScrabBro</span>
+            <span className="text-xs text-muted-foreground">
+              {t.roundLabel} {roundNumber} · {new Date().toLocaleDateString(language)}
+            </span>
+          </div>
+          <ol className="space-y-2">
+            {sortedPlayers.map((p, i) => (
+              <li key={p.id} className={`flex items-center gap-3 rounded-lg px-3 py-2 ${i === 0 ? "bg-primary/10 border border-primary/30" : "bg-muted/50"}`}>
+                <span className="text-xl w-7 text-center">{getMedalEmoji(i + 1)}</span>
+                <span className="flex-1 truncate font-medium">{p.name}</span>
+                <span className="text-lg font-bold tabular-nums">{p.score}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-4 text-center text-xs text-muted-foreground">{t.canYouBeatUs} · {window.location.host}</p>
+        </div>
+      </div>
     </>
   );
 };
