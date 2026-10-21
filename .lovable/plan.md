@@ -1,53 +1,41 @@
-# Abrir el menú nativo para compartir la imagen del ranking
+# Compartir el resultado como imagen (sin Android Studio)
 
-## Diagnóstico
-- La app Android está hecha con Capacitor, y eso significa que funciona dentro de un WebView de Android. En ese WebView:
-  - `navigator.share` con archivos no está disponible (`canShare({files})` devuelve false), así que el código pasa directo al "plan B", que es descargar.
-  - La descarga usa un enlace `<a download>` con un blob. El WebView de Android ignora ese tipo de descarga y no lo pasa al sistema. Por eso sale el aviso "Imagen descargada" pero no se guarda ningún archivo.
-- La imagen sí se genera bien (html-to-image funciona). Lo que falla es el paso de entregarla al sistema operativo.
+## Idea
+Usar el menú para compartir que ya trae Chrome en Android y Safari en iPhone. Es el mismo menú del teléfono, con WhatsApp, Instagram, Gmail, etc. Además, ScrabBro se podrá instalar en la pantalla de inicio desde el navegador. No hace falta Android Studio ni ningún comando.
 
-## Solución (compatible con la arquitectura actual)
-El menú nativo para compartir de Android (el selector con WhatsApp, Instagram, Gmail, etc.) solo se abre desde código nativo. Capacitor tiene complementos oficiales para hacerlo:
+## Qué verá el usuario
+1. Pulsa Compartir y luego "Como imagen".
+2. Se abre una **vista previa** con una tarjeta bonita del resultado:
+   - encabezado "ScrabBro", número de ronda y fecha;
+   - las posiciones con sus medallas y puntajes;
+   - un pie corto con el enlace de ScrabBro.
+3. Debajo de la vista previa aparecen tres botones:
+   - **Compartir imagen**: abre el menú del teléfono con la imagen ya adjunta.
+   - **Guardar imagen**: descarga la imagen de verdad. El aviso "Imagen guardada" solo aparece cuando la descarga se hizo realmente.
+   - **Cerrar**.
+4. Si el teléfono no puede abrir el menú, la vista previa sigue abierta y aparece el mensaje "Mantén presionada la imagen para guardarla o compartirla". Esto funciona en cualquier teléfono.
+5. Si el usuario cancela el menú, no sale ningún error.
 
-1. **@capacitor/filesystem**: guarda la imagen PNG en la caché de la app y devuelve una ruta `file://` que el sistema puede leer.
-2. **@capacitor/share**: abre el selector nativo de Android con esa imagen y un texto.
+Se acaba el aviso falso de "descargada".
 
-Flujo nuevo de "Compartir como imagen":
+## App instalable desde el navegador
+- Se agregan el icono de ScrabBro, un nombre, los colores del tema y el modo pantalla completa. Así, la opción "Añadir a pantalla de inicio" la abre como una app.
+- No se agrega modo sin conexión, para evitar problemas de versiones viejas guardadas.
 
-```text
-Capturar ranking (html-to-image, x2)
-        |
-   ¿App nativa? (Capacitor.isNativePlatform)
-     | sí                                  | no (navegador)
- Blob -> base64                          navigator.share({files}) si existe
- Filesystem.writeFile(Cache)             si no -> descarga real (la de hoy)
- Share.share({ files:[uri], text })
-     |
- Menú nativo de Android
-```
+## Aviso honesto sobre tu app Android actual
+La app Android que ya tienes (hecha con Capacitor) muestra ScrabBro dentro de una ventana interna de Android. Esa ventana no deja abrir el menú del teléfono. Ahí la imagen se verá en la vista previa y el usuario podrá **mantenerla presionada** para guardarla o compartirla. El menú completo funcionará en Chrome, Safari y en la versión instalada desde el navegador.
 
-- Si el usuario cancela el menú, no se muestra ningún error.
-- El aviso "Imagen descargada" solo aparecerá cuando de verdad se haya descargado (en el navegador).
-- En la app nativa, los archivos temporales viejos de la caché se borran antes de crear el nuevo.
-- Se aplicará también a "Compartir como texto": en la app nativa usará `Share.share({ text })`, que es más fiable que el compartir web dentro del WebView.
-
-## Lo que tendrás que hacer tú (una sola vez)
-Esto agrega código nativo, así que en tu computador:
-1. `git pull`
-2. `npm install`
-3. `npx cap sync android`
-4. `npx cap run android` (o abrir el proyecto en Android Studio)
-
-Sin `cap sync`, la app del teléfono no tendrá los complementos y seguirá fallando.
+## Textos
+Todos los textos nuevos irán en los 6 idiomas, con soporte de derecha a izquierda para árabe.
 
 ## Verificación
-- En este entorno: compilación y typecheck. También una prueba con Playwright en el navegador móvil, para confirmar que la imagen se genera y que en la web se usa el camino correcto.
-- Desde aquí no puedo abrir el menú nativo real: necesita un teléfono o emulador Android. Para que lo confirmes, dejaré mensajes claros en la consola y en los avisos (por ejemplo "complemento no instalado, ejecuta cap sync") y te daré una lista de 3 pasos para probarlo.
+- Pruebas en un móvil simulado (390x844), en modo claro y oscuro: la tarjeta se ve bien, el botón Compartir entrega la imagen al menú del teléfono, la descarga es real y el mensaje de respaldo aparece cuando corresponde.
+- Al final, solo tendrás que probarlo una vez desde Chrome en tu teléfono.
 
 ## Detalles técnicos
-- `bun add @capacitor/share @capacitor/filesystem`
-- `src/lib/nativeShare.ts`: `blobToBase64`, `shareImageNative(blob, text)` (que hace `Filesystem.writeFile({ path: 'scrabbro-<ts>.png', data, directory: Directory.Cache })` y luego `Share.share({ files: [uri], text, dialogTitle })`) y `shareTextNative(text)`. Los complementos se importan dinámicamente para no cargar más el bundle web.
-- `ShareButton.tsx`: rama nativa antes de la web; `AbortError` y "Share canceled" se tratan como cancelación sin aviso.
-- Nueva traducción `shareSheetTitle` en los 6 idiomas (título del selector).
-- Test pequeño de `blobToBase64` junto a los tests existentes.
-- La regla "compartir en nativo usa @capacitor/share + filesystem cache" se anotará en AGENTS.md.
+- Nuevo `ShareImageDialog.tsx`: muestra la imagen con un `<img src={objectURL}>` y genera el `File` una sola vez. Llama a `navigator.share({files})` directamente desde el clic del botón, para conservar el gesto del usuario (si se hace después de un `await` de la captura, Chrome lo rechaza). Usa `canShare` y, si no funciona, muestra la indicación de mantener presionada la imagen.
+- La tarjeta se captura desde un nodo oculto que se renderiza fuera de la pantalla, con `html-to-image` `toBlob` y pixelRatio 2. El fondo se calcula desde el tema.
+- La descarga solo se marca como exitosa fuera de un WebView. Se detecta con `Capacitor.isNativePlatform()` o con el user agent `; wv`.
+- Archivos: `public/manifest.webmanifest`, iconos 192/512 generados, etiquetas en `index.html` (manifest, apple-touch-icon y título/descr. actualizados). No se usará service worker ni vite-plugin-pwa.
+- `ShareButton.tsx` abre el nuevo diálogo. Se agregan claves nuevas en `translations.ts`.
+- Se anotará la regla en AGENTS.md: compartir imagen = Web Share con gesto directo y respaldo de mantener presionado.
