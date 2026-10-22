@@ -6,15 +6,25 @@ import { ShareImageDialog } from "@/components/ShareImageDialog";
 import { Button } from "@/components/ui/button";
 import { readResultHash } from "@/lib/shareResult";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function SharedResult() {
-  const { t } = useLanguage();
+  const { t, setLanguage } = useLanguage();
+  const { setTheme } = useTheme();
   const [result] = useState(() => readResultHash(window.location.hash));
   const ref = useRef<HTMLDivElement>(null);
   const [blob, setBlob] = useState<Blob | null>(null);
   const [open, setOpen] = useState(false);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    if (!result) return;
+    setLanguage(result.language);
+    setTheme(result.theme);
+    // The isolated result page does not restore or overwrite game data.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   useEffect(() => {
     if (!result) return;
