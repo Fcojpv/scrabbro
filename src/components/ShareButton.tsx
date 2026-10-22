@@ -5,6 +5,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { toBlob } from "html-to-image";
 import { ShareImageDialog } from "@/components/ShareImageDialog";
+import { ResultCard, getMedalEmoji } from "@/components/ResultCard";
+import { createResultUrl, type ShareResult } from "@/lib/shareResult";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   Dialog,
   DialogContent,
@@ -33,19 +36,14 @@ export const ShareButton = ({ players, roundNumber, leaderboardId }: ShareButton
   const [showPreview, setShowPreview] = React.useState(false);
   const cardRef = React.useRef<HTMLDivElement>(null);
   const { language } = useLanguage();
+  const { theme } = useTheme();
+  const [resultUrl, setResultUrl] = React.useState<string>();
+  const result: ShareResult = { players, roundNumber, language, theme, date: new Date().toLocaleDateString(language) };
 
   const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
   const hasScores = sortedPlayers.some(p => p.score > 0);
 
   if (!hasScores) return null;
-
-  const getMedalEmoji = (rank: number) => {
-    if (rank === 1) return "🥇";
-    if (rank === 2) return "🥈";
-    if (rank === 3) return "🥉";
-    if (rank === 4) return "🫂";
-    return "▪️";
-  };
 
   const generateShareText = () => {
     const rankings = sortedPlayers
@@ -89,6 +87,9 @@ ${t.playHere} ${window.location.origin}
 
   const handleShareAsImage = async () => {
     setShowShareDialog(false);
+    // Transfer the snapshot, not the page-local blob, to a different browser.
+    try { setResultUrl(createResultUrl(result, window.location.origin)); }
+    catch { toast.error(t.imageCaptureError); return; }
     const blob = await captureCard();
     if (!blob) { toast.error(t.imageCaptureError); return; }
     setImageBlob(blob);
@@ -185,28 +186,11 @@ ${t.playHere} ${window.location.origin}
           </div>
         </DialogContent>
       </Dialog>
-      <ShareImageDialog blob={imageBlob} open={showPreview} onOpenChange={setShowPreview} shareText={imageShareText} />
+      <ShareImageDialog blob={imageBlob} open={showPreview} onOpenChange={setShowPreview} shareText={imageShareText} resultUrl={resultUrl} />
 
       {/* Off-screen result card used only for image capture */}
       <div aria-hidden="true" style={{ position: "fixed", left: "-10000px", top: 0, pointerEvents: "none" }}>
-        <div ref={cardRef} dir={language === "ar" ? "rtl" : "ltr"} className="w-[360px] p-6 bg-background text-foreground font-sans">
-          <div className="flex items-baseline justify-between border-b border-border pb-3 mb-4">
-            <span className="text-2xl font-bold tracking-tight text-primary">ScrabBro</span>
-            <span className="text-xs text-muted-foreground">
-              {t.roundLabel} {roundNumber} · {new Date().toLocaleDateString(language)}
-            </span>
-          </div>
-          <ol className="space-y-2">
-            {sortedPlayers.map((p, i) => (
-              <li key={p.id} className={`flex items-center gap-3 rounded-lg px-3 py-2 ${i === 0 ? "bg-primary/10 border border-primary/30" : "bg-muted/50"}`}>
-                <span className="text-xl w-7 text-center">{getMedalEmoji(i + 1)}</span>
-                <span className="flex-1 truncate font-medium">{p.name}</span>
-                <span className="text-lg font-bold tabular-nums">{p.score}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-4 text-center text-xs text-muted-foreground">{t.canYouBeatUs} · {window.location.host}</p>
-        </div>
+        <ResultCard ref={cardRef} result={result} />
       </div>
     </>
   );

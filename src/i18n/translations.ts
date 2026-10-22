@@ -99,6 +99,17 @@ export interface Translations {
   saveImage: string;
   imageSaved: string;
   longPressHint: string;
+  copyImage: string;
+  imageCopied: string;
+  imageCopyError: string;
+  browserShareHint: string;
+  openResultBrowser: string;
+  copyResultLink: string;
+  resultLinkCopied: string;
+  browserOpenError: string;
+  downloadStarted: string;
+  invalidResult: string;
+
   closeLabel: string;
   roundLabel: string;
   shareNotSupported: string;
@@ -213,6 +224,16 @@ export const translations: Record<Language, Translations> = {
     saveImage: 'Save image',
     imageSaved: 'Image saved',
     longPressHint: 'Press and hold the image to save or share it',
+    copyImage: 'Copy image',
+    imageCopied: 'Image copied. Paste it into an app that accepts images.',
+    imageCopyError: 'Could not copy the image. Try opening the result in your browser.',
+    browserShareHint: 'This viewer cannot share or save this image. Open the result in Chrome or Safari; if it stays here, copy the link and paste it into your browser. The link contains player names and scores.',
+    openResultBrowser: 'Open in browser',
+    copyResultLink: 'Copy result link',
+    resultLinkCopied: 'Result link copied',
+    browserOpenError: 'Could not open the browser. Copy the result link instead.',
+    downloadStarted: 'Download requested. Check your browser downloads.',
+    invalidResult: 'This result link is invalid.',
     closeLabel: 'Close',
     roundLabel: 'Round',
     shareNotSupported: 'Copy text to share',
@@ -321,6 +342,16 @@ export const translations: Record<Language, Translations> = {
     saveImage: 'Guardar imagen',
     imageSaved: 'Imagen guardada',
     longPressHint: 'Mantén presionada la imagen para guardarla o compartirla',
+    copyImage: 'Copiar imagen',
+    imageCopied: 'Imagen copiada. Pégala en una aplicación que admita imágenes.',
+    imageCopyError: 'No se pudo copiar la imagen. Prueba abrir el resultado en tu navegador.',
+    browserShareHint: 'Este visor no permite compartir o guardar esta imagen. Abre el resultado en Chrome o Safari; si sigue aquí, copia el enlace y pégalo en tu navegador. El enlace contiene nombres y puntajes.',
+    openResultBrowser: 'Abrir en navegador',
+    copyResultLink: 'Copiar enlace del resultado',
+    resultLinkCopied: 'Enlace del resultado copiado',
+    browserOpenError: 'No se pudo abrir el navegador. Copia el enlace del resultado.',
+    downloadStarted: 'Descarga solicitada. Revisa las descargas de tu navegador.',
+    invalidResult: 'El enlace del resultado no es válido.',
     closeLabel: 'Cerrar',
     roundLabel: 'Ronda',
     shareNotSupported: 'Copia el texto para compartir',
@@ -429,6 +460,16 @@ export const translations: Record<Language, Translations> = {
     saveImage: '保存图片',
     imageSaved: '图片已保存',
     longPressHint: '长按图片即可保存或分享',
+    copyImage: '复制图片',
+    imageCopied: '图片已复制。可粘贴到支持图片的应用。',
+    imageCopyError: '无法复制图片。请在浏览器中打开结果。',
+    browserShareHint: '此查看器无法分享或保存图片。请在 Chrome 或 Safari 中打开结果；若仍在此处，请复制链接并粘贴到浏览器。链接包含玩家姓名和分数。',
+    openResultBrowser: '在浏览器中打开',
+    copyResultLink: '复制结果链接',
+    resultLinkCopied: '结果链接已复制',
+    browserOpenError: '无法打开浏览器。请复制结果链接。',
+    downloadStarted: '已请求下载。请查看浏览器下载记录。',
+    invalidResult: '结果链接无效。',
     closeLabel: '关闭',
     roundLabel: '回合',
     shareNotSupported: '复制文本以分享',
@@ -537,6 +578,16 @@ export const translations: Record<Language, Translations> = {
     saveImage: 'छवि सहेजें',
     imageSaved: 'छवि सहेजी गई',
     longPressHint: 'सहेजने या साझा करने के लिए छवि को दबाकर रखें',
+    copyImage: 'छवि कॉपी करें',
+    imageCopied: 'छवि कॉपी हुई। इसे छवियाँ स्वीकार करने वाले ऐप में पेस्ट करें।',
+    imageCopyError: 'छवि कॉपी नहीं हुई। परिणाम ब्राउज़र में खोलें।',
+    browserShareHint: 'यह व्यूअर छवि साझा या सहेज नहीं सकता। परिणाम Chrome या Safari में खोलें; यदि यहीं रहता है, लिंक कॉपी करके ब्राउज़र में पेस्ट करें। लिंक में खिलाड़ियों के नाम और स्कोर हैं।',
+    openResultBrowser: 'ब्राउज़र में खोलें',
+    copyResultLink: 'परिणाम लिंक कॉपी करें',
+    resultLinkCopied: 'परिणाम लिंक कॉपी हुआ',
+    browserOpenError: 'ब्राउज़र नहीं खुला। परिणाम लिंक कॉपी करें।',
+    downloadStarted: 'डाउनलोड का अनुरोध हुआ। ब्राउज़र के डाउनलोड देखें।',
+    invalidResult: 'परिणाम लिंक अमान्य है।',
     closeLabel: 'बंद करें',
     roundLabel: 'राउंड',
     shareNotSupported: 'साझा करने के लिए टेक्स्ट कॉपी करें',
@@ -645,6 +696,16 @@ export const translations: Record<Language, Translations> = {
     saveImage: 'حفظ الصورة',
     imageSaved: 'تم حفظ الصورة',
     longPressHint: 'اضغط مطولاً على الصورة لحفظها أو مشاركتها',
+    copyImage: 'نسخ الصورة',
+    imageCopied: 'تم نسخ الصورة. الصقها في تطبيق يدعم الصور.',
+    imageCopyError: 'تعذر نسخ الصورة. جرّب فتح النتيجة في المتصفح.',
+    browserShareHint: 'هذا العارض لا يسمح بمشاركة الصورة أو حفظها. افتح النتيجة في Chrome أو Safari؛ إذا بقيت هنا، انسخ الرابط والصقه في المتصفح. يتضمن الرابط أسماء اللاعبين ونقاطهم.',
+    openResultBrowser: 'فتح في المتصفح',
+    copyResultLink: 'نسخ رابط النتيجة',
+    resultLinkCopied: 'تم نسخ رابط النتيجة',
+    browserOpenError: 'تعذر فتح المتصفح. انسخ رابط النتيجة.',
+    downloadStarted: 'تم طلب التنزيل. تحقق من تنزيلات المتصفح.',
+    invalidResult: 'رابط النتيجة غير صالح.',
     closeLabel: 'إغلاق',
     roundLabel: 'الجولة',
     shareNotSupported: 'انسخ النص للمشاركة',
@@ -753,6 +814,16 @@ export const translations: Record<Language, Translations> = {
     saveImage: 'Salvar imagem',
     imageSaved: 'Imagem salva',
     longPressHint: 'Toque e segure a imagem para salvar ou compartilhar',
+    copyImage: 'Copiar imagem',
+    imageCopied: 'Imagem copiada. Cole em um aplicativo que aceite imagens.',
+    imageCopyError: 'Não foi possível copiar a imagem. Abra o resultado no navegador.',
+    browserShareHint: 'Este visualizador não permite compartilhar ou salvar a imagem. Abra o resultado no Chrome ou Safari; se continuar aqui, copie o link e cole no navegador. O link contém nomes e pontuações.',
+    openResultBrowser: 'Abrir no navegador',
+    copyResultLink: 'Copiar link do resultado',
+    resultLinkCopied: 'Link do resultado copiado',
+    browserOpenError: 'Não foi possível abrir o navegador. Copie o link do resultado.',
+    downloadStarted: 'Download solicitado. Verifique os downloads do navegador.',
+    invalidResult: 'O link do resultado é inválido.',
     closeLabel: 'Fechar',
     roundLabel: 'Rodada',
     shareNotSupported: 'Copie o texto para compartilhar',
