@@ -1,4 +1,5 @@
 # Compartir resultados
-- [ ] Mostrar compartir y copiar imagen según capacidades, sin falso éxito al guardar.
-- [ ] Abrir el resultado en navegador mediante un enlace transportable, no un blob local.
-- [ ] Verificar captura, descarga, portapapeles y alternativas; documentar límites reales.
+- [x] Mostrar compartir y copiar imagen según capacidades, sin falso éxito al guardar.
+- [x] Abrir el resultado en navegador mediante un enlace transportable.
+- [x] Verificar captura, copia y página del resultado en móvil simulado.
+- [ ] Probar en el teléfono real del usuario (espera al usuario).
