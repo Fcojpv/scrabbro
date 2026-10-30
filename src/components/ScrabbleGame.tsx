@@ -1,0 +1,782 @@
+// @ts-nocheck -- imported from original project; stricter type settings here
+import { useState, useRef, useEffect } from "react";
+import { PlayerSetup } from "@/components/PlayerSetup";
+import { Leaderboard } from "@/components/Leaderboard";
+import { TurnInput } from "@/components/TurnInput";
+import { ScoreHistory } from "@/components/ScoreHistory";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { EndGameDialog } from "@/components/EndGameDialog";
+import { KofiDialog } from "@/components/KofiDialog";
+import { SettingsMenu } from "@/components/SettingsMenu";
+import { RestoreGameDialog } from "@/components/RestoreGameDialog";
+import { CloseAppDialog } from "@/components/CloseAppDialog";
+import { ClosedScreen } from "@/components/ClosedScreen";
+import { ShareButton } from "@/components/ShareButton";
+import { Button } from "@/components/ui/button";
+import { RotateCcw, Clock, Hourglass, Music, ChevronRight, ChevronLeft, Heart } from "lucide-react";
+import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useGameTimer } from "@/hooks/useGameTimer";
+import { useTurnTimer } from "@/hooks/useTurnTimer";
+import { useGamePersistence } from "@/hooks/useGamePersistence";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { SwipeableViews } from "@/components/SwipeableViews";
+
+interface Player {
+  id: number;
+  name: string;
+  score: number;
+  customTimerMinutes?: number;
+}
+
+interface RoundScore {
+  playerId: number;
+  score: number;
+  wasBingo: boolean;
+  edited?: boolean;
+}
+
+const Index = () => {
+  const { t } = useLanguage();
+  const [gameStarted, setGameStarted] = useState(false);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [currentTurn, setCurrentTurn] = useState(0);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showEndGameDialog, setShowEndGameDialog] = useState(false);
+  const [showSurpriseEmojis, setShowSurpriseEmojis] = useState(false);
+  const [roundNumber, setRoundNumber] = useState(1);
+  const [isRadioPlaying, setIsRadioPlaying] = useState(false);
+  const [showKofiDialog, setShowKofiDialog] = useState(false);
+  const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [currentView, setCurrentView] = useState(0);
+  const [scoreHistory, setScoreHistory] = useState<RoundScore[][]>([]);
+  const [currentRoundScores, setCurrentRoundScores] = useState<RoundScore[]>([]);
+  const currentRoundScoresRef = useRef<RoundScore[]>([]);
+  const [adjustments, setAdjustments] = useState<Record<number, number>>({});
+  const [penalties, setPenalties] = useState<Record<number, number>>({});
+  const [showRestoreDialog, setShowRestoreDialog] = useState(false);
+  const [showCloseAppDialog, setShowCloseAppDialog] = useState(false);
+  const [appClosed, setAppClosed] = useState(false);
+  const [savedGameInfo, setSavedGameInfo] = useState<{ players: string; round: number; timestamp: number } | null>(null);
+  const restoreDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const restoreToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const endGameTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartFillTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heartEmptyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedStateRef = useRef<string | null>(null);
+
+  const gameTimer = useGameTimer(gameStarted);
+  const turnTimer = useTurnTimer(currentTurn, gameStarted, players[currentTurn]?.customTimerMinutes);
+  const { saveGameState, saveGameStateImmediately, loadGameState, clearSavedGame, getSavedGameInfo } = useGamePersistence();
+
+  // Check for saved game on mount
+  useEffect(() => {
+    const info = getSavedGameInfo();
+    if (info) {
+      setSavedGameInfo(info);
+      // Small delay to ensure all other effects have run
+      restoreDialogTimeoutRef.current = setTimeout(() => {
+        setShowRestoreDialog(true);
+      }, 100);
+    }
+
+    return () => {
+      if (restoreDialogTimeoutRef.current) {
+        clearTimeout(restoreDialogTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Auto-save game state when it changes
+  useEffect(() => {
+    if (gameStarted) {
+      const newState = {
+        gameStarted,
+        players,
+        currentTurn,
+        roundNumber,
+        scoreHistory,
+        currentRoundScores,
+        adjustments,
+        penalties,
+      };
+      const serialized = JSON.stringify(newState);
+      if (serialized !== lastSavedStateRef.current) {
+        saveGameState(newState);
+        lastSavedStateRef.current = serialized;
+      }
+    }
+  }, [gameStarted, players, currentTurn, roundNumber, scoreHistory, currentRoundScores, adjustments, penalties]);
+
+  // Keep ref in sync with current round scores for reliable history updates
+  useEffect(() => {
+    currentRoundScoresRef.current = currentRoundScores;
+  }, [currentRoundScores]);
+
+  // Heart animation cycle: 60s empty -> 5s filled -> repeat
+  useEffect(() => {
+    const cycle = () => {
+      // Empty for 60 seconds
+      setIsHeartFilled(false);
+
+      heartFillTimeoutRef.current = setTimeout(() => {
+        // Filled for 5 seconds
+        setIsHeartFilled(true);
+
+        heartEmptyTimeoutRef.current = setTimeout(() => {
+          cycle(); // Restart cycle
+        }, 5000);
+      }, 60000);
+    };
+
+    cycle();
+
+    return () => {
+      if (heartFillTimeoutRef.current) {
+        clearTimeout(heartFillTimeoutRef.current);
+      }
+      if (heartEmptyTimeoutRef.current) {
+        clearTimeout(heartEmptyTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Cleanup remaining timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (restoreToastTimeoutRef.current) {
+        clearTimeout(restoreToastTimeoutRef.current);
+      }
+      if (endGameTimeoutRef.current) {
+        clearTimeout(endGameTimeoutRef.current);
+      }
+    };
+  }, []);
+
+
+  const toggleRadio = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio("https://stream.zeno.fm/v2wvrmeknm0uv");
+      audioRef.current.volume = 0.5;
+    }
+
+    if (isRadioPlaying) {
+      audioRef.current.pause();
+      setIsRadioPlaying(false);
+      toast.info(t.radioStopped);
+    } else {
+      audioRef.current.play().catch((error) => {
+        console.error("Error playing radio:", error);
+        toast.error(t.radioError);
+      });
+      setIsRadioPlaying(true);
+      toast.success(t.radioStarted);
+    }
+  };
+
+  const handleStartGame = (players: Player[]) => {
+    // Clear any saved game when starting fresh
+    clearSavedGame();
+    setPlayers(players);
+    setCurrentTurn(0);
+    setGameStarted(true);
+    setScoreHistory([]);
+    setCurrentRoundScores([]);
+    setAdjustments({});
+    setPenalties({});
+    setRoundNumber(1);
+  };
+
+  const handleRestoreGame = () => {
+    const savedState = loadGameState();
+    if (savedState) {
+      // Close dialog first
+      setShowRestoreDialog(false);
+
+      // Batch all state updates - set gameStarted LAST to ensure proper render
+      setPlayers(savedState.players);
+      setCurrentTurn(savedState.currentTurn);
+      setRoundNumber(savedState.roundNumber);
+      setScoreHistory(savedState.scoreHistory);
+      setCurrentRoundScores(savedState.currentRoundScores);
+      setAdjustments(savedState.adjustments ?? {});
+      setPenalties(savedState.penalties ?? {});
+      setGameStarted(true); // Set this LAST and explicitly to true
+
+      // Show success message after a small delay to ensure UI has updated
+      restoreToastTimeoutRef.current = setTimeout(() => {
+        toast.success(t.gameRestored, { duration: 3000 });
+      }, 100);
+    }
+  };
+
+  const handleNewGame = () => {
+    clearSavedGame();
+    setShowRestoreDialog(false);
+  };
+
+  const handleSubmitScore = (score: number, wasBingo: boolean) => {
+    const currentPlayer = players[currentTurn];
+    if (!currentPlayer) return;
+    const currentPlayerId = currentPlayer.id;
+    const newRoundScore = { playerId: currentPlayerId, score, wasBingo };
+
+    setPlayers(prev =>
+      prev.map(p =>
+        p.id === currentPlayerId
+          ? { ...p, score: p.score + score }
+          : p
+      )
+    );
+
+    // Track score for current round
+    setCurrentRoundScores(prev => [...prev, newRoundScore]);
+
+    const playerName = players.find(p => p.id === currentPlayerId)?.name || `${t.player} ${currentPlayerId}`;
+    toast.success(`${playerName}: +${score} ${t.points}`, {
+      duration: 2000,
+    });
+
+    const nextTurn = (currentTurn + 1) % players.length;
+    setCurrentTurn(nextTurn);
+
+    // Increment round when all players have played
+    if (nextTurn === 0) {
+      // Save completed round to history using the ref to avoid stale closure
+      setScoreHistory(prev => [...prev, [...currentRoundScoresRef.current, newRoundScore]]);
+      setCurrentRoundScores([]);
+      setRoundNumber(prev => prev + 1);
+    }
+  };
+
+  const handleReset = () => {
+    clearSavedGame();
+    setGameStarted(false);
+    setPlayers([]);
+    setCurrentTurn(0);
+    setRoundNumber(1);
+    setScoreHistory([]);
+    setCurrentRoundScores([]);
+    setAdjustments({});
+    setPenalties({});
+    setShowResetDialog(false);
+    turnTimer.stopTimer();
+    toast.info(t.gameReset);
+  };
+
+  const handlePositionChange = () => {
+    // This is called when a player's position changes in the leaderboard
+  };
+
+  const handleEditPlayer = (playerId: number, newName: string, newScore: number, customTimerMinutes?: number) => {
+    const previous = players.find(p => p.id === playerId);
+    const delta = previous ? newScore - previous.score : 0;
+    if (delta !== 0) {
+      setAdjustments(prev => ({ ...prev, [playerId]: (prev[playerId] ?? 0) + delta }));
+    }
+    setPlayers(prev =>
+      prev.map(p =>
+        p.id === playerId
+          ? { ...p, name: newName, score: newScore, customTimerMinutes }
+          : p
+      )
+    );
+    toast.success(t.scoreUpdated, {
+      duration: 2000,
+    });
+  };
+
+  const handleTurnTimerChange = (minutes: number) => {
+    // Reset all custom timers when global timer changes
+    setPlayers(prev =>
+      prev.map(p => ({ ...p, customTimerMinutes: undefined }))
+    );
+    turnTimer.startTimer(minutes);
+  };
+
+  const handleEndGame = () => {
+    setShowSurpriseEmojis(true);
+    // Small delay to ensure emojis change before dialog opens
+    endGameTimeoutRef.current = setTimeout(() => {
+      setShowEndGameDialog(true);
+    }, 100);
+  };
+
+  const handleCloseApp = async () => {
+    const saved = saveGameStateImmediately({
+      gameStarted,
+      players,
+      currentTurn,
+      roundNumber,
+      scoreHistory,
+      currentRoundScores,
+      adjustments,
+      penalties,
+    });
+
+    if (!saved) {
+      toast.error(t.gameSaveError);
+      return;
+    }
+
+    audioRef.current?.pause();
+    setIsRadioPlaying(false);
+    turnTimer.stopTimer();
+    gameTimer.stopCountdown();
+    setShowCloseAppDialog(false);
+
+    try {
+      const [{ Capacitor }, { App }] = await Promise.all([
+        import("@capacitor/core"),
+        import("@capacitor/app"),
+      ]);
+      if (Capacitor.isNativePlatform()) {
+        await App.exitApp();
+        return;
+      }
+    } catch (error) {
+      console.error("Error closing native app:", error);
+    }
+
+    try {
+      window.close();
+    } catch {
+      // ignored: browser may block closing
+    }
+    window.setTimeout(() => {
+      if (!window.closed) setAppClosed(true);
+    }, 300);
+  };
+
+  const handleEditRoundScore = (roundIndex: number, playerId: number, newScore: number) => {
+    const isCurrent = roundIndex >= scoreHistory.length;
+    const round = isCurrent ? currentRoundScores : scoreHistory[roundIndex];
+    const old = round?.find(s => s.playerId === playerId);
+    if (!old || old.score === newScore) return;
+    const delta = newScore - old.score;
+    const update = (r: RoundScore[]) => r.map(s => s.playerId === playerId ? { ...s, score: newScore, edited: true } : s);
+    if (isCurrent) setCurrentRoundScores(prev => update(prev));
+    else setScoreHistory(prev => prev.map((r, i) => i === roundIndex ? update(r) : r));
+    setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, score: p.score + delta } : p));
+    toast.success(t.scoreUpdated, { duration: 2000 });
+  };
+
+  const handleApplyPenalties = (newPenalties: Record<number, number>) => {
+    setPenalties(prev => {
+      const next = { ...prev };
+      Object.entries(newPenalties).forEach(([id, v]) => { if (v) next[Number(id)] = (next[Number(id)] ?? 0) + v; });
+      return next;
+    });
+    const penalties = newPenalties;
+    setPlayers(prev =>
+      prev.map(p => ({
+        ...p,
+        score: p.score - penalties[p.id]
+      }))
+    );
+    setShowEndGameDialog(false);
+    setShowSurpriseEmojis(false);
+    // Clear saved game when ending
+    clearSavedGame();
+    toast.success(t.scoreUpdated, {
+      duration: 2000,
+    });
+  };
+
+  // Don't show PlayerSetup if we have players loaded (means we're restoring)
+  if (!gameStarted && players.length === 0) {
+    return (
+      <>
+        <PlayerSetup onStart={handleStartGame} onRequestClose={() => setShowCloseAppDialog(true)} />
+        <RestoreGameDialog
+          open={showRestoreDialog}
+          onOpenChange={setShowRestoreDialog}
+          gameInfo={savedGameInfo}
+          onRestore={handleRestoreGame}
+          onNewGame={handleNewGame}
+        />
+        <CloseAppDialog
+          open={showCloseAppDialog}
+          onOpenChange={setShowCloseAppDialog}
+          onConfirm={handleCloseApp}
+          hasActiveGame={false}
+        />
+        <ClosedScreen open={appClosed} onBack={() => setAppClosed(false)} />
+      </>
+    );
+  }
+
+  // If we have players but game not started yet, wait for state to sync
+  if (!gameStarted && players.length > 0) {
+    return null;
+  }
+
+  const currentPlayer = players[currentTurn];
+
+  // Guard against invalid turn state
+  if (!currentPlayer) {
+    return null;
+  }
+
+  return (
+    <div className="h-screen supports-[height:100svh]:h-[100svh] bg-background overflow-hidden md:h-auto md:min-h-screen md:p-4 md:pb-8">
+      {/* Mobile swipeable view */}
+      <div className="md:hidden h-full flex flex-col">
+        <SwipeableViews currentView={currentView} onViewChange={setCurrentView}>
+          {/* Screen 1: Main game */}
+          <div className="h-full overflow-y-auto p-4 pb-20">
+            <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
+              <div className="flex justify-between items-center pt-2 gap-2">
+                <h1 className="text-2xl font-bold text-foreground flex-shrink min-w-0">{t.scrabbleScore}</h1>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowKofiDialog(true)}
+                    className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1 flex-shrink-0"
+                  >
+                    <Heart
+                      className={`w-3.5 h-3.5 transition-all duration-300 ${isHeartFilled ? "fill-orange-500 text-orange-500" : ""
+                        }`}
+                    />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleRadio}
+                    className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1 flex-shrink-0"
+                  >
+                    <Music className={`w-3.5 h-3.5 ${isRadioPlaying ? "text-orange-500" : ""}`} />
+                    {isRadioPlaying && (
+                      <span className="text-[8px] font-semibold text-orange-500 leading-none -mt-0.5">
+                        {t.radioLive}
+                      </span>
+                    )}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="flex flex-col items-center justify-center gap-0 h-8 w-8 p-1 flex-shrink-0"
+                      >
+                        <Hourglass className={`w-3.5 h-3.5 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
+                        {(turnTimer.isActive || gameTimer.isCountdownActive) && (
+                          <span className="text-[8px] font-semibold text-orange-500 leading-none -mt-0.5">
+                            {t.timerOn}
+                          </span>
+                        )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                        {t.turnTimer}
+                      </div>
+                      {[1, 2, 3, 4, 5].map((minutes) => (
+                        <DropdownMenuItem
+                          key={`turn-${minutes}`}
+                          onClick={() => handleTurnTimerChange(minutes)}
+                          className="cursor-pointer"
+                        >
+                          {minutes} {minutes === 1 ? t.minute : t.minutes}
+                        </DropdownMenuItem>
+                      ))}
+                      {turnTimer.isActive && (
+                        <DropdownMenuItem
+                          onClick={() => turnTimer.stopTimer()}
+                          className="cursor-pointer text-destructive"
+                        >
+                          {t.stopTimer}
+                        </DropdownMenuItem>
+                      )}
+                      <div className="h-px bg-border my-1" />
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                        {t.gameTimer}
+                      </div>
+                      {[15, 30, 45, 60, 90].map((minutes) => (
+                        <DropdownMenuItem
+                          key={`game-${minutes}`}
+                          onClick={() => gameTimer.startCountdown(minutes)}
+                          className="cursor-pointer"
+                        >
+                          {minutes} {t.minutes}
+                        </DropdownMenuItem>
+                      ))}
+                      {gameTimer.isCountdownActive && (
+                        <DropdownMenuItem
+                          onClick={() => gameTimer.stopCountdown()}
+                          className="cursor-pointer text-destructive"
+                        >
+                          {t.stopTimer}
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowResetDialog(true)}
+                    className="h-8 w-8 flex-shrink-0"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </Button>
+                  <div className="flex-shrink-0">
+                    <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
+                  </div>
+                  <div className="flex-shrink-0">
+                    <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
+                  </div>
+                </div>
+              </div>
+
+              <TurnInput
+                currentPlayer={currentPlayer.id}
+                currentPlayerName={currentPlayer.name}
+                onSubmitScore={handleSubmitScore}
+                timerDisplay={turnTimer.formatTime()}
+                timerColorClass={turnTimer.getColorClass()}
+                isTimerFinished={turnTimer.isFinished}
+                onEndGame={handleEndGame}
+              />
+
+              <Leaderboard
+                players={players}
+                onPositionChange={handlePositionChange}
+                roundNumber={roundNumber}
+                onEditPlayer={handleEditPlayer}
+                gameTime={gameTimer.formatTime()}
+                gameTimeColor={gameTimer.getColorClass()}
+                isGameTimeFinished={gameTimer.isFinished}
+                showSurpriseEmojis={showSurpriseEmojis}
+                currentTurn={currentTurn}
+                playersCount={players.length}
+              />
+            </div>
+          </div>
+
+          {/* Screen 2: Score History */}
+          <div className="h-full overflow-y-auto pt-1 pb-20">
+            <ScoreHistory
+              players={players}
+              scoreHistory={scoreHistory}
+              currentRoundScores={currentRoundScores}
+              currentTurn={currentTurn}
+              adjustments={adjustments}
+              penalties={penalties}
+              onEditRoundScore={handleEditRoundScore}
+            />
+          </div>
+
+        </SwipeableViews>
+
+        {/* Fixed dot indicators */}
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {[0, 1].map((index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentView(index)}
+              className={`w-2 h-2 rounded-full transition-all ${currentView === index
+                ? "bg-foreground"
+                : "bg-foreground/20"
+                }`}
+            />
+          ))}
+        </div>
+
+        {/* Fixed chevron navigation - Right (not on last screen) */}
+        {currentView < 1 && (
+          <button
+            onClick={() => setCurrentView(currentView + 1)}
+            className="fixed right-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors md:hidden"
+          >
+            <ChevronRight className="w-8 h-8" />
+          </button>
+        )}
+
+        {/* Fixed chevron navigation - Left (not on first screen) */}
+        {currentView > 0 && (
+          <button
+            onClick={() => setCurrentView(currentView - 1)}
+            className="fixed left-2 top-1/2 -translate-y-1/2 z-20 text-foreground/20 hover:text-foreground/40 transition-colors md:hidden"
+          >
+            <ChevronLeft className="w-8 h-8" />
+          </button>
+        )}
+      </div>
+
+      {/* Desktop view - no carousel */}
+      <div className="hidden md:block">
+        <div className="max-w-2xl mx-auto space-y-3 animate-slide-up">
+          <div className="flex justify-between items-center pt-2 gap-2">
+            <h1 className="text-2xl font-bold text-foreground flex-shrink min-w-0">{t.scrabbleScore}</h1>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowKofiDialog(true)}
+                className="flex flex-col items-center justify-center gap-0 h-10 p-1 flex-shrink-0"
+              >
+                <Heart
+                  className={`w-4 h-4 transition-all duration-300 ${isHeartFilled ? "fill-orange-500 text-orange-500" : ""
+                    }`}
+                />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleRadio}
+                className="flex flex-col items-center justify-center gap-0 h-10 p-1 flex-shrink-0"
+              >
+                <Music className={`w-4 h-4 ${isRadioPlaying ? "text-orange-500" : ""}`} />
+                {isRadioPlaying && (
+                  <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                    {t.radioLive}
+                  </span>
+                )}
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="flex flex-col items-center justify-center gap-0 h-10 p-1 flex-shrink-0"
+                  >
+                    <Hourglass className={`w-4 h-4 ${turnTimer.isActive || gameTimer.isCountdownActive ? "text-orange-500" : ""}`} />
+                    {(turnTimer.isActive || gameTimer.isCountdownActive) && (
+                      <span className="text-[9px] font-semibold text-orange-500 leading-none -mt-0.5">
+                        {t.timerOn}
+                      </span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                    {t.turnTimer}
+                  </div>
+                  {[1, 2, 3, 4, 5].map((minutes) => (
+                    <DropdownMenuItem
+                      key={`turn-${minutes}`}
+                      onClick={() => handleTurnTimerChange(minutes)}
+                      className="cursor-pointer"
+                    >
+                      {minutes} {minutes === 1 ? t.minute : t.minutes}
+                    </DropdownMenuItem>
+                  ))}
+                  {turnTimer.isActive && (
+                    <DropdownMenuItem
+                      onClick={() => turnTimer.stopTimer()}
+                      className="cursor-pointer text-destructive"
+                    >
+                      {t.stopTimer}
+                    </DropdownMenuItem>
+                  )}
+                  <div className="h-px bg-border my-1" />
+                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                    {t.gameTimer}
+                  </div>
+                  {[15, 30, 45, 60, 90].map((minutes) => (
+                    <DropdownMenuItem
+                      key={`game-${minutes}`}
+                      onClick={() => gameTimer.startCountdown(minutes)}
+                      className="cursor-pointer"
+                    >
+                      {minutes} {t.minutes}
+                    </DropdownMenuItem>
+                  ))}
+                  {gameTimer.isCountdownActive && (
+                    <DropdownMenuItem
+                      onClick={() => gameTimer.stopCountdown()}
+                      className="cursor-pointer text-destructive"
+                    >
+                      {t.stopTimer}
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowResetDialog(true)}
+                className="flex-shrink-0"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+              <div className="flex-shrink-0">
+                <ShareButton players={players} roundNumber={roundNumber} leaderboardId="leaderboard-capture" />
+              </div>
+              <div className="flex-shrink-0">
+                <SettingsMenu onRequestClose={() => setShowCloseAppDialog(true)} hasActiveGame />
+              </div>
+            </div>
+          </div>
+
+          <TurnInput
+            currentPlayer={currentPlayer.id}
+            currentPlayerName={currentPlayer.name}
+            onSubmitScore={handleSubmitScore}
+            timerDisplay={turnTimer.formatTime()}
+            timerColorClass={turnTimer.getColorClass()}
+            isTimerFinished={turnTimer.isFinished}
+            onEndGame={handleEndGame}
+          />
+
+          <Leaderboard
+            players={players}
+            onPositionChange={handlePositionChange}
+            roundNumber={roundNumber}
+            onEditPlayer={handleEditPlayer}
+            gameTime={gameTimer.formatTime()}
+            gameTimeColor={gameTimer.getColorClass()}
+            isGameTimeFinished={gameTimer.isFinished}
+            showSurpriseEmojis={showSurpriseEmojis}
+            currentTurn={currentTurn}
+            playersCount={players.length}
+          />
+
+        </div>
+      </div>
+
+      <ConfirmDialog
+        open={showResetDialog}
+        onOpenChange={setShowResetDialog}
+        onConfirm={handleReset}
+      />
+
+      <CloseAppDialog
+        open={showCloseAppDialog}
+        onOpenChange={setShowCloseAppDialog}
+        onConfirm={handleCloseApp}
+        hasActiveGame={gameStarted}
+      />
+      <ClosedScreen open={appClosed} onBack={() => setAppClosed(false)} />
+
+      <KofiDialog
+        open={showKofiDialog}
+        onOpenChange={setShowKofiDialog}
+      />
+
+      <EndGameDialog
+        open={showEndGameDialog}
+        onOpenChange={setShowEndGameDialog}
+        players={players}
+        onApplyPenalties={handleApplyPenalties}
+      />
+
+      <RestoreGameDialog
+        open={showRestoreDialog}
+        onOpenChange={setShowRestoreDialog}
+        gameInfo={savedGameInfo}
+        onRestore={handleRestoreGame}
+        onNewGame={handleNewGame}
+      />
+    </div>
+  );
+};
+
+export default Index;

@@ -1,3 +1,4 @@
+// @ts-nocheck -- imported from original project; stricter type settings here
 import * as React from "react";
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
