@@ -14,6 +14,7 @@ interface RoundScore {
   playerId: number;
   score: number;
   wasBingo: boolean;
+  edited?: boolean;
 }
 
 export interface GameState {
@@ -23,6 +24,8 @@ export interface GameState {
   roundNumber: number;
   scoreHistory: RoundScore[][];
   currentRoundScores: RoundScore[];
+  adjustments?: Record<number, number>;
+  penalties?: Record<number, number>;
 }
 
 interface StoredGameData {

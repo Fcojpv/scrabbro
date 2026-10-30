@@ -1,11 +1,24 @@
-# Welcome to ScrabBro
+# Screenshot Exact Match
 
-A Scrabble score tracking application built with React, Vite, TypeScript, and Tailwind CSS.
+Implement exactly the screenshot and nothing else
 
-## Features
+This project was built with [Lovable](https://lovable.dev).
 
-- Track scores for multiple players
-- Round-by-round score history
-- Game timer and turn timer
-- Mobile-friendly swipeable interface
-- Multi-language support
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/70274dac-009c-418f-84f0-c004e2693a12).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
+```
